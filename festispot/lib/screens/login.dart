@@ -3,6 +3,7 @@ import '../utils/variables.dart';
 import 'asistente/index.dart';
 import 'productor/index.dart';
 
+// Pantalla de inicio de sesión (login)
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -11,26 +12,32 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  // Clave para el formulario
   final _formKey = GlobalKey<FormState>();
+  // Controladores para los campos de email y contraseña
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  // Controla la visibilidad de la contraseña
   bool _isPasswordVisible = false;
+  // Indica si se está procesando el login
   bool _isLoading = false;
 
   @override
   void dispose() {
+    // Liberar recursos de los controladores
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
+  // Maneja el proceso de login
   void _handleLogin() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
       });
 
-      // Simular proceso de login
+      // Simular proceso de login (espera 1 segundo)
       await Future.delayed(const Duration(seconds: 1));
 
       // Validar credenciales usando la clase LoginCredentials
@@ -52,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         );
 
-        // Navegar al índice correspondiente
+        // Navegar al índice correspondiente según el tipo de usuario
         if (userType == LoginCredentials.userTypeAssistant) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
@@ -81,6 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Color de fondo de la pantalla
       backgroundColor: Colors.deepPurple.shade50,
       body: SafeArea(
         child: Center(
@@ -103,6 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
+                // Título de la app
                 Text(
                   'FestiSpot',
                   style: Theme.of(context).textTheme.headlineLarge?.copyWith(
@@ -111,6 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
+                // Subtítulo
                 Text(
                   'Descubre los mejores festivales',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -132,6 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
+                          // Título del formulario
                           Text(
                             'Iniciar Sesión',
                             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -233,7 +244,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           const SizedBox(height: 16),
 
-                          // Enlaces adicionales
+                          // Enlace para recuperar contraseña
                           TextButton(
                             onPressed: () {
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -251,7 +262,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                // Credenciales de prueba
+                // Credenciales de prueba para login rápido
                 Card(
                   color: Colors.blue.shade50,
                   child: Padding(
@@ -286,7 +297,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // Opción de registro
+                // Opción de registro para nuevos usuarios
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

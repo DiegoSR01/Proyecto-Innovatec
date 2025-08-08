@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// Pantalla principal del panel de Productor
 class ProductorIndexScreen extends StatelessWidget {
   const ProductorIndexScreen({super.key});
 
@@ -7,13 +8,16 @@ class ProductorIndexScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        // Título del AppBar
         title: const Text('Panel de Productor'),
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
         actions: [
+          // Botón para cerrar sesión
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
+              // Navega de regreso a la pantalla de login
               Navigator.of(context).pushReplacementNamed('/login');
             },
           ),
@@ -24,6 +28,7 @@ class ProductorIndexScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Tarjeta de bienvenida con información del usuario
             Card(
               elevation: 4,
               child: Padding(
@@ -59,6 +64,7 @@ class ProductorIndexScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
+            // Título de la sección de funciones
             Text(
               'Funciones del Productor',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -66,12 +72,14 @@ class ProductorIndexScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
+            // Grid con las funciones disponibles para el productor
             Expanded(
               child: GridView.count(
                 crossAxisCount: 2,
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
                 children: [
+                  // Tarjeta para crear festivales
                   _buildFeatureCard(
                     context,
                     'Crear Festivales',
@@ -83,6 +91,7 @@ class ProductorIndexScreen extends StatelessWidget {
                       );
                     },
                   ),
+                  // Tarjeta para ver festivales propios
                   _buildFeatureCard(
                     context,
                     'Mis Festivales',
@@ -94,6 +103,7 @@ class ProductorIndexScreen extends StatelessWidget {
                       );
                     },
                   ),
+                  // Tarjeta para ver estadísticas
                   _buildFeatureCard(
                     context,
                     'Estadísticas',
@@ -105,6 +115,7 @@ class ProductorIndexScreen extends StatelessWidget {
                       );
                     },
                   ),
+                  // Tarjeta para ver finanzas
                   _buildFeatureCard(
                     context,
                     'Finanzas',
@@ -125,6 +136,7 @@ class ProductorIndexScreen extends StatelessWidget {
     );
   }
 
+  // Método auxiliar para construir las tarjetas de función
   Widget _buildFeatureCard(
     BuildContext context,
     String title,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// Pantalla principal del panel de Asistente
 class AsistenteIndexScreen extends StatelessWidget {
   const AsistenteIndexScreen({super.key});
 
@@ -7,13 +8,16 @@ class AsistenteIndexScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        // Título del AppBar
         title: const Text('Panel de Asistente'),
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
         actions: [
+          // Botón para cerrar sesión
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
+              // Navega de regreso a la pantalla de login
               Navigator.of(context).pushReplacementNamed('/login');
             },
           ),
@@ -24,6 +28,7 @@ class AsistenteIndexScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Tarjeta de bienvenida con información del usuario
             Card(
               elevation: 4,
               child: Padding(
@@ -59,6 +64,7 @@ class AsistenteIndexScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
+            // Título de la sección de funciones
             Text(
               'Funciones del Asistente',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -66,12 +72,14 @@ class AsistenteIndexScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
+            // Grid con las funciones disponibles para el asistente
             Expanded(
               child: GridView.count(
                 crossAxisCount: 2,
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
                 children: [
+                  // Tarjeta para gestionar eventos
                   _buildFeatureCard(
                     context,
                     'Gestionar Eventos',
@@ -83,6 +91,7 @@ class AsistenteIndexScreen extends StatelessWidget {
                       );
                     },
                   ),
+                  // Tarjeta para ver asistentes
                   _buildFeatureCard(
                     context,
                     'Ver Asistentes',
@@ -94,6 +103,7 @@ class AsistenteIndexScreen extends StatelessWidget {
                       );
                     },
                   ),
+                  // Tarjeta para reportes
                   _buildFeatureCard(
                     context,
                     'Reportes',
@@ -105,6 +115,7 @@ class AsistenteIndexScreen extends StatelessWidget {
                       );
                     },
                   ),
+                  // Tarjeta para configuración
                   _buildFeatureCard(
                     context,
                     'Configuración',
@@ -125,6 +136,7 @@ class AsistenteIndexScreen extends StatelessWidget {
     );
   }
 
+  // Método auxiliar para construir las tarjetas de función
   Widget _buildFeatureCard(
     BuildContext context,
     String title,
