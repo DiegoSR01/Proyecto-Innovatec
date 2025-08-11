@@ -66,7 +66,7 @@ class CardImages extends StatelessWidget {
         child: InkWell(
           onTap: () {},
           child: FadeInImage(
-            placeholder: const AssetImage("assets/loading.gif"),
+            placeholder: const AssetImage("lib/imagenes/loading.gif"),
             image: AssetImage(carrusel.imagen),
             fit: BoxFit.cover,
           ),
