@@ -1,6 +1,7 @@
 import 'package:festispot/paginas/model_event.dart';
+import 'package:festispot/paginas/detalles_event.dart'; // Add this import
 import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart'; // Faltaba esta importación
+import 'package:carousel_slider/carousel_slider.dart';
 
 class Inicio extends StatefulWidget {
   const Inicio({super.key});
@@ -10,9 +11,6 @@ class Inicio extends StatefulWidget {
 }
 
 class _InicioState extends State<Inicio> {
-  // Agregamos la lista de carrusel
-  final List<Evento> carrusel = []; // Debes llenar esta lista con tus eventos
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,6 +18,7 @@ class _InicioState extends State<Inicio> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
+        centerTitle: true, // Moved here from TextStyle
         title: const Text(
           "Festispot",
           style: TextStyle(
@@ -66,7 +65,7 @@ class CardImages extends StatelessWidget {
         child: InkWell(
           onTap: () {},
           child: FadeInImage(
-            placeholder: const AssetImage("lib/imagenes/loading.gif"),
+            placeholder: const AssetImage("assets/images/loading.gif"),
             image: AssetImage(carrusel.imagen),
             fit: BoxFit.cover,
           ),
