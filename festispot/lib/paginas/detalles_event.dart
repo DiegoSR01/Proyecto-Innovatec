@@ -13,7 +13,10 @@ final List<Evento> carrusel = [
     nombre: 'Concierto de musica clásica',
     imagen: "assets/images/conc_ejem.jpg",
     descripcion:
-        "Asiste a un concierto de música clásica con una orquesta reconocida. Una experiencia cultural única.",
+        "Asiste a un concierto de música clásica con una orquesta reconocida. Una experiencia cultural única.", 
+    categoria: "concierto", 
+    ubicacion: " Auditorio Nacional",
+    fecha:"2023-10-15"
   ),
   Evento(
     id: 3,

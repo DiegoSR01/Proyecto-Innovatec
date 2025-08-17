@@ -3,12 +3,18 @@ class Evento {
   final String nombre;
   final String imagen;
   final String descripcion;
+  final String categoria;
+  final String ubicacion;
+  final String fecha;
 
-  const Evento({
+  const Evento(required int id, {
     required this.id,
     required this.nombre,
     required this.imagen,
     required this.descripcion,
+    required this.categoria,
+    required this.ubicacion,
+    required this.fecha
   }); // Corregido "Eveto" a "Evento"
 
   factory Evento.fromJson(Map<String, dynamic> json) => Evento(
@@ -16,6 +22,9 @@ class Evento {
     nombre: json['nombre'],
     imagen: json['imagen'],
     descripcion: json['descripcion'],
+    categoria: json['categoria'],
+    ubicacion: json['ubicacion'],
+    fecha: json['fecha']
   );
 
   Map<String, dynamic> toJson() => {
@@ -23,8 +32,18 @@ class Evento {
     'nombre': nombre,
     'imagen': imagen,
     'descripcion': descripcion,
+    'categoria': categoria,
+    'ubicacion': ubicacion,
+    'fecha': fecha
   };
 
-  Evento copy() =>
-      Evento(id: id, nombre: nombre, imagen: imagen, descripcion: descripcion);
+  Evento copy() => Evento(
+    id: id,
+    nombre: nombre,
+    imagen: imagen,
+    descripcion: descripcion,
+    categoria: categoria,
+    ubicacion: ubicacion,
+    fecha: fecha
+  );
 }
