@@ -39,76 +39,80 @@ class _InicioState extends State<Inicio> {
           ),
         ),
       ),
-      body: Stack(
+      body: Column(
         children: [
-          Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Buscar eventos...',
-                      prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 15,
-                      ),
-                    ),
-                    onChanged: (value) {
-                      // Add search functionality here
-                    },
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Buscar eventos...',
+                  prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 15,
+                    vertical: 15,
                   ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              CarouselSlider.builder(
-                itemCount: carrusel.length,
-                itemBuilder: (context, index, realindex) {
-                  return CardImages(carrusel: carrusel[index]);
+                onChanged: (value) {
+                  // Add search functionality here
                 },
-                options: CarouselOptions(
-                  height: 300,
-                  autoPlay: true,
-                  autoPlayCurve: Curves.easeInOut,
-                  enlargeCenterPage: true,
-                  aspectRatio: 16 / 9,
-                  viewportFraction: 0.8,
-                  scrollDirection: Axis.horizontal,
-                ),
               ),
-            ],
-          ),
-          Positioned(
-            left: 20,
-            bottom: 20,
-            child: FloatingActionButton(
-              heroTag: "btnCheck",
-              onPressed: () {
-                // Add check functionality here
-              },
-              backgroundColor: Colors.greenAccent,
-              child: const Icon(Icons.check_circle, color: Colors.white),
             ),
           ),
-          Positioned(
-            right: 20,
-            bottom: 20,
-            child: FloatingActionButton(
-              heroTag: "btnHeart",
-              onPressed: () {
-                // Add favorite functionality here
-              },
-              backgroundColor: Colors.red,
-              child: const Icon(Icons.favorite, color: Colors.white),
+          const SizedBox(height: 10),
+          CarouselSlider.builder(
+            itemCount: carrusel.length,
+            itemBuilder: (context, index, realindex) {
+              return CardImages(carrusel: carrusel[index]);
+            },
+            options: CarouselOptions(
+              height: 300,
+              autoPlay: true,
+              autoPlayCurve: Curves.easeInOut,
+              enlargeCenterPage: true,
+              aspectRatio: 16 / 9,
+              viewportFraction: 0.8,
+              scrollDirection: Axis.horizontal,
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.white,
+        elevation: 8,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                icon: const Icon(
+                  Icons.check_circle,
+                  color: Colors.greenAccent,
+                  size: 30,
+                ),
+                onPressed: () {
+                  // Add check functionality here
+                },
+              ),
+              IconButton(
+                icon: const Icon(
+                  Icons.favorite,
+                  color: Colors.red,
+                  size: 30,
+                ),
+                onPressed: () {
+                  // Add favorite functionality here
+                },
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
