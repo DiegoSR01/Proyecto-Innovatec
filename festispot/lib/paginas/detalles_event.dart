@@ -7,6 +7,9 @@ final List<Evento> carrusel = [
     imagen: "assets/images/cata.jpeg",
     descripcion:
         "Disfruta de una cata de vinos con expertos en la materia. Aprende sobre diferentes variedades y técnicas de degustación.",
+    categoria: "evento social", 
+    ubicacion: " Bodega del Valle",
+    fecha:"2025-10-15"
   ),
   Evento(
     id: 2,
@@ -14,9 +17,9 @@ final List<Evento> carrusel = [
     imagen: "assets/images/conc_ejem.jpg",
     descripcion:
         "Asiste a un concierto de música clásica con una orquesta reconocida. Una experiencia cultural única.", 
-    categoria: "concierto", 
+    categoria: "festival cultural", 
     ubicacion: " Auditorio Nacional",
-    fecha:"2023-10-15"
+    fecha:"2025-10-15"
   ),
   Evento(
     id: 3,
@@ -24,6 +27,9 @@ final List<Evento> carrusel = [
     imagen: "assets/images/feria_ejem.jpeg",
     descripcion:
         "Disfruta de un día lleno de tradición en la Feria del Alfeñique. Prueba dulces típicos y disfruta de actividades culturales.",
+    categoria: "evento cultural",
+    ubicacion: " Plaza Mayor",
+    fecha: "2025-10-20"
   ),
   Evento(
     id: 4,
@@ -31,5 +37,68 @@ final List<Evento> carrusel = [
     imagen: "assets/images/feria_agri.jpeg",
     descripcion:
         "Visita la Feria de Agricultura para conocer más sobre prácticas sostenibles y productos locales. Ideal para los amantes de la naturaleza.",
+    categoria: "evento social",
+    ubicacion: " Parque Ecológico",
+    fecha: "2025-10-25"
+  ),
+  Evento(
+    id: 5,
+    nombre: 'Festival de Jazz',
+    imagen: "assets/images/festival_jazz.jpeg",
+    descripcion:
+        "Disfruta de un fin de semana lleno de música en el Festival de Jazz. Conciertos en vivo y talleres para todos los amantes del jazz.",
+    categoria: "taller",
+    ubicacion: " Centro Cultural",
+    fecha: "2025-11-01"
+  ),
+  Evento(
+    id: 6,
+    nombre: 'Concierto de rock',
+    imagen: "assets/images/rock_ejem.jpg",
+    descripcion:
+        "Asiste al concierto de rock del año con bandas locales e internacionales. Una noche llena de energía y buena música.",
+    categoria: "evento cultural",
+    ubicacion: " Estadio Municipal",
+    fecha: "2025-11-05"
+  ),
+  Evento(
+    id: 7,
+    nombre: 'Startup Pitch & Networking Mexico',
+    imagen: "assets/images/network.jpg",
+    descripcion:
+        "Evento de networking para startups y emprendedores. Presentaciones, oportunidades de inversión y mucho más.",
+    categoria: "Networking",
+    ubicacion: " Centro de Convenciones",
+    fecha: "2025-11-10"
+  ),
+  Evento(
+    id: 8,
+    nombre: 'Exposición de arte contemporáneo',
+    imagen: "assets/images/expo_arte.jpg",
+    descripcion:
+        "Explora la Exposición de Arte Contemporáneo con obras de artistas emergentes. Una oportunidad para apreciar el arte moderno.",
+    categoria: "evento cultural",
+    ubicacion: " Galería Nacional",
+    fecha: "2025-11-15"
+  ),
+  Evento(
+    id: 9,
+    nombre: 'Taller de cocina mexicana',
+    imagen: "assets/images/taller_cocina.jpg",
+    descripcion:
+        "Aprende a cocinar platillos tradicionales mexicanos en este taller práctico. Ideal para los amantes de la gastronomía.",
+    categoria: "taller",
+    ubicacion: " Escuela de Cocina",
+    fecha: "2025-11-20"
+  ),
+  Evento(
+    id: 10,
+    nombre: 'Festival de cine independiente',
+    imagen: "assets/images/festival_cine.jpg",
+    descripcion:
+        "Disfruta de una selección de películas independientes en el Festival de Cine. Charlas con directores y actores.",
+    categoria: "fesitival",
+    ubicacion: " Cine Club",
+    fecha: "2025-11-25"
   ),
 ];

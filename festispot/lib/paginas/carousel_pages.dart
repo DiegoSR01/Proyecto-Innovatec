@@ -1,5 +1,6 @@
 import 'package:festispot/paginas/model_event.dart';
 import 'package:festispot/paginas/detalles_event.dart'; // Add this import
+import 'package:festispot/paginas/mostrar_evento.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
@@ -63,7 +64,15 @@ class CardImages extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: InkWell(
-          onTap: () {},
+          onTap: () {
+            carrusel.copy(); 
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MostrarEvento(carrusel:carrusel), // Navigate to MostrarEvento
+              ),
+            );
+          },
           child: FadeInImage(
             placeholder: const AssetImage("assets/images/loading.gif"),
             image: AssetImage(carrusel.imagen),
