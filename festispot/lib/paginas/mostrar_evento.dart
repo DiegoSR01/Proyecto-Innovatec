@@ -50,6 +50,11 @@ class MostrarEvento extends StatelessWidget {
                     "Fecha: ${carrusel.fecha}",
                     style: TextStyle(fontSize: 16, color: Colors.black54),
                   ),
+                  SizedBox(height: 5),
+                  Text(
+                    "Hora: ${carrusel.hora}",
+                    style: TextStyle(fontSize: 16, color: Colors.black54),
+                  ),
                 ],
               ),
             ),

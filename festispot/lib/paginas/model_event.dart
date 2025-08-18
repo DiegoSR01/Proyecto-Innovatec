@@ -6,6 +6,7 @@ class Evento {
   final String categoria;
   final String ubicacion;
   final String fecha;
+  final String hora; 
 
   const Evento({
     required this.id,
@@ -15,6 +16,7 @@ class Evento {
     required this.categoria,
     required this.ubicacion,
     required this.fecha,
+    required this.hora
   });
 
   factory Evento.fromJson(Map<String, dynamic> json) => Evento(
@@ -25,6 +27,7 @@ class Evento {
     categoria: json['categoria'],
     ubicacion: json['ubicacion'],
     fecha: json['fecha'],
+    hora: json['hora'],
   );
 
   Map<String, dynamic> toJson() => {
@@ -35,6 +38,7 @@ class Evento {
     'categoria': categoria,
     'ubicacion': ubicacion,
     'fecha': fecha,
+    'hora': hora,
   };
 
   Evento copy() => Evento(
@@ -45,5 +49,6 @@ class Evento {
     categoria: categoria,
     ubicacion: ubicacion,
     fecha: fecha,
+    hora: hora,
   );
 }
