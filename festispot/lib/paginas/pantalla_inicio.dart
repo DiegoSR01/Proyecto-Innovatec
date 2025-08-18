@@ -1,5 +1,6 @@
+import 'package:festispot/paginas/config_perfil.dart';
 import 'package:festispot/utils/model_event.dart';
-import 'package:festispot/utils/detalles_event.dart';
+import 'package:festispot/utils/eventos_carrusel.dart';
 import 'package:festispot/paginas/mostrar_evento.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -27,7 +28,10 @@ class _InicioState extends State<Inicio> {
             size: 30,
           ),
           onPressed: () {
-            // Add your account button action here
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Cuenta()),
+            );
           },
         ),
         title: const Text(
@@ -40,6 +44,7 @@ class _InicioState extends State<Inicio> {
         ),
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -64,6 +69,17 @@ class _InicioState extends State<Inicio> {
               ),
             ),
           ),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(
+              'Eventos Populares',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+          ),
           const SizedBox(height: 10),
           CarouselSlider.builder(
             itemCount: carrusel.length,
@@ -78,6 +94,18 @@ class _InicioState extends State<Inicio> {
               aspectRatio: 16 / 9,
               viewportFraction: 0.8,
               scrollDirection: Axis.horizontal,
+            ),
+          ),
+          const SizedBox(height: 20),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(
+              'Eventos que te podrían interesar',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
             ),
           ),
         ],
@@ -101,11 +129,7 @@ class _InicioState extends State<Inicio> {
                 },
               ),
               IconButton(
-                icon: const Icon(
-                  Icons.favorite,
-                  color: Colors.red,
-                  size: 30,
-                ),
+                icon: const Icon(Icons.favorite, color: Colors.red, size: 30),
                 onPressed: () {
                   // Add favorite functionality here
                 },
