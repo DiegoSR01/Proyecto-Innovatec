@@ -62,9 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
         // Navegar al índice correspondiente según el tipo de usuario
         if (userType == LoginCredentials.userTypeAssistant) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => const Asistentes(),
-            ),
+            MaterialPageRoute(builder: (context) => const Asistentes()),
           );
         } else if (userType == LoginCredentials.userTypeProducer) {
           Navigator.of(context).pushReplacement(
@@ -77,7 +75,9 @@ class _LoginScreenState extends State<LoginScreen> {
         // Credenciales incorrectas
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Credenciales incorrectas. Verifica tu email y contraseña.'),
+            content: Text(
+              'Credenciales incorrectas. Verifica tu email y contraseña.',
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -101,13 +101,18 @@ class _LoginScreenState extends State<LoginScreen> {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.deepPurple,
+                    color: Colors
+                        .white, // Changed to white to show the image better
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: const Icon(
-                    Icons.festival,
-                    size: 60,
-                    color: Colors.white,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.asset(
+                      'assets/images/logo.jpeg',
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -123,9 +128,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 // Subtítulo
                 Text(
                   'Descubre los mejores festivales',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Colors.grey.shade600,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge?.copyWith(color: Colors.grey.shade600),
                 ),
                 const SizedBox(height: 48),
 
@@ -145,10 +150,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           // Título del formulario
                           Text(
                             'Iniciar Sesión',
-                            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.deepPurple,
-                            ),
+                            style: Theme.of(context).textTheme.headlineSmall
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.deepPurple,
+                                ),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 24),
@@ -170,7 +176,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               if (value == null || value.isEmpty) {
                                 return 'Por favor ingresa tu correo';
                               }
-                              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                              if (!RegExp(
+                                r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                              ).hasMatch(value)) {
                                 return 'Ingresa un correo válido';
                               }
                               return null;
@@ -187,7 +195,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               prefixIcon: const Icon(Icons.lock),
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                                  _isPasswordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -231,7 +241,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     width: 20,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
+                                      ),
                                     ),
                                   )
                                 : const Text(
@@ -249,7 +261,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             onPressed: () {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('Función próximamente disponible'),
+                                  content: Text(
+                                    'Función próximamente disponible',
+                                  ),
                                 ),
                               );
                             },
@@ -272,24 +286,23 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         Text(
                           'Credenciales de prueba:',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue.shade800,
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue.shade800,
+                              ),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           'Asistente:\nasistente@festispot.com\nasistente123',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.blue.shade700,
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: Colors.blue.shade700),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           'Productor:\nproductor@festispot.com\nproductor123',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.blue.shade700,
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: Colors.blue.shade700),
                         ),
                       ],
                     ),
@@ -306,7 +319,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('Función de registro próximamente disponible'),
+                            content: Text(
+                              'Función de registro próximamente disponible',
+                            ),
                           ),
                         );
                       },

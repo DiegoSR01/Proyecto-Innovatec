@@ -1,4 +1,4 @@
-import 'package:festispot/paginas/model_event.dart';
+import 'package:festispot/utils/model_event.dart';
 
 final List<Evento> carrusel = [
   Evento(
@@ -36,7 +36,7 @@ final List<Evento> carrusel = [
   ),
   Evento(
     id: 4,
-    nombre: 'Feria de agrucultura',
+    nombre: 'Feria de agricultura',
     imagen: "assets/images/feria_agri.jpeg",
     descripcion:
         "Visita la Feria de Agricultura para conocer más sobre prácticas sostenibles y productos locales. Ideal para los amantes de la naturaleza.",

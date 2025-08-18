@@ -1,4 +1,4 @@
-import 'package:festispot/paginas/carousel_pages.dart';
+import 'package:festispot/paginas/pantalla_inicio.dart';
 import 'package:flutter/material.dart';
 
 class Asistentes extends StatelessWidget {
