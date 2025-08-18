@@ -1,5 +1,5 @@
 import 'package:festispot/paginas/model_event.dart';
-import 'package:festispot/paginas/detalles_event.dart'; // Add this import
+import 'package:festispot/paginas/detalles_event.dart'; 
 import 'package:festispot/paginas/mostrar_evento.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -19,7 +19,17 @@ class _InicioState extends State<Inicio> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        centerTitle: true, // Moved here from TextStyle
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.account_circle_outlined,
+            color: Colors.greenAccent,
+            size: 30,
+          ),
+          onPressed: () {
+            // Add your account button action here
+          },
+        ),
         title: const Text(
           "Festispot",
           style: TextStyle(
@@ -65,11 +75,13 @@ class CardImages extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         child: InkWell(
           onTap: () {
-            carrusel.copy(); 
+            carrusel.copy();
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MostrarEvento(carrusel:carrusel), // Navigate to MostrarEvento
+                builder: (context) => MostrarEvento(
+                  carrusel: carrusel,
+                ), // Navigate to MostrarEvento
               ),
             );
           },
