@@ -1,4 +1,4 @@
-import 'package:festispot/utils/model_event.dart';
+import 'package:festispot/utils/variables.dart';
 
 final List<Evento> carrusel = [
   Evento(
@@ -10,7 +10,13 @@ final List<Evento> carrusel = [
     categoria: "Evento Social", 
     ubicacion: " Bodega del Valle",
     fecha:"2025-10-15",
-    hora: "18:30"
+    hora: "18:30",
+    precio: "Gratuito",
+    capacidad: "500 personas",
+    edad: "18+",
+    organizador: "FestiSpot Productions",
+    organizadorRating: "4.9",
+    organizadorEventos: "120"
   ),
   Evento(
     id: 2,
@@ -21,7 +27,13 @@ final List<Evento> carrusel = [
     categoria: "Festival Cultural", 
     ubicacion: " Auditorio Nacional",
     fecha:"2025-10-15",
-    hora: "20:00"
+    hora: "20:00",
+    precio: "Gratuito",
+    capacidad: "500 personas",
+    edad: "18+",
+    organizador: "FestiSpot Productions",
+    organizadorRating: "4.9",
+    organizadorEventos: "120"
   ),
   Evento(
     id: 3,
@@ -32,7 +44,13 @@ final List<Evento> carrusel = [
     categoria: "Evento Cultural",
     ubicacion: " Plaza Mayor",
     fecha: "2025-10-20",
-    hora: "10:40"
+    hora: "10:40",
+    precio: "Gratuito",
+    capacidad: "500 personas",
+    edad: "18+",
+    organizador: "FestiSpot Productions",
+    organizadorRating: "4.9",
+    organizadorEventos: "120"
   ),
   Evento(
     id: 4,
@@ -43,7 +61,13 @@ final List<Evento> carrusel = [
     categoria: "Evento Social",
     ubicacion: " Parque Ecológico",
     fecha: "2025-10-25",
-    hora: "09:00"
+    hora: "09:00",
+    precio: "Gratuito",
+    capacidad: "500 personas",
+    edad: "18+",
+    organizador: "FestiSpot Productions",
+    organizadorRating: "4.9",
+    organizadorEventos: "120"
   ),
   Evento(
     id: 5,
@@ -54,7 +78,13 @@ final List<Evento> carrusel = [
     categoria: "Taller",
     ubicacion: " Centro Cultural",
     fecha: "2025-11-01",
-    hora: "19:00"
+    hora: "19:00",
+    precio: "Gratuito",
+    capacidad: "500 personas",
+    edad: "18+",
+    organizador: "FestiSpot Productions",
+    organizadorRating: "4.9",
+    organizadorEventos: "120"
   ),
   Evento(
     id: 6,
@@ -65,7 +95,13 @@ final List<Evento> carrusel = [
     categoria: "Evento Cultural",
     ubicacion: " Estadio Municipal",
     fecha: "2025-11-05",
-    hora: "21:00"
+    hora: "21:00",
+    precio: "Gratuito",
+    capacidad: "500 personas",
+    edad: "18+",
+    organizador: "FestiSpot Productions",
+    organizadorRating: "4.9",
+    organizadorEventos: "120"
   ),
   Evento(
     id: 7,
@@ -76,7 +112,13 @@ final List<Evento> carrusel = [
     categoria: "Networking",
     ubicacion: " Centro de Convenciones",
     fecha: "2025-11-10",
-    hora: "10:00"
+    hora: "10:00",
+    precio: "Gratuito",
+    capacidad: "500 personas",
+    edad: "18+",
+    organizador: "FestiSpot Productions",
+    organizadorRating: "4.9",
+    organizadorEventos: "120"
   ),
   Evento(
     id: 8,
@@ -87,7 +129,13 @@ final List<Evento> carrusel = [
     categoria: "Evento Cultural",
     ubicacion: " Galería Nacional",
     fecha: "2025-11-15",
-    hora: "11:00"
+    hora: "11:00",
+    precio: "Gratuito",
+    capacidad: "500 personas",
+    edad: "18+",
+    organizador: "FestiSpot Productions",
+    organizadorRating: "4.9",
+    organizadorEventos: "120"
   ),
   Evento(
     id: 9,
@@ -98,7 +146,13 @@ final List<Evento> carrusel = [
     categoria: "Taller",
     ubicacion: " Escuela de Cocina",
     fecha: "2025-11-20",
-    hora: "9:00"
+    hora: "9:00",
+    precio: "Gratuito",
+    capacidad: "500 personas",
+    edad: "18+",
+    organizador: "FestiSpot Productions",
+    organizadorRating: "4.9",
+    organizadorEventos: "120"
   ),
   Evento(
     id: 10,
@@ -109,6 +163,12 @@ final List<Evento> carrusel = [
     categoria: "Fesitival",
     ubicacion: " Cine Club",
     fecha: "2025-11-25",
-    hora: "19:30"
+    hora: "19:30",
+    precio: "Gratuito",
+    capacidad: "500 personas",
+    edad: "18+",
+    organizador: "FestiSpot Productions",
+    organizadorRating: "4.9",
+    organizadorEventos: "120"
   ),
 ];
