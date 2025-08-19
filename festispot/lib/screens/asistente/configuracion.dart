@@ -38,12 +38,6 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
           children: [
             const SizedBox(height: 20),
 
-            // Sección de Perfil
-            _buildSectionHeader('Perfil'),
-            _buildProfileSection(),
-
-            const SizedBox(height: 24),
-
             // Sección de Preferencias
             _buildSectionHeader('Preferencias'),
             _buildSettingTile(
@@ -85,7 +79,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
 
             const SizedBox(height: 24),
 
-            // Sección de Notificaciones
+            // Sección de Notificaciones Detalladas
             _buildSectionHeader('Notificaciones Detalladas'),
             _buildSettingTile(
               icon: Icons.event,
@@ -116,14 +110,6 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
 
             // Sección de Cuenta
             _buildSectionHeader('Cuenta'),
-            _buildSettingTile(
-              icon: Icons.person,
-              title: 'Editar Perfil',
-              subtitle: 'Cambiar información personal',
-              onTap: () {
-                // Navegar a editar perfil
-              },
-            ),
             _buildSettingTile(
               icon: Icons.security,
               title: 'Privacidad y Seguridad',
@@ -263,69 +249,6 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
           fontSize: 18,
           fontWeight: FontWeight.bold,
         ),
-      ),
-    );
-  }
-
-  Widget _buildProfileSection() {
-    return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF2D2E3F),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 30,
-            backgroundColor: const Color(0xFFE91E63),
-            child: const Icon(
-              Icons.person,
-              color: Colors.white,
-              size: 30,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Usuario FestiSpot',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  'usuario@festispot.com',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.7),
-                    fontSize: 14,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              // Editar perfil
-            },
-            icon: const Icon(
-              Icons.edit,
-              color: Color(0xFFE91E63),
-            ),
-          ),
-        ],
       ),
     );
   }

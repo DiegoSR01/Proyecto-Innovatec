@@ -106,7 +106,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
             ],
           ),
           content: const Text(
-            '¿Estás seguro que deseas cerrar sesión, Ana? Tendrás que volver a iniciar sesión para acceder a tu cuenta.',
+            '¿Estás seguro que deseas cerrar sesión? Tendrás que volver a iniciar sesión para acceder a tu cuenta.',
             style: TextStyle(
               color: Colors.white70,
               height: 1.4,

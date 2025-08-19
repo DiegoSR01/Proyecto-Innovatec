@@ -11,7 +11,7 @@ class ExplorarEventos extends StatefulWidget {
 }
 
 class _ExplorarEventosState extends State<ExplorarEventos> {
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   String _selectedCategory = 'Todos';
   List<Evento> _filteredEventos = [];
 
@@ -39,7 +39,7 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
   void _filterEvents() {
     setState(() {
       _filteredEventos = carrusel.where((evento) {
-        bool matchesSearch = evento.nombre!.toLowerCase().contains(_searchController.text.toLowerCase());
+        bool matchesSearch = evento.nombre.toLowerCase().contains(_searchController.text.toLowerCase());
         bool matchesCategory = _selectedCategory == 'Todos';
         return matchesSearch && matchesCategory;
       }).toList();

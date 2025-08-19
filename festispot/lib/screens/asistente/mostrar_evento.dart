@@ -191,7 +191,7 @@ class _MostrarEventoState extends State<MostrarEvento>
                 // Hero Image con overlay
                 Stack(
                   children: [
-                    Container(
+                    SizedBox(
                       height: 400,
                       width: double.infinity,
                       child: ClipRRect(
