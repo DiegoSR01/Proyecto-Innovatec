@@ -13,6 +13,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
   bool _notificacionesEventos = true;
   bool _notificacionesOfertas = false;
   bool _ubicacionActiva = true;
+  String _idiomaSeleccionado = 'Español'; // Agregado para manejar el idioma seleccionado
 
   @override
   Widget build(BuildContext context) {
@@ -177,61 +178,6 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
               },
             ),
 
-            const SizedBox(height: 24),
-
-            // Botón de Cerrar Sesión
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF2D2E3F),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: Colors.red.withOpacity(0.3),
-                    width: 1,
-                  ),
-                ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(16),
-                    onTap: () {
-                      _showLogoutDialog();
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.red.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Icon(
-                              Icons.logout,
-                              color: Colors.red,
-                              size: 20,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          const Text(
-                            'Cerrar Sesión',
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
             const SizedBox(height: 100),
           ],
         ),
@@ -316,7 +262,6 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
                   Switch(
                     value: switchValue,
                     onChanged: onSwitchChanged,
-                    activeColor: const Color(0xFFE91E63),
                     activeTrackColor: const Color(0xFFE91E63).withOpacity(0.3),
                   )
                 else
@@ -348,9 +293,9 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildLanguageOption('Español', true),
-            _buildLanguageOption('English', false),
-            _buildLanguageOption('Français', false),
+            _buildLanguageOption('Español'),
+            _buildLanguageOption('English'),
+            _buildLanguageOption('Français'),
           ],
         ),
         actions: [
@@ -362,7 +307,10 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
             ),
           ),
           ElevatedButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              Navigator.pop(context);
+              // Aquí podrías agregar lógica para aplicar el idioma
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFE91E63),
               shape: RoundedRectangleBorder(
@@ -379,7 +327,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
     );
   }
 
-  Widget _buildLanguageOption(String language, bool isSelected) {
+  Widget _buildLanguageOption(String language) {
     return ListTile(
       title: Text(
         language,
@@ -387,8 +335,12 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
       ),
       leading: Radio<String>(
         value: language,
-        groupValue: isSelected ? language : null,
-        onChanged: (value) {},
+        groupValue: _idiomaSeleccionado,
+        onChanged: (value) {
+          setState(() {
+            _idiomaSeleccionado = value!;
+          });
+        },
         activeColor: const Color(0xFFE91E63),
       ),
     );
@@ -452,57 +404,6 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
             ),
             child: const Text(
               'Cerrar',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showLogoutDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF2D2E3F),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: const Text(
-          'Cerrar Sesión',
-          style: TextStyle(color: Colors.white),
-        ),
-        content: const Text(
-          '¿Estás seguro de que quieres cerrar tu sesión?',
-          style: TextStyle(color: Colors.white70),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'Cancelar',
-              style: TextStyle(color: Colors.white70),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              // Aquí implementar lógica de logout
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Sesión cerrada exitosamente'),
-                  backgroundColor: Color(0xFF2D2E3F),
-                ),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: const Text(
-              'Cerrar Sesión',
               style: TextStyle(color: Colors.white),
             ),
           ),
