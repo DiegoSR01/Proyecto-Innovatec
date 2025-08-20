@@ -86,12 +86,12 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.2),
+                  color: Color.fromARGB(255, 0, 229, 255),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(
                   Icons.logout,
-                  color: Colors.red,
+                  color: Color.fromARGB(255, 0, 229, 255),
                   size: 24,
                 ),
               ),
@@ -122,7 +122,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
             ),
             Container(
               decoration: BoxDecoration(
-                color: Colors.red,
+                color: Color.fromARGB(255, 0, 229, 255),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: TextButton(
@@ -222,13 +222,13 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFFE91E63).withOpacity(0.1),
+            Color.fromARGB(255, 0, 229, 255),
             const Color(0xFF9C27B0).withOpacity(0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: const Color(0xFFE91E63).withOpacity(0.3),
+          color: Color.fromARGB(255, 0, 229, 255),
           width: 1,
         ),
       ),
@@ -242,7 +242,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
                 height: 120,
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
+                    colors: [Color.fromARGB(255, 0, 229, 255), Color(0xFF9C27B0)],
                   ),
                   borderRadius: BorderRadius.circular(60),
                 ),
@@ -276,7 +276,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
           ),
           const SizedBox(height: 16),
           const Text(
-            'Ana García López',
+            'Mario García Vásquez',
             style: TextStyle(
               color: Colors.white,
               fontSize: 24,
@@ -285,7 +285,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
           ),
           const SizedBox(height: 4),
           const Text(
-            'ana.garcia@festispot.com',
+            'productor@festispot.com',
             style: TextStyle(
               color: Colors.white70,
               fontSize: 16,
@@ -295,10 +295,10 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: const Color(0xFFE91E63).withOpacity(0.2),
+              color: Color.fromARGB(255, 0, 229, 255),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: const Color(0xFFE91E63),
+                color: Color.fromARGB(255, 0, 229, 255),
                 width: 1,
               ),
             ),
@@ -307,14 +307,14 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
               children: [
                 Icon(
                   Icons.person_outline,
-                  color: Color(0xFFE91E63),
+                  color: Color.fromARGB(255, 0, 229, 255),
                   size: 16,
                 ),
                 SizedBox(width: 4),
                 Text(
                   'USUARIO',
                   style: TextStyle(
-                    color: Color(0xFFE91E63),
+                    color: Color.fromARGB(255, 0, 229, 255),
                     fontWeight: FontWeight.bold,
                     fontSize: 12,
                   ),
@@ -375,7 +375,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
                 'Eventos\nAsistidos', 
                 '12', 
                 Icons.event,
-                const Color(0xFFE91E63),
+                Color.fromARGB(255, 0, 229, 255),
               ),
             ),
             const SizedBox(width: 12),
@@ -436,12 +436,12 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
       width: double.infinity,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Colors.red, Color(0xFFD32F2F)],
+          colors: [ Color.fromARGB(255, 0, 229, 255),  Color.fromARGB(255, 0, 229, 255)],
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.red.withOpacity(0.3),
+            color:  Color.fromARGB(255, 0, 229, 255),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -555,7 +555,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
         ),
         trailing: const Icon(
           Icons.arrow_forward_ios,
-          color: Color(0xFFE91E63),
+          color: Color.fromARGB(255, 0, 229, 255),
           size: 16,
         ),
         onTap: onTap,

@@ -1,15 +1,15 @@
 import 'package:festispot/utils/variables.dart';
 import 'package:flutter/material.dart';
 
-class MostrarEvento extends StatefulWidget {
+class MostrarEventoprod extends StatefulWidget {
   final Evento carrusel;
-  const MostrarEvento({super.key, required this.carrusel});
+  const MostrarEventoprod({super.key, required this.carrusel});
 
   @override
-  State<MostrarEvento> createState() => _MostrarEventoState();
+  State<MostrarEventoprod> createState() => _MostrarEventoprodState();
 }
 
-class _MostrarEventoState extends State<MostrarEvento>
+class _MostrarEventoprodState extends State<MostrarEventoprod>
     with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -25,21 +25,17 @@ class _MostrarEventoState extends State<MostrarEvento>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
     _animationController.forward();
   }
@@ -65,19 +61,15 @@ class _MostrarEventoState extends State<MostrarEvento>
             ),
             const SizedBox(width: 8),
             Text(
-              _isFavorite
-                  ? '¡Agregado a favoritos!'
-                  : 'Eliminado de favoritos',
+              _isFavorite ? '¡Agregado a favoritos!' : 'Eliminado de favoritos',
             ),
           ],
         ),
-        backgroundColor: _isFavorite 
-          ? const Color(0xFFE91E63)
-          : const Color(0xFF757575),
+        backgroundColor: _isFavorite
+            ? Color.fromARGB(255, 0, 229, 255)
+            : const Color(0xFF757575),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.all(16),
         duration: const Duration(seconds: 2),
       ),
@@ -100,18 +92,16 @@ class _MostrarEventoState extends State<MostrarEvento>
             const SizedBox(width: 8),
             Text(
               _isAttending
-                  ? '¡Confirmado! Te esperamos en el evento'
-                  : 'Asistencia cancelada',
+                  ? '¡Aplicado! Espera confirmación del organizador'
+                  : 'Aplicación cancelada',
             ),
           ],
         ),
-        backgroundColor: _isAttending 
-          ? const Color(0xFF4CAF50)
-          : const Color(0xFF757575),
+        backgroundColor: _isAttending
+            ? const Color(0xFF4CAF50)
+            : const Color(0xFF757575),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.all(16),
         duration: const Duration(seconds: 3),
       ),
@@ -133,10 +123,7 @@ class _MostrarEventoState extends State<MostrarEvento>
             borderRadius: BorderRadius.circular(12),
           ),
           child: IconButton(
-            icon: const Icon(
-              Icons.arrow_back,
-              color: Colors.white,
-            ),
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
@@ -162,10 +149,7 @@ class _MostrarEventoState extends State<MostrarEvento>
               borderRadius: BorderRadius.circular(12),
             ),
             child: IconButton(
-              icon: const Icon(
-                Icons.share,
-                color: Colors.white,
-              ),
+              icon: const Icon(Icons.share, color: Colors.white),
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -240,7 +224,10 @@ class _MostrarEventoState extends State<MostrarEvento>
                               ),
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
-                                  colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
+                                  colors: [
+                                    Color.fromARGB(255, 0, 229, 255),
+                                    Color(0xFF9C27B0),
+                                  ],
                                 ),
                                 borderRadius: BorderRadius.circular(20),
                               ),
@@ -342,7 +329,9 @@ class _MostrarEventoState extends State<MostrarEvento>
 
                           // Ubicación
                           _buildLocationSection(),
-                          const SizedBox(height: 100), // Espacio para el botón flotante
+                          const SizedBox(
+                            height: 100,
+                          ), // Espacio para el botón flotante
                         ],
                       ),
                     ),
@@ -366,15 +355,16 @@ class _MostrarEventoState extends State<MostrarEvento>
                           colors: [Color(0xFF4CAF50), Color(0xFF2E7D32)],
                         )
                       : const LinearGradient(
-                          colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
+                          colors: [Color.fromARGB(255, 0, 229, 255), Color(0xFF9C27B0)],
                         ),
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: (_isAttending 
-                          ? const Color(0xFF4CAF50)
-                          : const Color(0xFFE91E63))
-                          .withOpacity(0.4),
+                      color:
+                          (_isAttending
+                                  ? const Color(0xFF4CAF50)
+                                  : Color.fromARGB(255, 0, 229, 255))
+                              .withOpacity(0.4),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                     ),
@@ -394,13 +384,15 @@ class _MostrarEventoState extends State<MostrarEvento>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        _isAttending ? Icons.check_circle : Icons.event_available,
+                        _isAttending
+                            ? Icons.check_circle
+                            : Icons.event_available,
                         color: Colors.white,
                         size: 24,
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        _isAttending ? '¡Asistiré!' : 'Confirmar Asistencia',
+                        _isAttending ? '¡Aplicado!' : 'Aplicar a convocatoria',
                         style: const TextStyle(
                           fontSize: 18,
                           color: Colors.white,
@@ -496,10 +488,10 @@ class _MostrarEventoState extends State<MostrarEvento>
           ),
           const SizedBox(height: 16),
           Text(
-            widget.carrusel.descripcion ?? 
+            widget.carrusel.descripcion ??
                 'Un evento increíble que no te puedes perder. '
-                'Ven y disfruta de una experiencia única llena de '
-                'entretenimiento, música y diversión.',
+                    'Ven y disfruta de una experiencia única llena de '
+                    'entretenimiento, música y diversión.',
             style: TextStyle(
               color: Colors.white.withOpacity(0.8),
               fontSize: 16,
@@ -610,11 +602,7 @@ class _MostrarEventoState extends State<MostrarEvento>
               ),
               borderRadius: BorderRadius.circular(30),
             ),
-            child: const Icon(
-              Icons.business,
-              color: Colors.white,
-              size: 30,
-            ),
+            child: const Icon(Icons.business, color: Colors.white, size: 30),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -640,11 +628,7 @@ class _MostrarEventoState extends State<MostrarEvento>
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    const Icon(
-                      Icons.star,
-                      color: Colors.amber,
-                      size: 16,
-                    ),
+                    const Icon(Icons.star, color: Colors.amber, size: 16),
                     const SizedBox(width: 4),
                     Text(
                       '${widget.carrusel.organizadorRating ?? '4.9'} • ${widget.carrusel.organizadorEventos ?? '120'} eventos',
@@ -741,11 +725,7 @@ class _MostrarEventoState extends State<MostrarEvento>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.map,
-                    color: Color(0xFF00BCD4),
-                    size: 40,
-                  ),
+                  const Icon(Icons.map, color: Color(0xFF00BCD4), size: 40),
                   const SizedBox(height: 8),
                   Text(
                     widget.carrusel.ubicacion ?? 'Ubicación por confirmar',
@@ -810,23 +790,22 @@ class _MostrarEventoState extends State<MostrarEvento>
     );
   }
 
-  Widget _buildDetailCard(String emoji, String label, String value, Color color) {
+  Widget _buildDetailCard(
+    String emoji,
+    String label,
+    String value,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: const Color(0xFF1A1B2E),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: color.withOpacity(0.3),
-          width: 1,
-        ),
+        border: Border.all(color: color.withOpacity(0.3), width: 1),
       ),
       child: Column(
         children: [
-          Text(
-            emoji,
-            style: const TextStyle(fontSize: 24),
-          ),
+          Text(emoji, style: const TextStyle(fontSize: 24)),
           const SizedBox(height: 8),
           Text(
             label,

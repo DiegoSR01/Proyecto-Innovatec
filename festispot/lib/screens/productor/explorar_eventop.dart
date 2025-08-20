@@ -27,7 +27,7 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
     'Evento Empresarial',
     'Educativo',
     'Evento Social',
-    'Otro'
+    'Otro',
   ];
 
   @override
@@ -39,7 +39,9 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
   void _filterEvents() {
     setState(() {
       _filteredEventos = carrusel.where((evento) {
-        bool matchesSearch = evento.nombre.toLowerCase().contains(_searchController.text.toLowerCase());
+        bool matchesSearch = evento.nombre.toLowerCase().contains(
+          _searchController.text.toLowerCase(),
+        );
         bool matchesCategory = _selectedCategory == 'Todos';
         return matchesSearch && matchesCategory;
       }).toList();
@@ -67,7 +69,7 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
           IconButton(
             icon: const Icon(
               Icons.filter_list,
-              color: Color(0xFFE91E63),
+              color: Color.fromARGB(255, 0, 229, 255),
               size: 24,
             ),
             onPressed: () {
@@ -99,7 +101,10 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
                 decoration: InputDecoration(
                   hintText: 'Buscar eventos...',
                   hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
-                  prefixIcon: const Icon(Icons.search, color: Color(0xFFE91E63)),
+                  prefixIcon: const Icon(
+                    Icons.search,
+                    color: Color.fromARGB(255, 0, 229, 255),
+                  ),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 20,
@@ -135,13 +140,19 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
                       });
                     },
                     backgroundColor: const Color(0xFF2D2E3F),
-                    selectedColor: const Color(0xFFE91E63),
+                    selectedColor: Color.fromARGB(255, 0, 229, 255),
                     labelStyle: TextStyle(
-                      color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                      color: isSelected
+                          ? Colors.white
+                          : Colors.white.withOpacity(0.7),
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.normal,
                     ),
                     side: BorderSide(
-                      color: isSelected ? const Color(0xFFE91E63) : Colors.transparent,
+                      color: isSelected
+                          ? Color.fromARGB(255, 0, 229, 255)
+                          : Colors.transparent,
                     ),
                   ),
                 );
@@ -171,10 +182,7 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
                       // Toggle entre grid y lista
                     });
                   },
-                  icon: const Icon(
-                    Icons.grid_view,
-                    color: Color(0xFFE91E63),
-                  ),
+                  icon: const Icon(Icons.grid_view, color: Color(0xFFE91E63)),
                 ),
               ],
             ),
@@ -223,7 +231,7 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MostrarEvento(carrusel: evento),
+                builder: (context) => MostrarEventoprod(carrusel: evento),
               ),
             );
           },
@@ -302,9 +310,12 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
                       Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFE91E63),
+                              color: Color.fromARGB(255, 0, 229, 255),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
@@ -319,7 +330,11 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
                           const Spacer(),
                           Row(
                             children: [
-                              const Icon(Icons.star, color: Colors.amber, size: 16),
+                              const Icon(
+                                Icons.star,
+                                color: Colors.amber,
+                                size: 16,
+                              ),
                               const SizedBox(width: 4),
                               Text(
                                 '4.8',
@@ -350,10 +365,13 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
+                          colors: [Color.fromARGB(255, 0, 229, 255), Color(0xFF9C27B0)],
                         ),
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -465,7 +483,7 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
                         Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFE91E63),
+                        backgroundColor: Color.fromARGB(255, 0, 229, 255),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -487,17 +505,14 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
 
   Widget _buildFilterOption(String title) {
     return ListTile(
-      title: Text(
-        title,
-        style: const TextStyle(color: Colors.white),
-      ),
+      title: Text(title, style: const TextStyle(color: Colors.white)),
       leading: Radio<String>(
         value: title,
         groupValue: null, // Aquí puedes manejar el estado seleccionado
         onChanged: (value) {
           // Manejar selección
         },
-        activeColor: const Color(0xFFE91E63),
+        activeColor:Color.fromARGB(255, 0, 229, 255),
       ),
     );
   }

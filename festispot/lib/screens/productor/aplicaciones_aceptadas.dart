@@ -3,47 +3,43 @@ import 'package:festispot/utils/eventos_carrusel.dart';
 import 'package:festispot/utils/variables.dart';
 import 'package:festispot/screens/productor/mostrar_eventop.dart';
 
-class FavoritosScreen extends StatefulWidget {
-  const FavoritosScreen({super.key});
+class AplicacionesAceptadas extends StatefulWidget {
+  const AplicacionesAceptadas({super.key});
 
   @override
-  State<FavoritosScreen> createState() => _FavoritosScreenState();
+  State<AplicacionesAceptadas> createState() => _AplicacionesAceptadasState();
 }
 
-class _FavoritosScreenState extends State<FavoritosScreen> {
-  List<Evento> _favoritos = [];
+class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
+  List<Evento> _aplicacionesAceptadas = [];
   bool _isGridView = false;
 
   @override
   void initState() {
     super.initState();
-    _loadFavoritos();
+    _loadAplicaciones();
   }
 
-  void _loadFavoritos() {
-    // Aquí simularemos algunos favoritos para la demo
-    // En una app real, cargarías esto desde SharedPreferences o base de datos
+  void _loadAplicaciones() {
     setState(() {
-      _favoritos = carrusel
-          .take(2)
-          .toList(); // Tomar los primeros 2 como ejemplo
+      _aplicacionesAceptadas = carrusel.take(3).toList();
     });
   }
 
-  void _removeFavorito(Evento evento) {
+  void _removeAplicacion(Evento evento) {
     setState(() {
-      _favoritos.removeWhere((e) => e.id == evento.id);
+      _aplicacionesAceptadas.removeWhere((e) => e.id == evento.id);
     });
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Evento removido de favoritos'),
+        content: const Text('Aplicación removida'),
         backgroundColor: const Color(0xFF2D2E3F),
         action: SnackBarAction(
           label: 'Deshacer',
           textColor: Color.fromARGB(255, 0, 229, 255),
           onPressed: () {
             setState(() {
-              _favoritos.add(evento);
+              _aplicacionesAceptadas.add(evento);
             });
           },
         ),
@@ -61,7 +57,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
         centerTitle: true,
         automaticallyImplyLeading: false,
         title: const Text(
-          "❤️ Favoritos",
+          "✅ Aplicaciones Aceptadas",
           style: TextStyle(
             color: Colors.white,
             fontSize: 24,
@@ -69,7 +65,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
           ),
         ),
         actions: [
-          if (_favoritos.isNotEmpty)
+          if (_aplicacionesAceptadas.isNotEmpty)
             IconButton(
               onPressed: () {
                 setState(() {
@@ -83,7 +79,9 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
             ),
         ],
       ),
-      body: _favoritos.isEmpty ? _buildEmptyState() : _buildFavoritosList(),
+      body: _aplicacionesAceptadas.isEmpty
+          ? _buildEmptyState()
+          : _buildAplicacionesList(),
     );
   }
 
@@ -99,14 +97,14 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
               borderRadius: BorderRadius.circular(50),
             ),
             child: Icon(
-              Icons.favorite_border,
+              Icons.check_circle_outline,
               size: 60,
               color: Colors.white.withOpacity(0.3),
             ),
           ),
           const SizedBox(height: 24),
           Text(
-            'No tienes favoritos aún',
+            'No hay aplicaciones aceptadas',
             style: TextStyle(
               color: Colors.white.withOpacity(0.8),
               fontSize: 20,
@@ -117,7 +115,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40),
             child: Text(
-              'Los eventos que marques como favoritos aparecerán aquí para que puedas acceder fácilmente',
+              'Las aplicaciones que aceptes aparecerán aquí para que puedas gestionarlas',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white.withOpacity(0.5),
@@ -126,42 +124,20 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
               ),
             ),
           ),
-          const SizedBox(height: 32),
-          ElevatedButton.icon(
-            onPressed: () {
-              // Navegar a explorar eventos
-            },
-            icon: const Icon(Icons.search, color: Colors.white),
-            label: const Text(
-              'Explorar Eventos',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Color.fromARGB(255, 0, 229, 255),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25),
-              ),
-            ),
-          ),
         ],
       ),
     );
   }
 
-  Widget _buildFavoritosList() {
+  Widget _buildAplicacionesList() {
     return Column(
       children: [
-        // Header con contador
         Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
               Text(
-                '${_favoritos.length} evento${_favoritos.length != 1 ? 's' : ''} favorito${_favoritos.length != 1 ? 's' : ''}',
+                '${_aplicacionesAceptadas.length} aplicación${_aplicacionesAceptadas.length != 1 ? 'es' : ''} aceptada${_aplicacionesAceptadas.length != 1 ? 's' : ''}',
                 style: TextStyle(
                   color: Colors.white.withOpacity(0.8),
                   fontSize: 16,
@@ -169,7 +145,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                 ),
               ),
               const Spacer(),
-              if (_favoritos.isNotEmpty)
+              if (_aplicacionesAceptadas.isNotEmpty)
                 TextButton.icon(
                   onPressed: () {
                     _showClearAllDialog();
@@ -190,17 +166,15 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
             ],
           ),
         ),
-
-        // Lista de favoritos
         Expanded(
           child: _isGridView
               ? _buildGridView()
               : ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: _favoritos.length,
+                  itemCount: _aplicacionesAceptadas.length,
                   itemBuilder: (context, index) {
-                    final evento = _favoritos[index];
-                    return _buildFavoritoCard(evento, index);
+                    final evento = _aplicacionesAceptadas[index];
+                    return _buildAplicacionCard(evento);
                   },
                 ),
         ),
@@ -217,15 +191,15 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
         mainAxisSpacing: 16,
         childAspectRatio: 0.8,
       ),
-      itemCount: _favoritos.length,
+      itemCount: _aplicacionesAceptadas.length,
       itemBuilder: (context, index) {
-        final evento = _favoritos[index];
+        final evento = _aplicacionesAceptadas[index];
         return _buildGridCard(evento);
       },
     );
   }
 
-  Widget _buildFavoritoCard(Evento evento, int index) {
+  Widget _buildAplicacionCard(Evento evento) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -244,7 +218,6 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: () {
-            evento.copy();
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -256,30 +229,25 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                // Imagen del evento
                 Hero(
-                  tag: 'evento_${evento.id}',
+                  tag: 'aplicacion_${evento.id}',
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: FadeInImage(
-                      placeholder: const AssetImage(
-                        "assets/images/loading.gif",
-                      ),
-                      image: AssetImage(evento.imagen),
-                      fit: BoxFit.cover,
+                    child: Image.asset(
+                      evento.imagen,
                       width: 100,
                       height: 100,
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
                 const SizedBox(width: 16),
-                // Información del evento
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        evento.nombre ?? 'Evento',
+                        evento.nombre,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -289,28 +257,25 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on,
-                            color: Colors.white.withOpacity(0.6),
-                            size: 16,
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Text(
+                          'ACEPTADA',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
                           ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              'Ciudad de México',
-                              style: TextStyle(
-                                color: Colors.white.withOpacity(0.6),
-                                fontSize: 14,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 8),
                       Row(
                         children: [
                           Icon(
@@ -320,7 +285,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            'Próximamente',
+                            'Fecha del evento',
                             style: TextStyle(
                               color: Colors.white.withOpacity(0.6),
                               fontSize: 14,
@@ -328,51 +293,26 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFE91E63),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          'FAVORITO',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),
-                // Botones de acción
                 Column(
                   children: [
                     IconButton(
-                      onPressed: () {
-                        _removeFavorito(evento);
-                      },
+                      onPressed: () => _removeAplicacion(evento),
                       icon: const Icon(
-                        Icons.favorite,
-                        color: Color(0xFFE91E63),
+                        Icons.check_circle,
+                        color: Colors.green,
                         size: 24,
                       ),
                     ),
-                    const SizedBox(height: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
-                        ),
+                        color: Colors.green,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: const Text(
@@ -412,7 +352,6 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: () {
-            evento.copy();
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -423,7 +362,6 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Imagen
               Expanded(
                 flex: 3,
                 child: Stack(
@@ -432,14 +370,11 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                       borderRadius: const BorderRadius.vertical(
                         top: Radius.circular(16),
                       ),
-                      child: FadeInImage(
-                        placeholder: const AssetImage(
-                          "assets/images/loading.gif",
-                        ),
-                        image: AssetImage(evento.imagen),
-                        fit: BoxFit.cover,
+                      child: Image.asset(
+                        evento.imagen,
                         width: double.infinity,
                         height: double.infinity,
+                        fit: BoxFit.cover,
                       ),
                     ),
                     Positioned(
@@ -451,12 +386,10 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: IconButton(
-                          onPressed: () {
-                            _removeFavorito(evento);
-                          },
+                          onPressed: () => _removeAplicacion(evento),
                           icon: const Icon(
-                            Icons.favorite,
-                            color: Color(0xFFE91E63),
+                            Icons.check_circle,
+                            color: Colors.green,
                             size: 20,
                           ),
                         ),
@@ -465,7 +398,6 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                   ],
                 ),
               ),
-              // Información
               Expanded(
                 flex: 2,
                 child: Padding(
@@ -474,7 +406,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        evento.nombre ?? 'Evento',
+                        evento.nombre,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 14,
@@ -483,42 +415,24 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on,
-                            color: Colors.white.withOpacity(0.6),
-                            size: 12,
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Text(
+                          'ACEPTADA',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
                           ),
-                          const SizedBox(width: 2),
-                          Expanded(
-                            child: Text(
-                              'CDMX',
-                              style: TextStyle(
-                                color: Colors.white.withOpacity(0.6),
-                                fontSize: 12,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Spacer(),
-                      Row(
-                        children: [
-                          const Icon(Icons.star, color: Colors.amber, size: 14),
-                          const SizedBox(width: 2),
-                          Text(
-                            '4.8',
-                            style: TextStyle(
-                              color: Colors.white.withOpacity(0.8),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ],
                   ),
@@ -538,11 +452,11 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
         backgroundColor: const Color(0xFF2D2E3F),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text(
-          'Limpiar favoritos',
+          'Limpiar aplicaciones',
           style: TextStyle(color: Colors.white),
         ),
         content: const Text(
-          '¿Estás seguro de que quieres eliminar todos los eventos de tus favoritos?',
+          '¿Estás seguro de que quieres eliminar todas las aplicaciones aceptadas?',
           style: TextStyle(color: Colors.white70),
         ),
         actions: [
@@ -556,12 +470,12 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
           ElevatedButton(
             onPressed: () {
               setState(() {
-                _favoritos.clear();
+                _aplicacionesAceptadas.clear();
               });
               Navigator.pop(context);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFE91E63),
+              backgroundColor: Colors.green,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),

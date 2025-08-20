@@ -1,5 +1,7 @@
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:festispot/screens/productor/aplicaciones.dart';
+import 'package:festispot/screens/productor/aplicaciones_aceptadas.dart';
 import 'package:festispot/screens/productor/configuracion.dart';
 import 'package:festispot/screens/productor/explorar_eventop.dart';
 import 'package:festispot/screens/productor/favoritos_pro.dart';
@@ -28,6 +30,8 @@ class _MainProductorState extends State<MainProductor> {
       const Inicio(),
       const ExplorarEventos(),
       const FavoritosScreen(),
+      const AplicacionesPendientes(),
+      const AplicacionesAceptadas(),
       const ConfiguracionScreen(),
     ]);
   }
@@ -59,7 +63,7 @@ class _MainProductorState extends State<MainProductor> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: const Color(0xFFE91E63),
+          selectedItemColor: Color.fromARGB(255, 0, 229, 255),
           unselectedItemColor: Colors.white.withOpacity(0.6),
           selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
           unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w400),
@@ -80,6 +84,16 @@ class _MainProductorState extends State<MainProductor> {
               label: 'Favoritos',
             ),
             BottomNavigationBarItem(
+              icon: Icon(Icons.list_alt_outlined),
+              activeIcon: Icon(Icons.favorite),
+              label: 'Solicitudes',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.check_sharp),
+              activeIcon: Icon(Icons.settings),
+              label: 'Aplicaciones aceptadas',
+            ),
+                        BottomNavigationBarItem(
               icon: Icon(Icons.settings_outlined),
               activeIcon: Icon(Icons.settings),
               label: 'Configuración',
@@ -117,7 +131,7 @@ class _InicioState extends State<Inicio> {
           child: IconButton(
             icon: const Icon(
               Icons.account_circle_outlined,
-              color: Color(0xFFE91E63),
+              color: Color.fromARGB(255, 0, 229, 255),
               size: 24,
             ),
             onPressed: () {
@@ -135,7 +149,7 @@ class _InicioState extends State<Inicio> {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
+                  colors: [Color.fromARGB(255, 0, 229, 255), Color(0xFF9C27B0)],
                 ),
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -166,7 +180,7 @@ class _InicioState extends State<Inicio> {
             child: IconButton(
               icon: const Icon(
                 Icons.notifications_outlined,
-                color: Color(0xFFE91E63),
+                color: Color.fromARGB(255, 0, 229, 255),
                 size: 24,
               ),
               onPressed: () {
@@ -191,7 +205,7 @@ class _InicioState extends State<Inicio> {
                       title: 'Eventos',
                       subtitle: 'Disponibles',
                       value: '${carrusel.length}',
-                      color: const Color(0xFFE91E63),
+                      color: Color.fromARGB(255, 0, 229, 255),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -255,7 +269,7 @@ class _InicioState extends State<Inicio> {
             CarouselSlider.builder(
               itemCount: carrusel.length,
               itemBuilder: (context, index, realindex) {
-                return CardImages(carrusel: carrusel[index]);
+                return CardImages(carruselevent: carrusel[index]);
               },
               options: CarouselOptions(
                 height: 320,
@@ -508,11 +522,9 @@ class _InicioState extends State<Inicio> {
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: () {
-            evento.copy();
-            Navigator.push(
-              context,
+            Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) => MostrarEvento(carrusel: evento),
+                builder: (context) => MostrarEventoprod(carrusel: evento),
               ),
             );
           },
@@ -591,7 +603,10 @@ class _InicioState extends State<Inicio> {
                   ),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
+                      colors: [
+                        Color.fromARGB(255, 0, 229, 255),
+                        Color(0xFF9C27B0),
+                      ],
                     ),
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -614,8 +629,8 @@ class _InicioState extends State<Inicio> {
 }
 
 class CardImages extends StatelessWidget {
-  final Evento carrusel;
-  const CardImages({super.key, required this.carrusel});
+  final Evento carruselevent;
+  const CardImages({super.key, required this.carruselevent});
 
   @override
   Widget build(BuildContext context) {
@@ -635,19 +650,20 @@ class CardImages extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         child: Stack(
           children: [
-            InkWell(
+            GestureDetector(
               onTap: () {
-                carrusel.copy();
-                Navigator.push(
-                  context,
+                Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => MostrarEvento(carrusel: carrusel),
+                    builder: (context) => MostrarEventoprod(
+                      carrusel:
+                          carruselevent, // This matches the property name in MostrarEventoprod
+                    ),
                   ),
                 );
               },
               child: FadeInImage(
                 placeholder: const AssetImage("assets/images/loading.gif"),
-                image: AssetImage(carrusel.imagen),
+                image: AssetImage(carruselevent.imagen),
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: double.infinity,
@@ -672,7 +688,7 @@ class CardImages extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    carrusel.nombre ?? 'Evento Especial',
+                    carruselevent.nombre ?? 'Evento Especial',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -690,7 +706,7 @@ class CardImages extends StatelessWidget {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE91E63),
+                          color: Color.fromARGB(255, 0, 229, 255),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: const Text(
@@ -734,7 +750,7 @@ class CardImages extends StatelessWidget {
                   ),
                   onPressed: () {
                     // Agregar a favoritos
-                    _toggleFavorite(carrusel);
+                    _toggleFavorite(carruselevent);
                   },
                 ),
               ),

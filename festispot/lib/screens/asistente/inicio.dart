@@ -579,7 +579,6 @@ class CardImages extends StatelessWidget {
           children: [
             InkWell(
               onTap: () {
-                carrusel.copy();
                 Navigator.push(
                   context,
                   MaterialPageRoute(
