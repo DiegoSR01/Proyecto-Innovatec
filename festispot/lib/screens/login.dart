@@ -1,7 +1,7 @@
 import 'package:festispot/screens/asistente/inicio.dart';
 import 'package:flutter/material.dart';
 import '../utils/variables.dart';
-import 'productor/inicio.dart';
+import 'productor/iniciopro.dart';
 import 'registro.dart';
 
 // Pantalla de inicio de sesión (login)
@@ -53,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
         } else if (userType == LoginCredentials.userTypeProducer) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => const ProductorIndexScreen(),
+              builder: (context) => const MainProductor(),
             ),
           );
         }
