@@ -335,7 +335,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE91E63),
+                          color: Color.fromARGB(255, 0, 229, 255),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(

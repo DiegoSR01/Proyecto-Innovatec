@@ -13,7 +13,8 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
   bool _notificacionesEventos = true;
   bool _notificacionesOfertas = false;
   bool _ubicacionActiva = true;
-  String _idiomaSeleccionado = 'Español'; // Agregado para manejar el idioma seleccionado
+  String _idiomaSeleccionado =
+      'Español'; // Agregado para manejar el idioma seleccionado
 
   @override
   Widget build(BuildContext context) {
@@ -226,12 +227,22 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 0, 229, 255),
+                    color: Color.fromARGB(
+                      255,
+                      0,
+                      229,
+                      255,
+                    ).withOpacity(0.2), // Changed opacity for container
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
                     icon,
-                    color: Color.fromARGB(255, 0, 229, 255),
+                    color: const Color.fromARGB(
+                      255,
+                      0,
+                      229,
+                      255,
+                    ), // Kept original color for icon
                     size: 20,
                   ),
                 ),
@@ -283,9 +294,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF2D2E3F),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text(
           'Seleccionar Idioma',
           style: TextStyle(color: Colors.white),
@@ -317,10 +326,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: const Text(
-              'Aplicar',
-              style: TextStyle(color: Colors.white),
-            ),
+            child: const Text('Aplicar', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -329,10 +335,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
 
   Widget _buildLanguageOption(String language) {
     return ListTile(
-      title: Text(
-        language,
-        style: const TextStyle(color: Colors.white),
-      ),
+      title: Text(language, style: const TextStyle(color: Colors.white)),
       leading: Radio<String>(
         value: language,
         groupValue: _idiomaSeleccionado,
@@ -351,9 +354,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF2D2E3F),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           children: [
             Container(
@@ -364,12 +365,19 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
                 ),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(Icons.celebration, color: Colors.white, size: 24),
+              child: const Icon(
+                Icons.celebration,
+                color: Colors.white,
+                size: 24,
+              ),
             ),
             const SizedBox(width: 12),
             const Text(
               'FestiSpot',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),
@@ -402,10 +410,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: const Text(
-              'Cerrar',
-              style: TextStyle(color: Colors.white),
-            ),
+            child: const Text('Cerrar', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
