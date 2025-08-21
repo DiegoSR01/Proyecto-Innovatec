@@ -28,34 +28,13 @@ class _AplicacionesPendientesState extends State<AplicacionesPendientes> {
     });
   }
 
-  void _aceptarAplicacion(Evento evento) {
-    setState(() {
-      _aplicacionesPendientes.removeWhere((e) => e.id == evento.id);
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Aplicación aceptada'),
-        backgroundColor: Colors.green,
-        action: SnackBarAction(
-          label: 'Deshacer',
-          textColor: Colors.white,
-          onPressed: () {
-            setState(() {
-              _aplicacionesPendientes.add(evento);
-            });
-          },
-        ),
-      ),
-    );
-  }
-
   void _rechazarAplicacion(Evento evento) {
     setState(() {
       _aplicacionesPendientes.removeWhere((e) => e.id == evento.id);
     });
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Rechazando la aplicación'),
+        content: const Text('Cancelaste solicitud'),
         backgroundColor: Colors.red,
         action: SnackBarAction(
           label: 'Deshacer',
@@ -230,25 +209,13 @@ class _AplicacionesPendientesState extends State<AplicacionesPendientes> {
                 ),
                 Column(
                   children: [
-                    Row(
-                      children: [
-                        IconButton(
-                          onPressed: () => _aceptarAplicacion(evento),
-                          icon: const Icon(
-                            Icons.check_circle,
-                            color: Colors.green,
-                            size: 30,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () => _rechazarAplicacion(evento),
-                          icon: const Icon(
-                            Icons.cancel,
-                            color: Colors.red,
-                            size: 30,
-                          ),
-                        ),
-                      ],
+                    IconButton(
+                      onPressed: () => _rechazarAplicacion(evento),
+                      icon: const Icon(
+                        Icons.cancel,
+                        color: Colors.red,
+                        size: 30,
+                      ),
                     ),
                   ],
                 ),

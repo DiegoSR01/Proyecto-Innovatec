@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:festispot/screens/login.dart';
+import 'package:festispot/screens/productor/suscrpcionp.dart'; // Add this import
 
 class PerfilUsuario extends StatefulWidget {
   const PerfilUsuario({super.key});
@@ -8,7 +9,8 @@ class PerfilUsuario extends StatefulWidget {
   State<PerfilUsuario> createState() => _PerfilUsuarioState();
 }
 
-class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateMixin {
+class _PerfilUsuarioState extends State<PerfilUsuario>
+    with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
@@ -21,21 +23,17 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutBack,
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Curves.easeOutBack,
+          ),
+        );
 
     _animationController.forward();
   }
@@ -59,13 +57,11 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
             Expanded(child: Text(message)),
           ],
         ),
-        backgroundColor: isSuccess 
-          ? const Color(0xFF4CAF50) 
-          : const Color(0xFFE91E63),
+        backgroundColor: isSuccess
+            ? const Color(0xFF4CAF50)
+            : const Color(0xFFE91E63),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.all(16),
         duration: Duration(seconds: isSuccess ? 2 : 3),
       ),
@@ -86,7 +82,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 0, 229, 255),
+                  color: Color.fromARGB(255, 0, 229, 255).withOpacity(0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(
@@ -107,10 +103,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
           ),
           content: const Text(
             '¿Estás seguro que deseas cerrar sesión? Tendrás que volver a iniciar sesión para acceder a tu cuenta.',
-            style: TextStyle(
-              color: Colors.white70,
-              height: 1.4,
-            ),
+            style: TextStyle(color: Colors.white70, height: 1.4),
           ),
           actions: [
             TextButton(
@@ -161,10 +154,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
             borderRadius: BorderRadius.circular(12),
           ),
           child: IconButton(
-            icon: const Icon(
-              Icons.arrow_back,
-              color: Colors.white,
-            ),
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
@@ -227,13 +217,11 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
           ],
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Color.fromARGB(255, 0, 229, 255),
-          width: 1,
-        ),
+        border: Border.all(color: Color.fromARGB(255, 0, 229, 255), width: 1),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center, // <-- Cambiado de start a center
+        crossAxisAlignment:
+            CrossAxisAlignment.center, // <-- Cambiado de start a center
         children: [
           Stack(
             children: [
@@ -242,21 +230,21 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
                 height: 120,
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color.fromARGB(255, 0, 229, 255), Color(0xFF9C27B0)],
+                    colors: [
+                      Color.fromARGB(255, 0, 229, 255),
+                      Color(0xFF9C27B0),
+                    ],
                   ),
                   borderRadius: BorderRadius.circular(60),
                 ),
-                child: const Icon(
-                  Icons.person,
-                  color: Colors.white,
-                  size: 60,
-                ),
+                child: const Icon(Icons.person, color: Colors.white, size: 60),
               ),
               Positioned(
                 bottom: 0,
                 right: 0,
                 child: GestureDetector(
-                  onTap: () => _showCustomSnackBar('Cambio de foto próximamente', false),
+                  onTap: () =>
+                      _showCustomSnackBar('Cambio de foto próximamente', false),
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
@@ -286,16 +274,13 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
           const SizedBox(height: 4),
           const Text(
             'productor@festispot.com',
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 16,
-            ),
+            style: TextStyle(color: Colors.white70, fontSize: 16),
           ),
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Color.fromARGB(255, 0, 229, 255),
+              color: Color.fromARGB(255, 0, 229, 255).withOpacity(0.2),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: Color.fromARGB(255, 0, 229, 255),
@@ -325,10 +310,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
           const SizedBox(height: 12),
           const Text(
             'Miembro desde Marzo 2023',
-            style: TextStyle(
-              color: Colors.white60,
-              fontSize: 14,
-            ),
+            style: TextStyle(color: Colors.white60, fontSize: 14),
           ),
         ],
       ),
@@ -336,99 +318,103 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
   }
 
   Widget _buildAccountSection() {
-    return _buildSection(
-      'Información Personal',
-      [
-        _buildSettingTile(
-          Icons.edit_outlined,
-          'Editar Perfil',
-          'Modificar nombre y información básica',
-          const Color(0xFF00BCD4),
-          () => _showCustomSnackBar('Función próximamente disponible', false),
+    return _buildSection('Información Personal', [
+      _buildSettingTile(
+        Icons.attach_money,
+        'Suscripción',
+        'Gestionar plan de suscripción',
+        const Color.fromARGB(255, 255, 64, 129),
+        () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const SuscripcionScreen()),
         ),
-        _buildSettingTile(
-          Icons.email_outlined,
-          'Cambiar Correo',
-          'Actualizar dirección de correo electrónico',
-          const Color(0xFFFF9800),
-          () => _showCustomSnackBar('Función próximamente disponible', false),
-        ),
-        _buildSettingTile(
-          Icons.phone_outlined,
-          'Teléfono',
-          'Agregar o modificar número de teléfono',
-          const Color(0xFF4CAF50),
-          () => _showCustomSnackBar('Función próximamente disponible', false),
-        ),
-      ],
-    );
+      ),
+      _buildSettingTile(
+        Icons.edit_outlined,
+        'Editar Perfil',
+        'Modificar nombre y información básica',
+        const Color(0xFF00BCD4),
+        () => _showCustomSnackBar('Función próximamente disponible', false),
+      ),
+      _buildSettingTile(
+        Icons.email_outlined,
+        'Cambiar Correo',
+        'Actualizar dirección de correo electrónico',
+        const Color(0xFFFF9800),
+        () => _showCustomSnackBar('Función próximamente disponible', false),
+      ),
+      _buildSettingTile(
+        Icons.phone_outlined,
+        'Teléfono',
+        'Agregar o modificar número de teléfono',
+        const Color(0xFF4CAF50),
+        () => _showCustomSnackBar('Función próximamente disponible', false),
+      ),
+    ]);
   }
 
   Widget _buildStatsSection() {
-    return _buildSection(
-      'Mi Actividad',
-      [
-        Row(
-          children: [
-            Expanded(
-              child: _buildStatCard(
-                'Eventos\nAsistidos', 
-                '12', 
-                Icons.event,
-                Color.fromARGB(255, 0, 229, 255),
-              ),
+    return _buildSection('Mi Actividad', [
+      Row(
+        children: [
+          Expanded(
+            child: _buildStatCard(
+              'Eventos\nAsistidos',
+              '12',
+              Icons.event,
+              Color.fromARGB(255, 0, 229, 255),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildStatCard(
-                'Favoritos', 
-                '8', 
-                Icons.favorite,
-                const Color(0xFF9C27B0),
-              ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: _buildStatCard(
+              'Favoritos',
+              '8',
+              Icons.favorite,
+              const Color(0xFF9C27B0),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildStatCard(
-                'Reviews\nEscritas', 
-                '5', 
-                Icons.star,
-                const Color(0xFFFFD700),
-              ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: _buildStatCard(
+              'Reviews\nEscritas',
+              '5',
+              Icons.star,
+              const Color(0xFFFFD700),
             ),
-          ],
-        ),
-      ],
-    );
+          ),
+        ],
+      ),
+    ]);
   }
 
   Widget _buildSecuritySection() {
-    return _buildSection(
-      'Seguridad y Privacidad',
-      [
-        _buildSettingTile(
-          Icons.lock_outline,
-          'Cambiar Contraseña',
-          'Modificar tu contraseña de acceso',
-          const Color(0xFF9C27B0),
-          () => _showCustomSnackBar('Función próximamente disponible', false),
+    return _buildSection('Seguridad y Privacidad', [
+      _buildSettingTile(
+        Icons.lock_outline,
+        'Cambiar Contraseña',
+        'Modificar tu contraseña de acceso',
+        const Color(0xFF9C27B0),
+        () => _showCustomSnackBar('Función próximamente disponible', false),
+      ),
+      _buildSettingTile(
+        Icons.security_outlined,
+        'Autenticación de Dos Factores',
+        'Agregar capa extra de seguridad',
+        const Color(0xFF00BCD4),
+        () => _showCustomSnackBar('Función próximamente disponible', false),
+      ),
+      _buildSettingTile(
+        Icons.privacy_tip_outlined,
+        'Privacidad de Datos',
+        'Controla qué información compartes',
+        const Color(0xFF4CAF50),
+        () => _showCustomSnackBar(
+          'Configuración de privacidad próximamente',
+          false,
         ),
-        _buildSettingTile(
-          Icons.security_outlined,
-          'Autenticación de Dos Factores',
-          'Agregar capa extra de seguridad',
-          const Color(0xFF00BCD4),
-          () => _showCustomSnackBar('Función próximamente disponible', false),
-        ),
-        _buildSettingTile(
-          Icons.privacy_tip_outlined,
-          'Privacidad de Datos',
-          'Controla qué información compartes',
-          const Color(0xFF4CAF50),
-          () => _showCustomSnackBar('Configuración de privacidad próximamente', false),
-        ),
-      ],
-    );
+      ),
+    ]);
   }
 
   Widget _buildLogoutSection() {
@@ -436,12 +422,15 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
       width: double.infinity,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [ Color.fromARGB(255, 0, 229, 255),  Color.fromARGB(255, 0, 229, 255)],
+          colors: [
+            Color.fromARGB(255, 0, 229, 255),
+            Color.fromARGB(255, 0, 229, 255),
+          ],
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color:  Color.fromARGB(255, 0, 229, 255),
+            color: Color.fromARGB(255, 0, 229, 255),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -460,11 +449,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
         child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.logout,
-              color: Colors.white,
-              size: 24,
-            ),
+            Icon(Icons.logout, color: Colors.white, size: 24),
             SizedBox(width: 12),
             Text(
               'Cerrar Sesión',
@@ -524,10 +509,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
       decoration: BoxDecoration(
         color: const Color(0xFF1A1B2E),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.1),
-          width: 1,
-        ),
+        border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
       ),
       child: ListTile(
         leading: Container(
@@ -548,10 +530,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
         ),
         subtitle: Text(
           subtitle,
-          style: TextStyle(
-            color: Colors.white.withOpacity(0.7),
-            fontSize: 14,
-          ),
+          style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 14),
         ),
         trailing: const Icon(
           Icons.arrow_forward_ios,
@@ -559,23 +538,23 @@ class _PerfilUsuarioState extends State<PerfilUsuario> with TickerProviderStateM
           size: 16,
         ),
         onTap: onTap,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
     );
   }
 
-  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: const Color(0xFF1A1B2E),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: color.withOpacity(0.3),
-          width: 1,
-        ),
+        border: Border.all(color: color.withOpacity(0.3), width: 1),
       ),
       child: Column(
         children: [

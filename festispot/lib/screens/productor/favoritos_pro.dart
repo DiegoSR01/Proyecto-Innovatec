@@ -371,7 +371,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                       ),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
+                          colors: [Color.fromARGB(255, 0, 229, 255), Color(0xFF9C27B0)],
                         ),
                         borderRadius: BorderRadius.circular(20),
                       ),
