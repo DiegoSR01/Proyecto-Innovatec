@@ -240,14 +240,6 @@ class _AplicacionesCombinedState extends State<AplicacionesCombined>
                 Row(
                   children: [
                     IconButton(
-                      onPressed: () => _aceptarAplicacion(evento),
-                      icon: const Icon(
-                        Icons.check_circle,
-                        color: Colors.green,
-                        size: 30,
-                      ),
-                    ),
-                    IconButton(
                       onPressed: () => _rechazarAplicacion(evento),
                       icon: const Icon(
                         Icons.cancel,
@@ -357,27 +349,23 @@ class _AplicacionesCombinedState extends State<AplicacionesCombined>
     );
   }
 
-  void _aceptarAplicacion(Evento evento) {
-    setState(() {
-      _aplicacionesPendientes.removeWhere((e) => e.id == evento.id);
-      _aplicacionesAceptadas.add(evento);
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Aplicación aceptada'),
-        backgroundColor: Colors.green,
-      ),
-    );
-  }
-
   void _rechazarAplicacion(Evento evento) {
     setState(() {
       _aplicacionesPendientes.removeWhere((e) => e.id == evento.id);
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Aplicación rechazada'),
-        backgroundColor: Colors.red,
+      SnackBar(
+        content: const Text('Aplicación removida'),
+        backgroundColor: const Color(0xFF2D2E3F),
+        action: SnackBarAction(
+          label: 'Deshacer',
+          textColor: const Color.fromARGB(255, 0, 229, 255),
+          onPressed: () {
+            setState(() {
+              _aplicacionesPendientes.add(evento);
+            });
+          },
+        ),
       ),
     );
   }
