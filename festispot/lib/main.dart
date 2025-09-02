@@ -1,8 +1,26 @@
 import 'package:flutter/material.dart';
 import 'screens/login.dart';
+import 'screens/debug/api_debug_screen.dart';
+import 'utils/api/festispot_api.dart';
 
 // Función principal que inicia la aplicación
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  try {
+    // Inicializar la API en modo debug con modo mock automático
+    await FestiSpotApi.initialize(debugMode: true);
+    print('✅ FestiSpot API inicializada correctamente');
+    
+    // Verificar conectividad y habilitar mock si es necesario
+    final isConnected = await FestiSpotApi.checkConnectivity();
+    if (!isConnected) {
+      print('🤖 Servidor no disponible - modo mock habilitado automáticamente');
+    }
+  } catch (e) {
+    print('❌ Error inicializando FestiSpot API: $e');
+  }
+  
   runApp(const MyApp());
 }
 
@@ -22,6 +40,10 @@ class MyApp extends StatelessWidget {
       ),
       // Pantalla inicial de la aplicación (pantalla de login)
       home: const LoginScreen(),
+      // Rutas de navegación
+      routes: {
+        '/debug': (context) => const ApiDebugScreen(),
+      },
     );
   }
 }
