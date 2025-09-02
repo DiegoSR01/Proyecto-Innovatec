@@ -114,7 +114,7 @@ class _AplicacionesCombinedState extends State<AplicacionesCombined>
           ),
           const SizedBox(height: 24),
           Text(
-            'No hay aplicaciones ${tipo}',
+            'No hay aplicaciones $tipo',
             style: TextStyle(
               color: Colors.white.withOpacity(0.8),
               fontSize: 20,

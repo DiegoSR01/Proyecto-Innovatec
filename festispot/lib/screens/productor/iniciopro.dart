@@ -1,7 +1,4 @@
-import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:festispot/screens/productor/aplicaciones.dart';
-import 'package:festispot/screens/productor/aplicaciones_aceptadas.dart';
 import 'package:festispot/screens/productor/aplicaciones_combined.dart';
 import 'package:festispot/screens/productor/configuracion.dart';
 import 'package:festispot/screens/productor/explorar_eventop.dart';
