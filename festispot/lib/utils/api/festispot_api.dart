@@ -11,6 +11,7 @@ export 'services/api_service.dart';
 export 'services/auth_service.dart';
 export 'services/event_service.dart';
 export 'services/user_service.dart';
+export 'services/mock_api_service.dart';
 
 // Importar servicios para uso interno
 import 'services/api_service.dart';

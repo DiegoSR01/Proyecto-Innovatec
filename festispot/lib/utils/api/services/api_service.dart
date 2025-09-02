@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants.dart';
 import '../models/api_response.dart';
+import 'mock_api_service.dart';
 
 class ApiService {
   static final ApiService _instance = ApiService._internal();
@@ -13,16 +14,19 @@ class ApiService {
   late http.Client _client;
   String? _authToken;
   bool _debugMode = false;
+  bool _useMockWhenOffline = true;
 
   // Inicializar el servicio
-  Future<void> initialize({bool debugMode = false}) async {
+  Future<void> initialize({bool debugMode = false, bool useMockWhenOffline = true}) async {
     _client = http.Client();
     _debugMode = debugMode;
+    _useMockWhenOffline = useMockWhenOffline;
     await _loadAuthToken();
     if (_debugMode) {
       print('🚀 ApiService inicializado en modo debug');
       print('📍 Base URL: ${ApiConstants.baseUrl}');
       print('🔐 Token cargado: ${_authToken != null ? "Sí" : "No"}');
+      print('🤖 Mock habilitado cuando offline: $_useMockWhenOffline');
     }
   }
 
@@ -258,10 +262,44 @@ class ApiService {
   // Verificar conectividad
   Future<bool> checkConnectivity() async {
     try {
-      final response = await get('/health', fromJson: null);
-      return response.success;
+      final response = await _client
+          .get(
+            Uri.parse('${ApiConstants.baseUrl}${ApiConstants.testEndpoint}'),
+            headers: _getHeaders(),
+          )
+          .timeout(const Duration(seconds: 5));
+      
+      final isConnected = response.statusCode >= 200 && response.statusCode < 300;
+      
+      if (_debugMode) {
+        print('🌐 Verificación de conectividad: ${isConnected ? "Conectado" : "Sin conexión"}');
+        if (isConnected) {
+          print('📡 Respuesta del servidor: ${response.body}');
+        }
+      }
+      
+      // Habilitar/deshabilitar mock basado en conectividad
+      if (_useMockWhenOffline) {
+        if (isConnected) {
+          MockApiService.disable();
+          if (_debugMode) print('🔌 Modo real habilitado');
+        } else {
+          MockApiService.enable();
+          if (_debugMode) print('🤖 Modo mock habilitado');
+        }
+      }
+      
+      return isConnected;
     } catch (e) {
       if (_debugMode) print('❌ Error verificando conectividad: $e');
+      
+      // En caso de error, habilitar mock si está configurado
+      if (_useMockWhenOffline) {
+        MockApiService.enable();
+        if (_debugMode) print('🤖 Modo mock habilitado por error de conectividad');
+        return true; // Retornar true porque el mock está disponible
+      }
+      
       return false;
     }
   }

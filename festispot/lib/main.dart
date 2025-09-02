@@ -8,9 +8,15 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   try {
-    // Inicializar la API en modo debug
+    // Inicializar la API en modo debug con modo mock automático
     await FestiSpotApi.initialize(debugMode: true);
     print('✅ FestiSpot API inicializada correctamente');
+    
+    // Verificar conectividad y habilitar mock si es necesario
+    final isConnected = await FestiSpotApi.checkConnectivity();
+    if (!isConnected) {
+      print('🤖 Servidor no disponible - modo mock habilitado automáticamente');
+    }
   } catch (e) {
     print('❌ Error inicializando FestiSpot API: $e');
   }

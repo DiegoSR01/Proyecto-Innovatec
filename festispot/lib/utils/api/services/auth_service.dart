@@ -4,6 +4,7 @@ import '../constants.dart';
 import '../models/api_response.dart';
 import '../models/user.dart';
 import 'api_service.dart';
+import 'mock_api_service.dart';
 
 class AuthService {
   static final AuthService _instance = AuthService._internal();
@@ -78,6 +79,17 @@ class AuthService {
     required String password,
   }) async {
     try {
+      // Si el modo mock está habilitado, usar datos simulados
+      if (MockApiService.isEnabled) {
+        final response = await MockApiService.mockLogin(email, password);
+        if (response.success && response.data != null) {
+          await _saveUserData(response.data!);
+          // Simular token para el mock
+          await _apiService.setAuthToken('mock_token_${DateTime.now().millisecondsSinceEpoch}');
+        }
+        return response;
+      }
+
       final response = await _apiService.post<Map<String, dynamic>>(
         ApiConstants.loginEndpoint,
         body: {
@@ -132,6 +144,23 @@ class AuthService {
     required String userType, // 'asistente' o 'productor'
   }) async {
     try {
+      // Si el modo mock está habilitado, usar datos simulados
+      if (MockApiService.isEnabled) {
+        final response = await MockApiService.mockRegister(
+          email: email,
+          password: password,
+          name: name,
+          phone: phone,
+          userType: userType,
+        );
+        if (response.success && response.data != null) {
+          await _saveUserData(response.data!);
+          // Simular token para el mock
+          await _apiService.setAuthToken('mock_token_${DateTime.now().millisecondsSinceEpoch}');
+        }
+        return response;
+      }
+
       final response = await _apiService.post<Map<String, dynamic>>(
         ApiConstants.registerEndpoint,
         body: {

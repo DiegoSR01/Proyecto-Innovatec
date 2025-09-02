@@ -2,6 +2,7 @@ import '../constants.dart';
 import '../models/api_response.dart';
 import '../models/event.dart';
 import 'api_service.dart';
+import 'mock_api_service.dart';
 
 class EventService {
   static final EventService _instance = EventService._internal();
@@ -20,6 +21,11 @@ class EventService {
     int? offset,
   }) async {
     try {
+      // Si el modo mock está habilitado, usar datos simulados
+      if (MockApiService.isEnabled) {
+        return await MockApiService.mockGetEvents();
+      }
+
       final queryParams = <String, String>{};
       
       if (category != null) queryParams['category'] = category;

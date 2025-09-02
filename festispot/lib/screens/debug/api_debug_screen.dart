@@ -14,8 +14,9 @@ class _ApiDebugScreenState extends State<ApiDebugScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _isConnected = false;
   bool _isLoggedIn = false;
+  bool _isMockEnabled = false;
   String? _currentUser;
-  String _baseUrl = 'http://localhost:3000/api';
+  final String _baseUrl = 'http://10.228.2.163:8000/api';
   
   // Controladores para pruebas
   final TextEditingController _emailController = TextEditingController();
@@ -89,6 +90,7 @@ class _ApiDebugScreenState extends State<ApiDebugScreen> {
     setState(() {
       _isLoggedIn = FestiSpotApi.authService.isLoggedIn;
       _currentUser = FestiSpotApi.authService.currentUser?.email;
+      _isMockEnabled = MockApiService.isEnabled;
     });
   }
 
@@ -179,10 +181,156 @@ class _ApiDebugScreenState extends State<ApiDebugScreen> {
     }
   }
 
+  Future<void> _testApiEndpoint() async {
+    try {
+      _addLog('Probando endpoint de test...');
+      final response = await FestiSpotApi.apiService.get<Map<String, dynamic>>(
+        '/test',
+        fromJson: (data) => data as Map<String, dynamic>,
+      );
+      
+      if (response.success) {
+        _addLog('✅ Endpoint de test respondió correctamente');
+        if (response.data != null) {
+          _addLog('Respuesta: ${response.data}');
+        }
+      } else {
+        _addLog('❌ Error en endpoint de test: ${response.message}', isError: true);
+      }
+    } catch (e) {
+      _addLog('❌ Error probando endpoint: $e', isError: true);
+    }
+  }
+
+  Future<void> _queryDatabaseData() async {
+    try {
+      _addLog('🔍 Consultando datos de la base de datos...');
+      
+      // Consultar eventos
+      _addLog('📊 Obteniendo eventos de la BD...');
+      final eventsResponse = await FestiSpotApi.eventService.getAllEvents();
+      
+      if (eventsResponse.success && eventsResponse.data != null) {
+        final events = eventsResponse.data!;
+        _addLog('✅ Eventos encontrados: ${events.length}');
+        
+        if (events.isEmpty) {
+          _addLog('📭 No hay eventos en la base de datos');
+        } else {
+          _addLog('📋 Lista de eventos:');
+          for (int i = 0; i < events.length; i++) {
+            final event = events[i];
+            _addLog('  ${i + 1}. ${event.title}');
+            _addLog('     📍 Ubicación: ${event.location ?? "No especificada"}');
+            _addLog('     🏷️ Categoría: ${event.category ?? "Sin categoría"}');
+            _addLog('     💰 Precio: \$${event.price ?? 0}');
+            _addLog('     📅 Fecha: ${event.date?.toString().split(' ')[0] ?? "No especificada"}');
+            _addLog('     👥 Asistentes: ${event.attendeesCount ?? 0}/${event.capacity ?? "∞"}');
+            _addLog('     🔧 Estado: ${event.isActive == true ? "Activo" : "Inactivo"}');
+            _addLog('     🆔 ID: ${event.id}');
+            if (i < events.length - 1) _addLog('     ─────────────────');
+          }
+        }
+      } else {
+        _addLog('❌ Error obteniendo eventos: ${eventsResponse.message}', isError: true);
+      }
+
+      // Intentar obtener información adicional de usuarios si está disponible
+      try {
+        _addLog('👥 Intentando obtener datos de usuarios...');
+        final userResponse = await FestiSpotApi.apiService.get<dynamic>(
+          '/users',
+          fromJson: (data) => data,
+        );
+        
+        if (userResponse.success) {
+          _addLog('✅ Datos de usuarios obtenidos');
+          if (userResponse.data != null) {
+            if (userResponse.data is List) {
+              final users = userResponse.data as List;
+              _addLog('👥 Total de usuarios: ${users.length}');
+            } else if (userResponse.data is Map) {
+              _addLog('👤 Datos de usuario: ${userResponse.data}');
+            }
+          }
+        } else {
+          _addLog('⚠️ No se pudieron obtener datos de usuarios (${userResponse.message})');
+        }
+      } catch (e) {
+        _addLog('⚠️ Endpoint de usuarios no disponible');
+      }
+
+      // Intentar obtener categorías de eventos
+      try {
+        _addLog('🏷️ Obteniendo categorías de eventos...');
+        final categoriesResponse = await FestiSpotApi.eventService.getCategories();
+        
+        if (categoriesResponse.success && categoriesResponse.data != null) {
+          final categories = categoriesResponse.data!;
+          _addLog('✅ Categorías encontradas: ${categories.length}');
+          if (categories.isNotEmpty) {
+            _addLog('� Categorías disponibles: ${categories.join(", ")}');
+          }
+        } else {
+          _addLog('⚠️ No se pudieron obtener categorías');
+        }
+      } catch (e) {
+        _addLog('⚠️ Endpoint de categorías no disponible');
+      }
+
+      // Intentar obtener estadísticas generales
+      try {
+        _addLog('�📈 Intentando obtener estadísticas...');
+        final statsResponse = await FestiSpotApi.apiService.get<dynamic>(
+          '/stats',
+          fromJson: (data) => data,
+        );
+        
+        if (statsResponse.success && statsResponse.data != null) {
+          _addLog('📊 Estadísticas obtenidas: ${statsResponse.data}');
+        } else {
+          _addLog('⚠️ No hay estadísticas disponibles');
+        }
+      } catch (e) {
+        _addLog('⚠️ Endpoint de estadísticas no disponible');
+      }
+
+      // Mostrar resumen final
+      _addLog('📋 ═══ RESUMEN DE CONSULTA ═══');
+      _addLog('🎪 Total de eventos consultados');
+      _addLog('👥 Datos de usuarios verificados');
+      _addLog('🏷️ Categorías de eventos revisadas');
+      _addLog('📊 Estadísticas del sistema consultadas');
+      _addLog('🏁 Consulta de base de datos completada');
+      
+    } catch (e) {
+      _addLog('❌ Error consultando base de datos: $e', isError: true);
+    }
+  }
+
   void _clearLogs() {
     setState(() {
       _logs.clear();
     });
+  }
+
+  void _toggleMockMode() {
+    if (_isMockEnabled) {
+      MockApiService.disable();
+      _addLog('Modo mock deshabilitado - usando API real');
+    } else {
+      MockApiService.enable();
+      _addLog('Modo mock habilitado - usando datos simulados');
+    }
+    _updateStatus();
+  }
+
+  void _fillTestCredentials() {
+    setState(() {
+      _emailController.text = 'asistente@festispot.com';
+      _passwordController.text = 'asistente123';
+    });
+    _addLog('Credenciales de prueba cargadas');
   }
 
   void _copyLogs() {
@@ -244,6 +392,18 @@ class _ApiDebugScreenState extends State<ApiDebugScreen> {
                 Row(
                   children: [
                     Icon(
+                      _isMockEnabled ? Icons.psychology : Icons.cloud,
+                      color: _isMockEnabled ? Colors.orange : Colors.blue,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 4),
+                    Text('Modo: ${_isMockEnabled ? "Mock (Simulado)" : "Real"}'),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Icon(
                       _isLoggedIn ? Icons.person : Icons.person_off,
                       color: _isLoggedIn ? Colors.green : Colors.grey,
                       size: 16,
@@ -261,6 +421,41 @@ class _ApiDebugScreenState extends State<ApiDebugScreen> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
+                // Información de endpoints
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.info_outline, color: Colors.blue, size: 16),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Funciones Disponibles:',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text('🔄 Conectividad: Verifica conexión al servidor', style: TextStyle(fontSize: 12)),
+                      Text('🟢 Test API: Prueba endpoint /api/test', style: TextStyle(fontSize: 12)),
+                      Text('🟣 Consultar BD: Muestra todos los datos almacenados', style: TextStyle(fontSize: 12)),
+                      Text('🎪 Eventos: Lista eventos de /api/v1/events', style: TextStyle(fontSize: 12)),
+                      Text('🤖 Mock/Real: Alterna entre datos simulados y reales', style: TextStyle(fontSize: 12)),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                
                 // URL Base
                 TextFormField(
                   controller: _baseUrlController,
@@ -306,11 +501,48 @@ class _ApiDebugScreenState extends State<ApiDebugScreen> {
                   spacing: 8,
                   runSpacing: 8,
                   children: [
+                    // Primera fila - Conectividad y Tests
                     ElevatedButton.icon(
                       onPressed: _checkConnectivity,
                       icon: const Icon(Icons.refresh),
                       label: const Text('Conectividad'),
                     ),
+                    ElevatedButton.icon(
+                      onPressed: _testApiEndpoint,
+                      icon: const Icon(Icons.api),
+                      label: const Text('Test API'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: _queryDatabaseData,
+                      icon: const Icon(Icons.storage),
+                      label: const Text('Consultar BD'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.purple,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                    
+                    // Segunda fila - Modo y Configuración
+                    ElevatedButton.icon(
+                      onPressed: _toggleMockMode,
+                      icon: Icon(_isMockEnabled ? Icons.cloud : Icons.psychology),
+                      label: Text(_isMockEnabled ? 'Modo Real' : 'Modo Mock'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: _isMockEnabled ? Colors.blue : Colors.orange,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: _fillTestCredentials,
+                      icon: const Icon(Icons.auto_fix_high),
+                      label: const Text('Credenciales'),
+                    ),
+                    
+                    // Tercera fila - Autenticación
                     ElevatedButton.icon(
                       onPressed: _testLogin,
                       icon: const Icon(Icons.login),
@@ -326,6 +558,8 @@ class _ApiDebugScreenState extends State<ApiDebugScreen> {
                       icon: const Icon(Icons.logout),
                       label: const Text('Logout'),
                     ),
+                    
+                    // Cuarta fila - Datos
                     ElevatedButton.icon(
                       onPressed: _testGetEvents,
                       icon: const Icon(Icons.event),
