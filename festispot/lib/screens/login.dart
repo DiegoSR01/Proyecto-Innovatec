@@ -1,6 +1,6 @@
 import 'package:festispot/screens/asistente/inicio.dart';
 import 'package:flutter/material.dart';
-import '../utils/variables.dart';
+import '../services/auth_service.dart';
 import 'productor/iniciopro.dart';
 import 'registro.dart';
 
@@ -32,36 +32,41 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoading = true;
       });
 
-      await Future.delayed(const Duration(seconds: 1));
-
-      String? userType = LoginCredentials.validateCredentials(
-        _emailController.text.trim(),
-        _passwordController.text,
-      );
-
-      setState(() {
-        _isLoading = false;
-      });
-
-      if (userType != null) {
-        _showCustomSnackBar('¡Login exitoso! Bienvenido a FestiSpot', true);
-
-        if (userType == LoginCredentials.userTypeAssistant) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const MainScreen()),
-          );
-        } else if (userType == LoginCredentials.userTypeProducer) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => const MainProductor(),
-            ),
-          );
-        }
-      } else {
-        _showCustomSnackBar(
-          'Credenciales incorrectas. Verifica tu email y contraseña.',
-          false,
+      try {
+        // Usar el servicio de autenticación
+        final result = await AuthService.login(
+          _emailController.text.trim(),
+          _passwordController.text,
         );
+
+        setState(() {
+          _isLoading = false;
+        });
+
+        result.onSuccess((user, message) {
+          _showCustomSnackBar(message, true);
+          
+          // Navegar según el tipo de usuario
+          if (user?.esAsistente == true) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const MainScreen()),
+            );
+          } else if (user?.esProductor == true) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const MainProductor()),
+            );
+          }
+        });
+
+        result.onError((errorMessage) {
+          _showCustomSnackBar(errorMessage, false);
+        });
+
+      } catch (e) {
+        setState(() {
+          _isLoading = false;
+        });
+        _showCustomSnackBar('Error inesperado: $e', false);
       }
     }
   }
