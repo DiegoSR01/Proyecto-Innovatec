@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../config/api_config.dart';
+import '../../config/api_config.dart';
 
 class ApiConfigScreen extends StatefulWidget {
   const ApiConfigScreen({super.key});
@@ -331,11 +331,8 @@ class _ApiConfigScreenState extends State<ApiConfigScreen> {
   }
 
   String _getEnvironmentUrl(ApiEnvironment env) {
-    const urls = {
-      ApiEnvironment.production: 'http://10.250.3.21/festispot_api/api/',
-      ApiEnvironment.testing: 'http://10.250.3.79/festispot_api/api/',
-    };
-    return urls[env] ?? 'URL no definida';
+    // Usar la configuración centralizada
+    return ApiConfig.apiUrl;
   }
 
   void _testConnection() async {

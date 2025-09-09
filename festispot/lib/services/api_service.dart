@@ -15,6 +15,8 @@ class ApiService {
   static dynamic _handleResponse(http.Response response) {
     if (ApiConfig.isDebugMode) {
       print('API Response [${response.statusCode}]: ${response.body}');
+      print('');
+      _printFormattedResponse(response);
     }
     
     if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -25,6 +27,139 @@ class ApiService {
       }
     } else {
       throw ApiException('Error HTTP ${response.statusCode}: ${response.body}', response.statusCode);
+    }
+  }
+
+  // Método para formatear y mostrar la respuesta como una consulta de base de datos
+  static void _printFormattedResponse(http.Response response) {
+    try {
+      final data = json.decode(response.body);
+      print('═══════════════════════════════════════════════════════════════');
+      print('🗃️  CONSULTA API - RESULTADO FORMATEADO');
+      print('═══════════════════════════════════════════════════════════════');
+      print('📡 Endpoint: ${response.request?.url ?? 'N/A'}');
+      print('📊 Status: ${response.statusCode} ${_getStatusText(response.statusCode)}');
+      print('⏱️  Response Time: ${DateTime.now().toString().substring(11, 19)}');
+      print('───────────────────────────────────────────────────────────────');
+
+      // Verificar si es una respuesta exitosa con datos
+      if (data is Map && data.containsKey('success') && data['success'] == true && data.containsKey('data')) {
+        final resultData = data['data'];
+        
+        if (resultData is List) {
+          print('📋 Registros encontrados: ${resultData.length}');
+          print('───────────────────────────────────────────────────────────────');
+          
+          if (resultData.isNotEmpty) {
+            // Mostrar header de tabla basado en las claves del primer registro
+            if (resultData[0] is Map) {
+              final firstRecord = resultData[0] as Map<String, dynamic>;
+              _printTableHeader(firstRecord.keys.toList());
+              
+              // Mostrar cada registro
+              for (int i = 0; i < resultData.length; i++) {
+                if (resultData[i] is Map) {
+                  _printTableRow(i + 1, resultData[i] as Map<String, dynamic>);
+                }
+              }
+            } else {
+              // Si no son mapas, mostrar como lista simple
+              for (int i = 0; i < resultData.length; i++) {
+                print('${i + 1}. ${resultData[i]}');
+              }
+            }
+          } else {
+            print('⚠️  Sin registros para mostrar');
+          }
+          
+        } else if (resultData is Map) {
+          print('📋 Registro único encontrado');
+          print('───────────────────────────────────────────────────────────────');
+          _printSingleRecord(resultData as Map<String, dynamic>);
+        } else {
+          print('📋 Respuesta: $resultData');
+        }
+        
+      } else if (data is List) {
+        // Respuesta directa como lista
+        print('📋 Registros encontrados: ${data.length}');
+        print('───────────────────────────────────────────────────────────────');
+        
+        if (data.isNotEmpty && data[0] is Map) {
+          final firstRecord = data[0] as Map<String, dynamic>;
+          _printTableHeader(firstRecord.keys.toList());
+          
+          for (int i = 0; i < data.length; i++) {
+            if (data[i] is Map) {
+              _printTableRow(i + 1, data[i] as Map<String, dynamic>);
+            }
+          }
+        }
+        
+      } else if (data is Map) {
+        print('📋 Respuesta del servidor:');
+        print('───────────────────────────────────────────────────────────────');
+        _printSingleRecord(Map<String, dynamic>.from(data));
+      } else {
+        print('📋 Respuesta: $data');
+      }
+      
+      print('═══════════════════════════════════════════════════════════════');
+      print('');
+    } catch (e) {
+      print('❌ Error al formatear respuesta: $e');
+      print('───────────────────────────────────────────────────────────────');
+      print('Raw Response: ${response.body}');
+      print('═══════════════════════════════════════════════════════════════');
+      print('');
+    }
+  }
+
+  static void _printTableHeader(List<String> columns) {
+    final header = columns.map((col) => col.padRight(20).substring(0, 20)).join(' │ ');
+    print('┌${'─' * header.length}┐');
+    print('│ $header │');
+    print('├${'─' * header.length}┤');
+  }
+
+  static void _printTableRow(int index, Map<String, dynamic> record) {
+    final values = record.values.map((value) {
+      String strValue;
+      if (value == null) {
+        strValue = 'NULL';
+      } else if (value is String && value.length > 18) {
+        strValue = '${value.substring(0, 15)}...';
+      } else {
+        strValue = value.toString();
+      }
+      return strValue.padRight(20).substring(0, 20);
+    }).join(' │ ');
+    
+    print('│ $values │');
+    
+    // Añadir separador cada 5 registros para mejor legibilidad
+    if (index % 5 == 0) {
+      print('├${'─' * values.length}┤');
+    }
+  }
+
+  static void _printSingleRecord(Map<String, dynamic> record) {
+    record.forEach((key, value) {
+      final displayValue = value?.toString() ?? 'NULL';
+      print('$key: $displayValue');
+    });
+  }
+
+  static String _getStatusText(int statusCode) {
+    switch (statusCode) {
+      case 200: return 'OK';
+      case 201: return 'Created';
+      case 400: return 'Bad Request';
+      case 401: return 'Unauthorized';
+      case 403: return 'Forbidden';
+      case 404: return 'Not Found';
+      case 500: return 'Internal Server Error';
+      default: return '';
     }
   }
 
@@ -699,6 +834,348 @@ class ApiService {
       throw Exception('Tiempo de espera agotado');
     } catch (e) {
       throw Exception('Error en petición POST: $e');
+    }
+  }
+
+  // === MÉTODOS CON URL ESPECÍFICA PARA DEBUG ===
+  
+  /// Obtiene usuarios desde una URL base específica
+  static Future<List<Usuario>> getUsuariosFromUrl(String baseUrl) async {
+    try {
+      final response = await http
+          .get(
+            Uri.parse('$baseUrl/api/users.php?action=get_all'),
+            headers: headers,
+          )
+          .timeout(timeout);
+
+      final data = _handleResponse(response);
+      
+      List<dynamic> userList;
+      if (data is List) {
+        userList = data;
+      } else if (data['data'] is List) {
+        userList = data['data'];
+      } else if (data['users'] is List) {
+        userList = data['users'];
+      } else {
+        throw ApiException('Formato de respuesta inesperado para usuarios', response.statusCode);
+      }
+      
+      return userList.map((json) => Usuario.fromJson(json)).toList();
+    } on SocketException {
+      throw ApiException('No hay conexión a internet o el servidor no está disponible');
+    } on TimeoutException {
+      throw ApiException('Tiempo de espera agotado');
+    } catch (e) {
+      throw ApiException('Error al obtener usuarios: $e');
+    }
+  }
+
+  /// Obtiene eventos desde una URL base específica
+  static Future<List<dynamic>> getEventosFromUrl(String baseUrl) async {
+    try {
+      final response = await http
+          .get(
+            Uri.parse('$baseUrl/api/get_events.php'),
+            headers: headers,
+          )
+          .timeout(timeout);
+
+      final data = _handleResponse(response);
+      
+      if (data is List) {
+        return data;
+      } else if (data['data'] is List) {
+        return data['data'];
+      } else if (data['events'] is List) {
+        return data['events'];
+      }
+      return [];
+    } on SocketException {
+      throw ApiException('No hay conexión a internet');
+    } on TimeoutException {
+      throw ApiException('Tiempo de espera agotado');
+    } catch (e) {
+      throw ApiException('Error al obtener eventos: $e');
+    }
+  }
+
+  /// Obtiene categorías desde una URL base específica
+  static Future<List<Map<String, dynamic>>> getCategoriasFromUrl(String baseUrl) async {
+    try {
+      final response = await http
+          .get(
+            Uri.parse('$baseUrl/api/get_categorias.php'),
+            headers: headers,
+          )
+          .timeout(timeout);
+
+      final data = _handleResponse(response);
+      
+      if (data is List) {
+        return data.cast<Map<String, dynamic>>();
+      } else if (data['data'] is List) {
+        return data['data'].cast<Map<String, dynamic>>();
+      } else if (data['categorias'] is List) {
+        return data['categorias'].cast<Map<String, dynamic>>();
+      }
+      return [];
+    } catch (e) {
+      throw ApiException('Error al obtener categorías: $e');
+    }
+  }
+
+  /// Obtiene roles desde una URL base específica
+  static Future<List<Map<String, dynamic>>> getRolesFromUrl(String baseUrl) async {
+    try {
+      final response = await http
+          .get(
+            Uri.parse('$baseUrl/api/get_roles.php'),
+            headers: headers,
+          )
+          .timeout(timeout);
+
+      final data = _handleResponse(response);
+      
+      if (data is List) {
+        return data.cast<Map<String, dynamic>>();
+      } else if (data['data'] is List) {
+        return data['data'].cast<Map<String, dynamic>>();
+      }
+      return [];
+    } catch (e) {
+      throw ApiException('Error al obtener roles: $e');
+    }
+  }
+
+  /// Obtiene ubicaciones desde una URL base específica
+  static Future<List<Map<String, dynamic>>> getUbicacionesFromUrl(String baseUrl) async {
+    try {
+      final response = await http
+          .get(
+            Uri.parse('$baseUrl/api/get_ubicaciones.php'),
+            headers: headers,
+          )
+          .timeout(timeout);
+
+      final data = _handleResponse(response);
+      
+      if (data is List) {
+        return data.cast<Map<String, dynamic>>();
+      } else if (data['data'] is List) {
+        return data['data'].cast<Map<String, dynamic>>();
+      }
+      return [];
+    } catch (e) {
+      throw ApiException('Error al obtener ubicaciones: $e');
+    }
+  }
+
+  /// Obtiene favoritos desde una URL base específica
+  static Future<List<Map<String, dynamic>>> getFavoritosFromUrl(String baseUrl, int userId) async {
+    try {
+      final response = await http
+          .get(
+            Uri.parse('$baseUrl/api/get_favoritos.php?user_id=$userId'),
+            headers: headers,
+          )
+          .timeout(timeout);
+
+      final data = _handleResponse(response);
+      
+      if (data is List) {
+        return data.cast<Map<String, dynamic>>();
+      } else if (data['data'] is List) {
+        return data['data'].cast<Map<String, dynamic>>();
+      }
+      return [];
+    } catch (e) {
+      throw ApiException('Error al obtener favoritos: $e');
+    }
+  }
+
+  /// Obtiene reviews desde una URL base específica
+  static Future<List<Map<String, dynamic>>> getReviewsFromUrl(String baseUrl, int eventId) async {
+    try {
+      final response = await http
+          .get(
+            Uri.parse('$baseUrl/api/get_reviews.php?event_id=$eventId'),
+            headers: headers,
+          )
+          .timeout(timeout);
+
+      final data = _handleResponse(response);
+      
+      if (data is List) {
+        return data.cast<Map<String, dynamic>>();
+      } else if (data['data'] is List) {
+        return data['data'].cast<Map<String, dynamic>>();
+      }
+      return [];
+    } catch (e) {
+      throw ApiException('Error al obtener reviews: $e');
+    }
+  }
+
+  /// Obtiene asistencias desde una URL base específica
+  static Future<List<Map<String, dynamic>>> getAsistenciasFromUrl(String baseUrl, int eventId) async {
+    try {
+      final response = await http
+          .get(
+            Uri.parse('$baseUrl/api/get_asistencias.php?event_id=$eventId'),
+            headers: headers,
+          )
+          .timeout(timeout);
+
+      final data = _handleResponse(response);
+      
+      if (data is List) {
+        return data.cast<Map<String, dynamic>>();
+      } else if (data['data'] is List) {
+        return data['data'].cast<Map<String, dynamic>>();
+      }
+      return [];
+    } catch (e) {
+      throw ApiException('Error al obtener asistencias: $e');
+    }
+  }
+
+  /// Obtiene analytics desde una URL base específica
+  static Future<Map<String, dynamic>> getAnalyticsEventoFromUrl(String baseUrl, int eventId) async {
+    try {
+      final response = await http
+          .get(
+            Uri.parse('$baseUrl/api/get_analytics_evento.php?event_id=$eventId'),
+            headers: headers,
+          )
+          .timeout(timeout);
+
+      final data = _handleResponse(response);
+      
+      if (data is Map<String, dynamic>) {
+        return data;
+      } else if (data['data'] is Map<String, dynamic>) {
+        return data['data'];
+      }
+      return {};
+    } catch (e) {
+      throw ApiException('Error al obtener analytics: $e');
+    }
+  }
+
+  /// Obtiene notificaciones desde una URL base específica
+  static Future<List<Map<String, dynamic>>> getNotificacionesFromUrl(String baseUrl, int userId) async {
+    try {
+      final response = await http
+          .get(
+            Uri.parse('$baseUrl/api/get_notificaciones.php?user_id=$userId'),
+            headers: headers,
+          )
+          .timeout(timeout);
+
+      final data = _handleResponse(response);
+      
+      if (data is List) {
+        return data.cast<Map<String, dynamic>>();
+      } else if (data['data'] is List) {
+        return data['data'].cast<Map<String, dynamic>>();
+      }
+      return [];
+    } catch (e) {
+      throw ApiException('Error al obtener notificaciones: $e');
+    }
+  }
+
+  /// Obtiene planes de suscripción desde una URL base específica
+  static Future<List<Map<String, dynamic>>> getPlanesSuscripcionFromUrl(String baseUrl) async {
+    try {
+      final response = await http
+          .get(
+            Uri.parse('$baseUrl/api/get_planes_suscripcion.php'),
+            headers: headers,
+          )
+          .timeout(timeout);
+
+      final data = _handleResponse(response);
+      
+      if (data is List) {
+        return data.cast<Map<String, dynamic>>();
+      } else if (data['data'] is List) {
+        return data['data'].cast<Map<String, dynamic>>();
+      }
+      return [];
+    } catch (e) {
+      throw ApiException('Error al obtener planes de suscripción: $e');
+    }
+  }
+
+  /// Obtiene suscripciones de organizador desde una URL base específica
+  static Future<List<Map<String, dynamic>>> getSuscripcionesOrganizadorFromUrl(String baseUrl, int organizadorId) async {
+    try {
+      final response = await http
+          .get(
+            Uri.parse('$baseUrl/api/get_suscripciones_organizador.php?organizador_id=$organizadorId'),
+            headers: headers,
+          )
+          .timeout(timeout);
+
+      final data = _handleResponse(response);
+      
+      if (data is List) {
+        return data.cast<Map<String, dynamic>>();
+      } else if (data['data'] is List) {
+        return data['data'].cast<Map<String, dynamic>>();
+      }
+      return [];
+    } catch (e) {
+      throw ApiException('Error al obtener suscripciones de organizador: $e');
+    }
+  }
+
+  /// Obtiene configuraciones de usuario desde una URL base específica
+  static Future<Map<String, dynamic>> getConfiguracionesUsuarioFromUrl(String baseUrl, int userId) async {
+    try {
+      final response = await http
+          .get(
+            Uri.parse('$baseUrl/api/get_configuraciones_usuario.php?user_id=$userId'),
+            headers: headers,
+          )
+          .timeout(timeout);
+
+      final data = _handleResponse(response);
+      
+      if (data is Map<String, dynamic>) {
+        return data;
+      } else if (data['data'] is Map<String, dynamic>) {
+        return data['data'];
+      }
+      return {};
+    } catch (e) {
+      throw ApiException('Error al obtener configuraciones de usuario: $e');
+    }
+  }
+
+  /// Obtiene imágenes de evento desde una URL base específica
+  static Future<List<Map<String, dynamic>>> getImagenesEventoFromUrl(String baseUrl, int eventId) async {
+    try {
+      final response = await http
+          .get(
+            Uri.parse('$baseUrl/api/get_imagenes_evento.php?event_id=$eventId'),
+            headers: headers,
+          )
+          .timeout(timeout);
+
+      final data = _handleResponse(response);
+      
+      if (data is List) {
+        return data.cast<Map<String, dynamic>>();
+      } else if (data['data'] is List) {
+        return data['data'].cast<Map<String, dynamic>>();
+      }
+      return [];
+    } catch (e) {
+      throw ApiException('Error al obtener imágenes de evento: $e');
     }
   }
 }

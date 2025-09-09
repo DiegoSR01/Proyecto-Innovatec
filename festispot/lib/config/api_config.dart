@@ -1,12 +1,16 @@
 /// Configuración de la API y entornos
 class ApiConfig {
+  // IP única - CAMBIAR SOLO AQUÍ
+  static const String _apiHost = '192.168.1.10';
+  static const String apiUrl = 'http://$_apiHost/festispot_api';
+  
   // Tipo de entorno
   static const ApiEnvironment environment = ApiEnvironment.production;
   
-  // Configuraciones por entorno - Solo dos APIs
+  // Configuraciones por entorno - Una sola API
   static const Map<ApiEnvironment, String> _baseUrls = {
-    ApiEnvironment.production: 'http://10.250.3.21/festispot_api', // API por defecto
-    ApiEnvironment.testing: 'http://10.250.3.79/festispot_api',    // API de testing
+    ApiEnvironment.production: apiUrl, // API única
+    ApiEnvironment.testing: apiUrl,    // Misma API
   };
   
   // URL base actual según el entorno
@@ -85,10 +89,10 @@ class ApiConfig {
   }
 }
 
-/// Enum para los diferentes entornos - Solo dos APIs
+/// Enum para los diferentes entornos - API única
 enum ApiEnvironment {
-  production('API Principal (10.250.3.21)'),
-  testing('API de Testing (10.250.3.79)');
+  production('API Principal (10.228.2.29)'),
+  testing('API de Testing (10.228.2.29)');
   
   const ApiEnvironment(this.displayName);
   final String displayName;
