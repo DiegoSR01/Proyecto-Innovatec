@@ -471,22 +471,75 @@ class ApiService {
     }
   }
 
-  /// Actualiza un usuario existente usando users.php
-  static Future<bool> actualizarUsuario(Usuario usuario) async {
+  /// Obtiene información de un usuario por ID usando get_user.php
+  static Future<Usuario?> obtenerUsuario(int userId) async {
+    try {
+      if (ApiConfig.isDebugMode) {
+        print('🔄 Obteniendo información del usuario ID: $userId');
+        print('📡 URL: ${ApiConfig.baseUrl}/get_user.php');
+      }
+
+      final response = await http
+          .get(
+            Uri.parse('${ApiConfig.baseUrl}/get_user.php?id=$userId'),
+            headers: headers,
+          )
+          .timeout(timeout);
+
+      if (ApiConfig.isDebugMode) {
+        print('📥 Respuesta obtener usuario - Status: ${response.statusCode}');
+        print('📥 Body: ${response.body}');
+      }
+
+      final data = _handleResponse(response);
+      
+      if (data != null && data['success'] == true && data['user'] != null) {
+        if (ApiConfig.isDebugMode) {
+          print('✅ Usuario obtenido exitosamente');
+          print('📊 Datos del usuario: ${data['user']}');
+        }
+        return Usuario.fromJson(data['user']);
+      } else if (data != null && data['error'] != null) {
+        if (ApiConfig.isDebugMode) {
+          print('❌ Error obteniendo usuario: ${data['error']}');
+        }
+        throw ApiException(data['error'].toString());
+      }
+      
+      return null;
+    } on SocketException {
+      throw ApiException('No hay conexión a internet');
+    } on TimeoutException {
+      throw ApiException('Tiempo de espera agotado');
+    } catch (e) {
+      if (ApiConfig.isDebugMode) {
+        print('❌ Error en obtenerUsuario: $e');
+      }
+      if (e is ApiException) {
+        rethrow;
+      }
+      throw ApiException('Error al obtener usuario: $e');
+    }
+  }
+
+  /// Actualiza un usuario existente usando update_user.php
+  static Future<Usuario> actualizarUsuario(Usuario usuario) async {
     try {
       final response = await http
-          .post(
-            Uri.parse(ApiConfig.currentUsersUrl),
+          .put(
+            Uri.parse('${ApiConfig.baseUrl}/update_user.php'),
             headers: headers,
-            body: json.encode({
-              'action': 'update',
-              ...usuario.toJson(),
-            }),
+            body: json.encode(usuario.toJson()),
           )
           .timeout(timeout);
 
       final data = _handleResponse(response);
-      return data['success'] == true || data['error'] == false;
+      
+      if (data['success'] == true && data['user'] != null) {
+        return Usuario.fromJson(data['user']);
+      } else {
+        throw ApiException(data['error'] ?? 'Error al actualizar usuario');
+      }
     } on SocketException {
       throw ApiException('No hay conexión a internet');
     } on TimeoutException {

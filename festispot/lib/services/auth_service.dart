@@ -7,6 +7,7 @@ import '../config/api_config.dart';
 class AuthService {
   static const String _userKey = 'current_user';
   static const String _tokenKey = 'auth_token';
+  static const String _userIdKey = 'user_id';
 
   // Usuario actual en memoria
   static Usuario? _currentUser;
@@ -17,6 +18,9 @@ class AuthService {
   /// Verifica si hay un usuario autenticado
   static bool get isAuthenticated => _currentUser != null;
 
+  /// Obtiene el ID del usuario actual
+  static int? get currentUserId => _currentUser?.id;
+
   /// Inicia sesión con email y password
   static Future<AuthResult> login(String email, String password) async {
     try {
@@ -24,65 +28,32 @@ class AuthService {
         print('🔄 Iniciando proceso de login para: $email');
       }
       
-      // Primero intenta con la API
-      try {
-        final usuario = await ApiService.loginUsuario(email, password);
-        if (usuario != null) {
-          if (ApiConfig.isDebugMode) {
-            print('✅ Usuario obtenido de la API:');
-            print('   ID: ${usuario.id}');
-            print('   Nombre: ${usuario.nombre} ${usuario.apellido}');
-            print('   Email: ${usuario.email}');
-            print('   Rol ID: ${usuario.rolId}');
-            print('   Es Asistente: ${usuario.esAsistente}');
-            print('   Es Productor: ${usuario.esProductor}');
-            print('   Estado: ${usuario.estado}');
-          }
-          
-          await _saveUser(usuario);
-          _currentUser = usuario;
-          return AuthResult.success(usuario, 'Login exitoso - Bienvenido ${usuario.nombre}!');
-        }
-      } catch (apiError) {
+      // Intentar login con la API
+      final usuario = await ApiService.loginUsuario(email, password);
+      if (usuario != null) {
         if (ApiConfig.isDebugMode) {
-          print('❌ Error en API login: $apiError');
-          print('🔄 Intentando con credenciales locales como fallback...');
+          print('✅ Usuario obtenido de la API:');
+          print('   ID: ${usuario.id}');
+          print('   Nombre: ${usuario.nombre} ${usuario.apellido}');
+          print('   Email: ${usuario.email}');
+          print('   Rol ID: ${usuario.rolId}');
+          print('   Es Asistente: ${usuario.esAsistente}');
+          print('   Es Productor: ${usuario.esProductor}');
+          print('   Estado: ${usuario.estado}');
         }
-        // Si falla la API, usar credenciales hardcodeadas como fallback
-        return await _loginLocal(email, password);
+        
+        await _saveUser(usuario);
+        _currentUser = usuario;
+        return AuthResult.success(usuario, 'Login exitoso - Bienvenido ${usuario.nombre}!');
       }
 
       return AuthResult.error('Credenciales incorrectas');
     } catch (e) {
       if (ApiConfig.isDebugMode) {
-        print('❌ Error general en login: $e');
+        print('❌ Error durante el login: $e');
       }
-      return AuthResult.error('Error durante el login: $e');
+      return AuthResult.error('Error durante el login: ${e.toString()}');
     }
-  }
-
-  /// Login local como fallback (usando las credenciales de LocalCredentials)
-  static Future<AuthResult> _loginLocal(String email, String password) async {
-    final userCredentials = LocalCredentials.validateCredentials(email, password);
-    
-    if (userCredentials != null) {
-      final usuario = Usuario(
-        id: email == 'asistente@festispot.com' ? 1 : 2,
-        nombre: userCredentials['nombre']!.split(' ')[0],
-        apellido: userCredentials['nombre']!.split(' ').length > 1 
-          ? userCredentials['nombre']!.split(' ')[1] 
-          : 'Apellido',
-        email: email,
-        password: password,
-        rolId: userCredentials['tipo'] == 'asistente' ? 1 : 2,
-      );
-
-      await _saveUser(usuario);
-      _currentUser = usuario;
-      return AuthResult.success(usuario, 'Login exitoso (modo local)');
-    }
-
-    return AuthResult.error('Credenciales incorrectas');
   }
 
   /// Registra un nuevo usuario
@@ -151,22 +122,40 @@ class AuthService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_userKey);
     await prefs.remove(_tokenKey);
+    await prefs.remove(_userIdKey);
   }
 
   /// Actualiza los datos del usuario actual
   static Future<AuthResult> updateCurrentUser(Usuario usuarioActualizado) async {
     try {
-      final success = await ApiService.actualizarUsuario(usuarioActualizado);
+      final usuarioActualizadoDb = await ApiService.actualizarUsuario(usuarioActualizado);
       
-      if (success) {
-        _currentUser = usuarioActualizado;
-        await _saveUser(usuarioActualizado);
-        return AuthResult.success(usuarioActualizado, 'Usuario actualizado correctamente');
-      } else {
-        return AuthResult.error('Error al actualizar usuario');
-      }
+      _currentUser = usuarioActualizadoDb;
+      await _saveUser(usuarioActualizadoDb);
+      return AuthResult.success(usuarioActualizadoDb, 'Usuario actualizado correctamente');
     } catch (e) {
       return AuthResult.error('Error durante la actualización: $e');
+    }
+  }
+
+  /// Obtiene la información actualizada del usuario desde la BD
+  static Future<AuthResult> refreshCurrentUser() async {
+    try {
+      if (_currentUser?.id == null) {
+        return AuthResult.error('No hay usuario activo para actualizar');
+      }
+
+      final usuarioActualizado = await ApiService.obtenerUsuario(_currentUser!.id!);
+      
+      if (usuarioActualizado != null) {
+        _currentUser = usuarioActualizado;
+        await _saveUser(usuarioActualizado);
+        return AuthResult.success(usuarioActualizado, 'Información del usuario actualizada');
+      } else {
+        return AuthResult.error('No se pudo obtener la información del usuario');
+      }
+    } catch (e) {
+      return AuthResult.error('Error al actualizar información: $e');
     }
   }
 
@@ -192,6 +181,11 @@ class AuthService {
   static Future<void> _saveUser(Usuario usuario) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_userKey, json.encode(usuario.toJsonSafe()));
+    
+    // Guardar también el ID del usuario separadamente para fácil acceso
+    if (usuario.id != null) {
+      await prefs.setInt(_userIdKey, usuario.id!);
+    }
   }
 
   /// Elimina la cuenta del usuario actual

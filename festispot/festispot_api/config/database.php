@@ -67,6 +67,12 @@ function createDatabaseConnection() {
     }
 }
 
+// Función de compatibilidad para obtener conexión directa
+function getConnection() {
+    $database = new Database();
+    return $database->getConnection();
+}
+
 // Función para validar datos requeridos
 function validateRequired($data, $required_fields) {
     $errors = [];

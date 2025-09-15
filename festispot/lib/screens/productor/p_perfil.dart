@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:festispot/screens/login.dart';
-import 'package:festispot/screens/productor/suscrpcionp.dart'; // Add this import
+import 'package:festispot/screens/productor/p_suscripcion.dart'; // Add this import
 
 class PerfilUsuario extends StatefulWidget {
   const PerfilUsuario({super.key});

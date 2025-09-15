@@ -1,8 +1,8 @@
-import 'package:festispot/screens/asistente/inicio.dart';
+import 'package:festispot/screens/asistente/a_inicio.dart';
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import '../config/api_config.dart';
-import 'productor/iniciopro.dart';
+import 'productor/p_inicio.dart';
 import 'registro.dart';
 
 // Pantalla de inicio de sesión (login)

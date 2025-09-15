@@ -1,174 +1,125 @@
 import 'package:festispot/utils/variables.dart';
+import 'package:festispot/services/api_service.dart';
 
-final List<Evento> carrusel = [
-  Evento(
-    id: 1,
-    nombre: 'Cata de vinos',
-    imagen: "assets/images/cata.jpeg",
-    descripcion:
-        "Disfruta de una cata de vinos con expertos en la materia. Aprende sobre diferentes variedades y técnicas de degustación.",
-    categoria: "Evento Social", 
-    ubicacion: " Bodega del Valle",
-    fecha:"2025-10-15",
-    hora: "18:30",
-    precio: "Gratuito",
-    capacidad: "500 personas",
-    edad: "18+",
-    organizador: "FestiSpot Productions",
-    organizadorRating: "4.9",
-    organizadorEventos: "120"
-  ),
-  Evento(
-    id: 2,
-    nombre: 'Concierto de musica clásica',
-    imagen: "assets/images/conc_ejem.jpg",
-    descripcion:
-        "Asiste a un concierto de música clásica con una orquesta reconocida. Una experiencia cultural única.", 
-    categoria: "Festival Cultural", 
-    ubicacion: " Auditorio Nacional",
-    fecha:"2025-10-15",
-    hora: "20:00",
-    precio: "Gratuito",
-    capacidad: "500 personas",
-    edad: "18+",
-    organizador: "FestiSpot Productions",
-    organizadorRating: "4.9",
-    organizadorEventos: "120"
-  ),
-  Evento(
-    id: 3,
-    nombre: 'Feria del alfeñique',
-    imagen: "assets/images/feria_ejem.jpeg",
-    descripcion:
-        "Disfruta de un día lleno de tradición en la Feria del Alfeñique. Prueba dulces típicos y disfruta de actividades culturales.",
-    categoria: "Evento Cultural",
-    ubicacion: " Plaza Mayor",
-    fecha: "2025-10-20",
-    hora: "10:40",
-    precio: "Gratuito",
-    capacidad: "500 personas",
-    edad: "18+",
-    organizador: "FestiSpot Productions",
-    organizadorRating: "4.9",
-    organizadorEventos: "120"
-  ),
-  Evento(
-    id: 4,
-    nombre: 'Feria de agricultura',
-    imagen: "assets/images/feria_agri.jpeg",
-    descripcion:
-        "Visita la Feria de Agricultura para conocer más sobre prácticas sostenibles y productos locales. Ideal para los amantes de la naturaleza.",
-    categoria: "Evento Social",
-    ubicacion: " Parque Ecológico",
-    fecha: "2025-10-25",
-    hora: "09:00",
-    precio: "Gratuito",
-    capacidad: "500 personas",
-    edad: "18+",
-    organizador: "FestiSpot Productions",
-    organizadorRating: "4.9",
-    organizadorEventos: "120"
-  ),
-  Evento(
-    id: 5,
-    nombre: 'Festival de Jazz',
-    imagen: "assets/images/festival_jazz.jpeg",
-    descripcion:
-        "Disfruta de un fin de semana lleno de música en el Festival de Jazz. Conciertos en vivo y talleres para todos los amantes del jazz.",
-    categoria: "Taller",
-    ubicacion: " Centro Cultural",
-    fecha: "2025-11-01",
-    hora: "19:00",
-    precio: "Gratuito",
-    capacidad: "500 personas",
-    edad: "18+",
-    organizador: "FestiSpot Productions",
-    organizadorRating: "4.9",
-    organizadorEventos: "120"
-  ),
-  Evento(
-    id: 6,
-    nombre: 'Concierto de rock',
-    imagen: "assets/images/rock_ejem.jpg",
-    descripcion:
-        "Asiste al concierto de rock del año con bandas locales e internacionales. Una noche llena de energía y buena música.",
-    categoria: "Evento Cultural",
-    ubicacion: " Estadio Municipal",
-    fecha: "2025-11-05",
-    hora: "21:00",
-    precio: "Gratuito",
-    capacidad: "500 personas",
-    edad: "18+",
-    organizador: "FestiSpot Productions",
-    organizadorRating: "4.9",
-    organizadorEventos: "120"
-  ),
-  Evento(
-    id: 7,
-    nombre: 'Startup Pitch & Networking Mexico',
-    imagen: "assets/images/network.jpg",
-    descripcion:
-        "Evento de networking para startups y emprendedores. Presentaciones, oportunidades de inversión y mucho más.",
-    categoria: "Networking",
-    ubicacion: " Centro de Convenciones",
-    fecha: "2025-11-10",
-    hora: "10:00",
-    precio: "Gratuito",
-    capacidad: "500 personas",
-    edad: "18+",
-    organizador: "FestiSpot Productions",
-    organizadorRating: "4.9",
-    organizadorEventos: "120"
-  ),
-  Evento(
-    id: 8,
-    nombre: 'Exposición de arte contemporáneo',
-    imagen: "assets/images/expo_arte.jpg",
-    descripcion:
-        "Explora la Exposición de Arte Contemporáneo con obras de artistas emergentes. Una oportunidad para apreciar el arte moderno.",
-    categoria: "Evento Cultural",
-    ubicacion: " Galería Nacional",
-    fecha: "2025-11-15",
-    hora: "11:00",
-    precio: "Gratuito",
-    capacidad: "500 personas",
-    edad: "18+",
-    organizador: "FestiSpot Productions",
-    organizadorRating: "4.9",
-    organizadorEventos: "120"
-  ),
-  Evento(
-    id: 9,
-    nombre: 'Taller de cocina mexicana',
-    imagen: "assets/images/taller_cocina.jpg",
-    descripcion:
-        "Aprende a cocinar platillos tradicionales mexicanos en este taller práctico. Ideal para los amantes de la gastronomía.",
-    categoria: "Taller",
-    ubicacion: " Escuela de Cocina",
-    fecha: "2025-11-20",
-    hora: "9:00",
-    precio: "Gratuito",
-    capacidad: "500 personas",
-    edad: "18+",
-    organizador: "FestiSpot Productions",
-    organizadorRating: "4.9",
-    organizadorEventos: "120"
-  ),
-  Evento(
-    id: 10,
-    nombre: 'Festival de cine independiente',
-    imagen: "assets/images/festival_cine.jpg",
-    descripcion:
-        "Disfruta de una selección de películas independientes en el Festival de Cine. Charlas con directores y actores.",
-    categoria: "Fesitival",
-    ubicacion: " Cine Club",
-    fecha: "2025-11-25",
-    hora: "19:30",
-    precio: "Gratuito",
-    capacidad: "500 personas",
-    edad: "18+",
-    organizador: "FestiSpot Productions",
-    organizadorRating: "4.9",
-    organizadorEventos: "120"
-  ),
-];
+// Esta lista ahora se carga dinámicamente desde la base de datos
+// Los eventos se obtienen a través de la API usando ApiService.getEventos()
+List<Evento> carrusel = [];
+
+/// Carga los eventos desde la API y los convierte al formato del carrusel
+Future<List<Evento>> loadEventosFromAPI() async {
+  try {
+    final eventosData = await ApiService.getEventos();
+    carrusel = eventosData.map((data) {
+      return Evento(
+        id: data['id'] ?? 0,
+        nombre: data['titulo'] ?? 'Sin título',
+        imagen: _mapImagePath(data['banner_image']),
+        descripcion: data['descripcion'] ?? 'Sin descripción',
+        categoria: data['category'] ?? 'Sin categoría',
+        ubicacion: data['venue_name'] ?? 'Sin ubicación',
+        fecha: _formatDate(data['fecha_inicio']),
+        hora: _formatTime(data['start_time']),
+        precio: _formatPrecio(data['precio_entrada']),
+        capacidad: data['capacidad_total']?.toString() ?? '500',
+        edad: data['edad_minima']?.toString() ?? '0',
+        organizador: _formatOrganizadorNombre(data['organizador_nombre'], data['organizador_apellido']),
+        organizadorRating: '4.9', // Por defecto - se puede mejorar con datos reales
+        organizadorEventos: '120', // Por defecto - se puede mejorar con datos reales
+        
+        // Nuevos campos de la BD
+        descripcionCorta: data['descripcion_corta'],
+        fechaFin: _formatDate(data['fecha_fin']),
+        horaFin: _formatTime(data['end_time']),
+        horaAperturaPuertas: _formatTime(data['hora_apertura_puertas']),
+        tipoEvento: data['event_type'],
+        direccionCompleta: data['full_address'],
+        ciudad: data['city'],
+        estado: data['state'],
+        pais: data['country'],
+        codigoPostal: data['postal_code'],
+        detallesUbicacion: data['location_details'],
+        edadMinima: data['edad_minima'],
+        politicasCancelacion: data['politicas_cancelacion'],
+        instruccionesEspeciales: data['instrucciones_especiales'],
+        tags: data['tags'],
+        accesible: data['accessible'] == 1,
+        plataformaVirtual: data['virtual_platform'],
+        enlaceEvento: data['event_link'],
+        codigoAcceso: data['access_code'],
+        passwordVirtual: data['virtual_password'],
+        instruccionesVirtuales: data['virtual_instructions'],
+        imagenesGaleria: data['gallery_images'],
+        videos: data['videos'],
+        estadoEvento: data['estado'],
+        organizadorNombre: data['organizador_nombre'],
+        organizadorApellido: data['organizador_apellido'],
+        organizadorEmail: data['organizador_email'],
+        organizadorTelefono: data['organizador_telefono'],
+      );
+    }).toList();
+    
+    return carrusel;
+  } catch (e) {
+    print('Error al cargar eventos desde la API: $e');
+    return [];
+  }
+}
+
+/// Mapea la imagen del evento a la ruta de assets
+String _mapImagePath(String? bannerImage) {
+  if (bannerImage == null || bannerImage.isEmpty) {
+    return 'assets/images/loading.gif';
+  }
+  
+  // Si es una URL completa, usarla directamente
+  if (bannerImage.startsWith('http')) {
+    return bannerImage;
+  }
+  
+  // Si no, mapear a assets locales
+  return 'assets/images/$bannerImage';
+}
+
+/// Formatea el nombre completo del organizador
+String _formatOrganizadorNombre(String? nombre, String? apellido) {
+  if (nombre == null && apellido == null) return 'FestiSpot Productions';
+  if (nombre != null && apellido != null) return '$nombre $apellido';
+  return nombre ?? apellido ?? 'FestiSpot Productions';
+}
+
+/// Formatea el precio desde la BD
+String _formatPrecio(dynamic precio) {
+  if (precio == null || precio == 0) return 'Gratuito';
+  
+  try {
+    final precioNum = double.parse(precio.toString());
+    if (precioNum == 0) return 'Gratuito';
+    return '\$${precioNum.toStringAsFixed(0)}';
+  } catch (e) {
+    return precio.toString();
+  }
+}
+
+/// Formatea la fecha desde datetime a string
+String _formatDate(String? fechaInicio) {
+  if (fechaInicio == null) return 'Por confirmar';
+  
+  try {
+    final date = DateTime.parse(fechaInicio);
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+  } catch (e) {
+    return fechaInicio.split(' ')[0]; // Solo la parte de fecha
+  }
+}
+
+/// Formatea la hora desde time a string
+String _formatTime(String? startTime) {
+  if (startTime == null) return 'Por confirmar';
+  
+  // Si ya es una hora en formato HH:MM, devolverla como está
+  if (startTime.contains(':')) {
+    return startTime.substring(0, 5); // Solo HH:MM
+  }
+  
+  return startTime;
+}

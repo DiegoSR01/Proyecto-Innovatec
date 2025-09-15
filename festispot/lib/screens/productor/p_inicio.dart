@@ -1,21 +1,22 @@
-import 'package:festispot/screens/asistente/perfil.dart';
-import 'package:festispot/screens/asistente/explorar_eventos.dart';
-import 'package:festispot/screens/asistente/favoritos.dart';
-import 'package:festispot/screens/asistente/configuracion.dart';
-import 'package:festispot/utils/variables.dart';
-import 'package:festispot/utils/eventos_carrusel.dart';
-import 'package:festispot/screens/asistente/mostrar_evento.dart';
-import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:festispot/screens/productor/p_aplicaciones_combined.dart';
+import 'package:festispot/screens/productor/p_configuracion.dart';
+import 'package:festispot/screens/productor/p_explorar_evento.dart';
+import 'package:festispot/screens/productor/p_favoritos.dart';
+import 'package:festispot/screens/productor/p_perfil.dart';
+import 'package:festispot/screens/productor/p_mostrar_evento.dart';
+import 'package:festispot/utils/eventos_carrusel.dart';
+import 'package:festispot/utils/variables.dart';
+import 'package:flutter/material.dart';
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+class MainProductor extends StatefulWidget {
+  const MainProductor({super.key});
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  State<MainProductor> createState() => _MainProductorState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainProductorState extends State<MainProductor> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [];
@@ -27,6 +28,7 @@ class _MainScreenState extends State<MainScreen> {
       const Inicio(),
       const ExplorarEventos(),
       const FavoritosScreen(),
+      const AplicacionesCombined(), // Remove the arguments since they're not needed
       const ConfiguracionScreen(),
     ]);
   }
@@ -58,7 +60,7 @@ class _MainScreenState extends State<MainScreen> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: const Color(0xFFE91E63),
+          selectedItemColor: Color.fromARGB(255, 0, 229, 255),
           unselectedItemColor: Colors.white.withOpacity(0.6),
           selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
           unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w400),
@@ -77,6 +79,11 @@ class _MainScreenState extends State<MainScreen> {
               icon: Icon(Icons.favorite_outline),
               activeIcon: Icon(Icons.favorite),
               label: 'Favoritos',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.list_alt_outlined),
+              activeIcon: Icon(Icons.favorite),
+              label: 'Solicitudes',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.settings_outlined),
@@ -98,7 +105,39 @@ class Inicio extends StatefulWidget {
 }
 
 class _InicioState extends State<Inicio> {
-  
+  List<Evento> _eventos = [];
+  bool _isLoading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadEventos();
+  }
+
+  Future<void> _loadEventos() async {
+    try {
+      setState(() {
+        _isLoading = true;
+        _error = null;
+      });
+
+      // Cargar eventos desde la API usando la función de eventos_carrusel
+      final eventos = await loadEventosFromAPI();
+
+      setState(() {
+        _eventos = eventos;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = 'Error al cargar eventos: $e';
+        _isLoading = false;
+        _eventos = []; // Lista vacía en caso de error
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -117,7 +156,7 @@ class _InicioState extends State<Inicio> {
           child: IconButton(
             icon: const Icon(
               Icons.account_circle_outlined,
-              color: Color(0xFFE91E63),
+              color: Color.fromARGB(255, 0, 229, 255),
               size: 24,
             ),
             onPressed: () {
@@ -135,11 +174,15 @@ class _InicioState extends State<Inicio> {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
+                  colors: [Color.fromARGB(255, 0, 229, 255), Color(0xFF9C27B0)],
                 ),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(Icons.celebration, color: Colors.white, size: 20),
+              child: const Icon(
+                Icons.celebration,
+                color: Colors.white,
+                size: 20,
+              ),
             ),
             const SizedBox(width: 8),
             const Text(
@@ -162,7 +205,7 @@ class _InicioState extends State<Inicio> {
             child: IconButton(
               icon: const Icon(
                 Icons.notifications_outlined,
-                color: Color(0xFFE91E63),
+                color: Color.fromARGB(255, 0, 229, 255),
                 size: 24,
               ),
               onPressed: () {
@@ -186,8 +229,8 @@ class _InicioState extends State<Inicio> {
                       icon: Icons.event,
                       title: 'Eventos',
                       subtitle: 'Disponibles',
-                      value: '${carrusel.length}',
-                      color: const Color(0xFFE91E63),
+                      value: '${_eventos.length}',
+                      color: Color.fromARGB(255, 0, 229, 255),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -248,22 +291,74 @@ class _InicioState extends State<Inicio> {
             const SizedBox(height: 12),
 
             // Carrusel de eventos
-            CarouselSlider.builder(
-              itemCount: carrusel.length,
-              itemBuilder: (context, index, realindex) {
-                return CardImages(carrusel: carrusel[index]);
-              },
-              options: CarouselOptions(
-                height: 320,
-                autoPlay: true,
-                autoPlayCurve: Curves.easeInOut,
-                enlargeCenterPage: true,
-                aspectRatio: 16 / 9,
-                viewportFraction: 0.85,
-                scrollDirection: Axis.horizontal,
-                autoPlayInterval: const Duration(seconds: 4),
-              ),
-            ),
+            _isLoading
+                ? const SizedBox(
+                    height: 320,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: Color(0xFFE91E63),
+                      ),
+                    ),
+                  )
+                : _error != null
+                    ? SizedBox(
+                        height: 320,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.error_outline,
+                                color: Colors.red,
+                                size: 64,
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                'Error: $_error',
+                                style: const TextStyle(color: Colors.white),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 16),
+                              ElevatedButton(
+                                onPressed: _loadEventos,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFE91E63),
+                                ),
+                                child: const Text('Reintentar'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    : _eventos.isEmpty
+                        ? const SizedBox(
+                            height: 320,
+                            child: Center(
+                              child: Text(
+                                'No hay eventos disponibles',
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          )
+                        : CarouselSlider.builder(
+                            itemCount: _eventos.length,
+                            itemBuilder: (context, index, realindex) {
+                              return CardImages(carruselevent: _eventos[index]);
+                            },
+                            options: CarouselOptions(
+                              height: 320,
+                              autoPlay: true,
+                              autoPlayCurve: Curves.easeInOut,
+                              enlargeCenterPage: true,
+                              aspectRatio: 16 / 9,
+                              viewportFraction: 0.85,
+                              scrollDirection: Axis.horizontal,
+                              autoPlayInterval: const Duration(seconds: 4),
+                            ),
+                          ),
 
             const SizedBox(height: 24),
 
@@ -287,17 +382,61 @@ class _InicioState extends State<Inicio> {
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: [
-                        _buildCategoryCard('Conferencia', Icons.mic, const Color(0xFFE91E63)),
-                        _buildCategoryCard('Seminario', Icons.school, const Color(0xFF9C27B0)),
-                        _buildCategoryCard('Taller', Icons.handyman, const Color(0xFF00BCD4)),
-                        _buildCategoryCard('Networking', Icons.people_alt, const Color(0xFFFF9800)),
-                        _buildCategoryCard('Festival', Icons.celebration, const Color(0xFF4CAF50)),
-                        _buildCategoryCard('Evento Deportivo', Icons.sports_soccer, const Color(0xFF2196F3)),
-                        _buildCategoryCard('Evento Cultural', Icons.palette, const Color(0xFF8BC34A)),
-                        _buildCategoryCard('Evento Empresarial', Icons.business_center, const Color(0xFF607D8B)),
-                        _buildCategoryCard('Educativo', Icons.menu_book, const Color(0xFFCDDC39)),
-                        _buildCategoryCard('Evento Social', Icons.group, const Color(0xFFFFC107)),
-                        _buildCategoryCard('Otro', Icons.more_horiz, const Color(0xFF795548)),
+                        _buildCategoryCard(
+                          'Conferencia',
+                          Icons.mic,
+                          const Color(0xFFE91E63),
+                        ),
+                        _buildCategoryCard(
+                          'Seminario',
+                          Icons.school,
+                          const Color(0xFF9C27B0),
+                        ),
+                        _buildCategoryCard(
+                          'Taller',
+                          Icons.handyman,
+                          const Color(0xFF00BCD4),
+                        ),
+                        _buildCategoryCard(
+                          'Networking',
+                          Icons.people_alt,
+                          const Color(0xFFFF9800),
+                        ),
+                        _buildCategoryCard(
+                          'Festival',
+                          Icons.celebration,
+                          const Color(0xFF4CAF50),
+                        ),
+                        _buildCategoryCard(
+                          'Evento Deportivo',
+                          Icons.sports_soccer,
+                          const Color(0xFF2196F3),
+                        ),
+                        _buildCategoryCard(
+                          'Evento Cultural',
+                          Icons.palette,
+                          const Color(0xFF8BC34A),
+                        ),
+                        _buildCategoryCard(
+                          'Evento Empresarial',
+                          Icons.business_center,
+                          const Color(0xFF607D8B),
+                        ),
+                        _buildCategoryCard(
+                          'Educativo',
+                          Icons.menu_book,
+                          const Color(0xFFCDDC39),
+                        ),
+                        _buildCategoryCard(
+                          'Evento Social',
+                          Icons.group,
+                          const Color(0xFFFFC107),
+                        ),
+                        _buildCategoryCard(
+                          'Otro',
+                          Icons.more_horiz,
+                          const Color(0xFF795548),
+                        ),
                       ],
                     ),
                   ),
@@ -322,7 +461,9 @@ class _InicioState extends State<Inicio> {
             const SizedBox(height: 16),
 
             // Lista de eventos recomendados
-            ...carrusel.take(3).map((evento) => _buildRecommendedEventCard(evento)),
+            ..._eventos
+                .take(3)
+                .map((evento) => _buildRecommendedEventCard(evento)),
 
             const SizedBox(height: 100), // Espacio para el bottom navigation
           ],
@@ -397,10 +538,7 @@ class _InicioState extends State<Inicio> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            color,
-            color.withOpacity(0.7),
-          ],
+          colors: [color, color.withOpacity(0.7)],
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
@@ -461,11 +599,9 @@ class _InicioState extends State<Inicio> {
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: () {
-            evento.copy();
-            Navigator.push(
-              context,
+            Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) => MostrarEvento(carrusel: evento),
+                builder: (context) => MostrarEventoprod(carrusel: evento),
               ),
             );
           },
@@ -489,7 +625,7 @@ class _InicioState extends State<Inicio> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        evento.nombre ?? 'Evento',
+                        evento.nombre,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -501,7 +637,11 @@ class _InicioState extends State<Inicio> {
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          Icon(Icons.location_on, color: Colors.white.withOpacity(0.6), size: 16),
+                          Icon(
+                            Icons.location_on,
+                            color: Colors.white.withOpacity(0.6),
+                            size: 16,
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             'Ciudad de México', // Placeholder
@@ -515,7 +655,11 @@ class _InicioState extends State<Inicio> {
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          Icon(Icons.calendar_today, color: Colors.white.withOpacity(0.6), size: 16),
+                          Icon(
+                            Icons.calendar_today,
+                            color: Colors.white.withOpacity(0.6),
+                            size: 16,
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             'Próximamente', // Placeholder
@@ -530,10 +674,16 @@ class _InicioState extends State<Inicio> {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
+                      colors: [
+                        Color.fromARGB(255, 0, 229, 255),
+                        Color(0xFF9C27B0),
+                      ],
                     ),
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -556,8 +706,8 @@ class _InicioState extends State<Inicio> {
 }
 
 class CardImages extends StatelessWidget {
-  final Evento carrusel;
-  const CardImages({super.key, required this.carrusel});
+  final Evento carruselevent;
+  const CardImages({super.key, required this.carruselevent});
 
   @override
   Widget build(BuildContext context) {
@@ -577,18 +727,20 @@ class CardImages extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         child: Stack(
           children: [
-            InkWell(
+            GestureDetector(
               onTap: () {
-                Navigator.push(
-                  context,
+                Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => MostrarEvento(carrusel: carrusel),
+                    builder: (context) => MostrarEventoprod(
+                      carrusel:
+                          carruselevent, // This matches the property name in MostrarEventoprod
+                    ),
                   ),
                 );
               },
               child: FadeInImage(
                 placeholder: const AssetImage("assets/images/loading.gif"),
-                image: AssetImage(carrusel.imagen),
+                image: AssetImage(carruselevent.imagen),
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: double.infinity,
@@ -600,10 +752,7 @@ class CardImages extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    Colors.black.withOpacity(0.7),
-                  ],
+                  colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
                 ),
               ),
             ),
@@ -616,7 +765,7 @@ class CardImages extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    carrusel.nombre ?? 'Evento Especial',
+                    carruselevent.nombre,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -629,9 +778,12 @@ class CardImages extends StatelessWidget {
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE91E63),
+                          color: Color.fromARGB(255, 0, 229, 255),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: const Text(
@@ -668,10 +820,14 @@ class CardImages extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: IconButton(
-                  icon: const Icon(Icons.favorite_border, color: Colors.white, size: 20),
+                  icon: const Icon(
+                    Icons.favorite_border,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                   onPressed: () {
                     // Agregar a favoritos
-                    _toggleFavorite(carrusel);
+                    _toggleFavorite(carruselevent);
                   },
                 ),
               ),

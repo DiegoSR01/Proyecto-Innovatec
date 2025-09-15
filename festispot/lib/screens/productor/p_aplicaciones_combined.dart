@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:festispot/utils/eventos_carrusel.dart';
 import 'package:festispot/utils/variables.dart';
-import 'package:festispot/screens/productor/mostrar_eventop.dart';
+import 'package:festispot/screens/productor/p_mostrar_evento.dart';
 
 class AplicacionesCombined extends StatefulWidget {
   const AplicacionesCombined({super.key});

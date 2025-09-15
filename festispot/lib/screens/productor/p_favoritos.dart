@@ -1,45 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:festispot/utils/eventos_carrusel.dart';
 import 'package:festispot/utils/variables.dart';
-import 'package:festispot/screens/productor/mostrar_eventop.dart';
+import 'package:festispot/screens/productor/p_mostrar_evento.dart';
 
-class AplicacionesAceptadas extends StatefulWidget {
-  const AplicacionesAceptadas({super.key});
+class FavoritosScreen extends StatefulWidget {
+  const FavoritosScreen({super.key});
 
   @override
-  State<AplicacionesAceptadas> createState() => _AplicacionesAceptadasState();
+  State<FavoritosScreen> createState() => _FavoritosScreenState();
 }
 
-class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
-  List<Evento> _aplicacionesAceptadas = [];
+class _FavoritosScreenState extends State<FavoritosScreen> {
+  List<Evento> _favoritos = [];
   bool _isGridView = false;
 
   @override
   void initState() {
     super.initState();
-    _loadAplicaciones();
+    _loadFavoritos();
   }
 
-  void _loadAplicaciones() {
-    setState(() {
-      _aplicacionesAceptadas = carrusel.take(3).toList();
-    });
+  void _loadFavoritos() async {
+    // Cargar eventos desde la API primero
+    try {
+      await loadEventosFromAPI();
+      // Aquí simularemos algunos favoritos para la demo
+      // En una app real, cargarías esto desde SharedPreferences o base de datos
+      setState(() {
+        _favoritos = carrusel
+            .take(2)
+            .toList(); // Tomar los primeros 2 como ejemplo
+      });
+    } catch (e) {
+      print('Error al cargar favoritos: $e');
+      setState(() {
+        _favoritos = []; // Lista vacía en caso de error
+      });
+    }
   }
 
-  void _removeAplicacion(Evento evento) {
+  void _removeFavorito(Evento evento) {
     setState(() {
-      _aplicacionesAceptadas.removeWhere((e) => e.id == evento.id);
+      _favoritos.removeWhere((e) => e.id == evento.id);
     });
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Aplicación removida'),
+        content: const Text('Evento removido de favoritos'),
         backgroundColor: const Color(0xFF2D2E3F),
         action: SnackBarAction(
           label: 'Deshacer',
           textColor: Color.fromARGB(255, 0, 229, 255),
           onPressed: () {
             setState(() {
-              _aplicacionesAceptadas.add(evento);
+              _favoritos.add(evento);
             });
           },
         ),
@@ -57,7 +70,7 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
         centerTitle: true,
         automaticallyImplyLeading: false,
         title: const Text(
-          "✅ Aplicaciones Aceptadas",
+          "❤️ Favoritos",
           style: TextStyle(
             color: Colors.white,
             fontSize: 24,
@@ -65,7 +78,7 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
           ),
         ),
         actions: [
-          if (_aplicacionesAceptadas.isNotEmpty)
+          if (_favoritos.isNotEmpty)
             IconButton(
               onPressed: () {
                 setState(() {
@@ -79,9 +92,7 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
             ),
         ],
       ),
-      body: _aplicacionesAceptadas.isEmpty
-          ? _buildEmptyState()
-          : _buildAplicacionesList(),
+      body: _favoritos.isEmpty ? _buildEmptyState() : _buildFavoritosList(),
     );
   }
 
@@ -97,14 +108,14 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
               borderRadius: BorderRadius.circular(50),
             ),
             child: Icon(
-              Icons.check_circle_outline,
+              Icons.favorite_border,
               size: 60,
               color: Colors.white.withOpacity(0.3),
             ),
           ),
           const SizedBox(height: 24),
           Text(
-            'No hay aplicaciones aceptadas',
+            'No tienes favoritos aún',
             style: TextStyle(
               color: Colors.white.withOpacity(0.8),
               fontSize: 20,
@@ -115,7 +126,7 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40),
             child: Text(
-              'Las aplicaciones que aceptes aparecerán aquí para que puedas gestionarlas',
+              'Los eventos que marques como favoritos aparecerán aquí para que puedas acceder fácilmente',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white.withOpacity(0.5),
@@ -124,20 +135,42 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
               ),
             ),
           ),
+          const SizedBox(height: 32),
+          ElevatedButton.icon(
+            onPressed: () {
+              // Navegar a explorar eventos
+            },
+            icon: const Icon(Icons.search, color: Colors.white),
+            label: const Text(
+              'Explorar Eventos',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color.fromARGB(255, 0, 229, 255),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildAplicacionesList() {
+  Widget _buildFavoritosList() {
     return Column(
       children: [
+        // Header con contador
         Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
               Text(
-                '${_aplicacionesAceptadas.length} aplicación${_aplicacionesAceptadas.length != 1 ? 'es' : ''} aceptada${_aplicacionesAceptadas.length != 1 ? 's' : ''}',
+                '${_favoritos.length} evento${_favoritos.length != 1 ? 's' : ''} favorito${_favoritos.length != 1 ? 's' : ''}',
                 style: TextStyle(
                   color: Colors.white.withOpacity(0.8),
                   fontSize: 16,
@@ -145,7 +178,7 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
                 ),
               ),
               const Spacer(),
-              if (_aplicacionesAceptadas.isNotEmpty)
+              if (_favoritos.isNotEmpty)
                 TextButton.icon(
                   onPressed: () {
                     _showClearAllDialog();
@@ -166,15 +199,17 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
             ],
           ),
         ),
+
+        // Lista de favoritos
         Expanded(
           child: _isGridView
               ? _buildGridView()
               : ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: _aplicacionesAceptadas.length,
+                  itemCount: _favoritos.length,
                   itemBuilder: (context, index) {
-                    final evento = _aplicacionesAceptadas[index];
-                    return _buildAplicacionCard(evento);
+                    final evento = _favoritos[index];
+                    return _buildFavoritoCard(evento, index);
                   },
                 ),
         ),
@@ -191,15 +226,15 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
         mainAxisSpacing: 16,
         childAspectRatio: 0.8,
       ),
-      itemCount: _aplicacionesAceptadas.length,
+      itemCount: _favoritos.length,
       itemBuilder: (context, index) {
-        final evento = _aplicacionesAceptadas[index];
+        final evento = _favoritos[index];
         return _buildGridCard(evento);
       },
     );
   }
 
-  Widget _buildAplicacionCard(Evento evento) {
+  Widget _buildFavoritoCard(Evento evento, int index) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -218,6 +253,7 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: () {
+            evento.copy();
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -229,25 +265,30 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
+                // Imagen del evento
                 Hero(
-                  tag: 'aplicacion_${evento.id}',
+                  tag: 'evento_${evento.id}',
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: Image.asset(
-                      evento.imagen,
+                    child: FadeInImage(
+                      placeholder: const AssetImage(
+                        "assets/images/loading.gif",
+                      ),
+                      image: AssetImage(evento.imagen),
+                      fit: BoxFit.cover,
                       width: 100,
                       height: 100,
-                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
                 const SizedBox(width: 16),
+                // Información del evento
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        evento.nombre,
+                        evento.nombre ?? 'Evento',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -257,25 +298,28 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.green,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Text(
-                          'ACEPTADA',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.location_on,
+                            color: Colors.white.withOpacity(0.6),
+                            size: 16,
                           ),
-                        ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              'Ciudad de México',
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.6),
+                                fontSize: 14,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 4),
                       Row(
                         children: [
                           Icon(
@@ -285,7 +329,7 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            'Fecha del evento',
+                            'Próximamente',
                             style: TextStyle(
                               color: Colors.white.withOpacity(0.6),
                               fontSize: 14,
@@ -293,26 +337,51 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
                           ),
                         ],
                       ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 0, 229, 255),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          'FAVORITO',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
+                // Botones de acción
                 Column(
                   children: [
                     IconButton(
-                      onPressed: () => _removeAplicacion(evento),
+                      onPressed: () {
+                        _removeFavorito(evento);
+                      },
                       icon: const Icon(
-                        Icons.check_circle,
-                        color: Colors.green,
+                        Icons.favorite,
+                        color: Color(0xFFE91E63),
                         size: 24,
                       ),
                     ),
+                    const SizedBox(height: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.green,
+                        gradient: const LinearGradient(
+                          colors: [Color.fromARGB(255, 0, 229, 255), Color(0xFF9C27B0)],
+                        ),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: const Text(
@@ -352,6 +421,7 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: () {
+            evento.copy();
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -362,6 +432,7 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Imagen
               Expanded(
                 flex: 3,
                 child: Stack(
@@ -370,11 +441,14 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
                       borderRadius: const BorderRadius.vertical(
                         top: Radius.circular(16),
                       ),
-                      child: Image.asset(
-                        evento.imagen,
+                      child: FadeInImage(
+                        placeholder: const AssetImage(
+                          "assets/images/loading.gif",
+                        ),
+                        image: AssetImage(evento.imagen),
+                        fit: BoxFit.cover,
                         width: double.infinity,
                         height: double.infinity,
-                        fit: BoxFit.cover,
                       ),
                     ),
                     Positioned(
@@ -386,10 +460,12 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: IconButton(
-                          onPressed: () => _removeAplicacion(evento),
+                          onPressed: () {
+                            _removeFavorito(evento);
+                          },
                           icon: const Icon(
-                            Icons.check_circle,
-                            color: Colors.green,
+                            Icons.favorite,
+                            color: Color(0xFFE91E63),
                             size: 20,
                           ),
                         ),
@@ -398,6 +474,7 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
                   ],
                 ),
               ),
+              // Información
               Expanded(
                 flex: 2,
                 child: Padding(
@@ -406,7 +483,7 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        evento.nombre,
+                        evento.nombre ?? 'Evento',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 14,
@@ -415,24 +492,42 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.green,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Text(
-                          'ACEPTADA',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.location_on,
+                            color: Colors.white.withOpacity(0.6),
+                            size: 12,
                           ),
-                        ),
+                          const SizedBox(width: 2),
+                          Expanded(
+                            child: Text(
+                              'CDMX',
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.6),
+                                fontSize: 12,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Spacer(),
+                      Row(
+                        children: [
+                          const Icon(Icons.star, color: Colors.amber, size: 14),
+                          const SizedBox(width: 2),
+                          Text(
+                            '4.8',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.8),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -452,11 +547,11 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
         backgroundColor: const Color(0xFF2D2E3F),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text(
-          'Limpiar aplicaciones',
+          'Limpiar favoritos',
           style: TextStyle(color: Colors.white),
         ),
         content: const Text(
-          '¿Estás seguro de que quieres eliminar todas las aplicaciones aceptadas?',
+          '¿Estás seguro de que quieres eliminar todos los eventos de tus favoritos?',
           style: TextStyle(color: Colors.white70),
         ),
         actions: [
@@ -470,12 +565,12 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
           ElevatedButton(
             onPressed: () {
               setState(() {
-                _aplicacionesAceptadas.clear();
+                _favoritos.clear();
               });
               Navigator.pop(context);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
+              backgroundColor: const Color(0xFFE91E63),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),

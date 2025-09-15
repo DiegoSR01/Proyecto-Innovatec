@@ -98,27 +98,4 @@ enum ApiEnvironment {
   final String displayName;
 }
 
-/// Configuración específica para credenciales locales (fallback)
-class LocalCredentials {
-  static const Map<String, Map<String, String>> users = {
-    'asistente@festispot.com': {
-      'password': 'asistente123',
-      'tipo': 'asistente',
-      'nombre': 'Usuario Asistente',
-    },
-    'productor@festispot.com': {
-      'password': 'productor123', 
-      'tipo': 'productor',
-      'nombre': 'Usuario Productor',
-    },
-  };
-  
-  /// Valida credenciales locales
-  static Map<String, String>? validateCredentials(String email, String password) {
-    final user = users[email];
-    if (user != null && user['password'] == password) {
-      return user;
-    }
-    return null;
-  }
-}
+

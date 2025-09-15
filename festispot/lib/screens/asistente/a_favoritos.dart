@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:festispot/utils/eventos_carrusel.dart';
 import 'package:festispot/utils/variables.dart';
-import 'package:festispot/screens/asistente/mostrar_evento.dart';
+import 'package:festispot/screens/asistente/a_mostrar_evento.dart';
+import 'package:festispot/services/api_service.dart';
+import 'package:festispot/services/auth_service.dart';
 
 class FavoritosScreen extends StatefulWidget {
   const FavoritosScreen({super.key});
@@ -13,6 +15,8 @@ class FavoritosScreen extends StatefulWidget {
 class _FavoritosScreenState extends State<FavoritosScreen> {
   List<Evento> _favoritos = [];
   bool _isGridView = false;
+  bool _isLoading = true;
+  int? _currentUserId;
 
   @override
   void initState() {
@@ -20,33 +24,96 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
     _loadFavoritos();
   }
 
-  void _loadFavoritos() {
-    // Aquí simularemos algunos favoritos para la demo
-    // En una app real, cargarías esto desde SharedPreferences o base de datos
-    setState(() {
-      _favoritos = carrusel.take(2).toList(); // Tomar los primeros 2 como ejemplo
-    });
+  void _loadFavoritos() async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      // Obtener el usuario actual
+      final currentUser = AuthService.currentUser;
+      if (currentUser?.id == null) {
+        setState(() {
+          _favoritos = [];
+          _isLoading = false;
+        });
+        return;
+      }
+
+      _currentUserId = currentUser!.id!;
+
+      // Cargar eventos desde la API
+      await loadEventosFromAPI();
+      
+      // Cargar favoritos del usuario desde la BD
+      final favoritosData = await ApiService.getFavoritos(_currentUserId!);
+      
+      // Filtrar eventos que están en favoritos
+      final eventosIds = favoritosData.map((fav) => fav['event_id']).toList();
+      final eventosFavoritos = carrusel.where((evento) => 
+        eventosIds.contains(evento.id)
+      ).toList();
+      
+      setState(() {
+        _favoritos = eventosFavoritos;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Error al cargar favoritos: $e');
+      setState(() {
+        _favoritos = [];
+        _isLoading = false;
+      });
+    }
   }
 
-  void _removeFavorito(Evento evento) {
-    setState(() {
-      _favoritos.removeWhere((e) => e.id == evento.id);
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Evento removido de favoritos'),
-        backgroundColor: const Color(0xFF2D2E3F),
-        action: SnackBarAction(
-          label: 'Deshacer',
-          textColor: const Color(0xFFE91E63),
-          onPressed: () {
-            setState(() {
-              _favoritos.add(evento);
-            });
-          },
+  void _removeFavorito(Evento evento) async {
+    if (_currentUserId == null) return;
+
+    try {
+      // Remover de la BD
+      final success = await ApiService.toggleFavorito(_currentUserId!, evento.id);
+      
+      if (success) {
+        setState(() {
+          _favoritos.removeWhere((e) => e.id == evento.id);
+        });
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${evento.nombre} removido de favoritos'),
+            backgroundColor: const Color(0xFF2D2E3F),
+            action: SnackBarAction(
+              label: 'Deshacer',
+              textColor: const Color(0xFFE91E63),
+              onPressed: () async {
+                // Volver a agregar a favoritos
+                final addSuccess = await ApiService.toggleFavorito(_currentUserId!, evento.id);
+                if (addSuccess) {
+                  setState(() {
+                    _favoritos.add(evento);
+                  });
+                }
+              },
+            ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error al remover favorito'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'),
+          backgroundColor: Colors.red,
         ),
-      ),
-    );
+      );
+    }
   }
 
   @override
@@ -67,7 +134,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
           ),
         ),
         actions: [
-          if (_favoritos.isNotEmpty)
+          if (_favoritos.isNotEmpty && !_isLoading)
             IconButton(
               onPressed: () {
                 setState(() {
@@ -81,7 +148,25 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
             ),
         ],
       ),
-      body: _favoritos.isEmpty ? _buildEmptyState() : _buildFavoritosList(),
+      body: _isLoading 
+          ? const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFE91E63)),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Cargando favoritos...',
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                ],
+              ),
+            )
+          : _favoritos.isEmpty 
+              ? _buildEmptyState() 
+              : _buildFavoritosList(),
     );
   }
 
