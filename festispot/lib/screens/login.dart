@@ -1,6 +1,7 @@
 import 'package:festispot/screens/asistente/inicio.dart';
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
+import '../config/api_config.dart';
 import 'productor/iniciopro.dart';
 import 'registro.dart';
 
@@ -33,6 +34,10 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       try {
+        if (ApiConfig.isDebugMode) {
+          print('🔄 Iniciando login desde UI para: ${_emailController.text.trim()}');
+        }
+        
         // Usar el servicio de autenticación
         final result = await AuthService.login(
           _emailController.text.trim(),
@@ -44,21 +49,43 @@ class _LoginScreenState extends State<LoginScreen> {
         });
 
         result.onSuccess((user, message) {
+          if (ApiConfig.isDebugMode) {
+            print('✅ Login exitoso en UI:');
+            print('   Usuario: ${user?.nombre} ${user?.apellido}');
+            print('   Rol: ${user?.rolId} (${user?.nombreRol})');
+            print('   Es Asistente: ${user?.esAsistente}');
+            print('   Es Productor: ${user?.esProductor}');
+          }
+          
           _showCustomSnackBar(message, true);
           
           // Navegar según el tipo de usuario
           if (user?.esAsistente == true) {
+            if (ApiConfig.isDebugMode) {
+              print('🔀 Navegando a pantalla de Asistente');
+            }
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (context) => const MainScreen()),
             );
           } else if (user?.esProductor == true) {
+            if (ApiConfig.isDebugMode) {
+              print('🔀 Navegando a pantalla de Productor');
+            }
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (context) => const MainProductor()),
             );
+          } else {
+            if (ApiConfig.isDebugMode) {
+              print('⚠️ Rol no reconocido: ${user?.rolId}');
+            }
+            _showCustomSnackBar('Rol de usuario no reconocido. Contacta al administrador.', false);
           }
         });
 
         result.onError((errorMessage) {
+          if (ApiConfig.isDebugMode) {
+            print('❌ Error en login desde UI: $errorMessage');
+          }
           _showCustomSnackBar(errorMessage, false);
         });
 
@@ -66,6 +93,9 @@ class _LoginScreenState extends State<LoginScreen> {
         setState(() {
           _isLoading = false;
         });
+        if (ApiConfig.isDebugMode) {
+          print('❌ Excepción en _handleLogin: $e');
+        }
         _showCustomSnackBar('Error inesperado: $e', false);
       }
     }

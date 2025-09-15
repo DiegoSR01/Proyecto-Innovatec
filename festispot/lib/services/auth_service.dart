@@ -20,22 +20,43 @@ class AuthService {
   /// Inicia sesión con email y password
   static Future<AuthResult> login(String email, String password) async {
     try {
+      if (ApiConfig.isDebugMode) {
+        print('🔄 Iniciando proceso de login para: $email');
+      }
+      
       // Primero intenta con la API
       try {
         final usuario = await ApiService.loginUsuario(email, password);
         if (usuario != null) {
+          if (ApiConfig.isDebugMode) {
+            print('✅ Usuario obtenido de la API:');
+            print('   ID: ${usuario.id}');
+            print('   Nombre: ${usuario.nombre} ${usuario.apellido}');
+            print('   Email: ${usuario.email}');
+            print('   Rol ID: ${usuario.rolId}');
+            print('   Es Asistente: ${usuario.esAsistente}');
+            print('   Es Productor: ${usuario.esProductor}');
+            print('   Estado: ${usuario.estado}');
+          }
+          
           await _saveUser(usuario);
           _currentUser = usuario;
-          return AuthResult.success(usuario, 'Login exitoso');
+          return AuthResult.success(usuario, 'Login exitoso - Bienvenido ${usuario.nombre}!');
         }
       } catch (apiError) {
+        if (ApiConfig.isDebugMode) {
+          print('❌ Error en API login: $apiError');
+          print('🔄 Intentando con credenciales locales como fallback...');
+        }
         // Si falla la API, usar credenciales hardcodeadas como fallback
-        print('API no disponible, usando credenciales locales: $apiError');
         return await _loginLocal(email, password);
       }
 
       return AuthResult.error('Credenciales incorrectas');
     } catch (e) {
+      if (ApiConfig.isDebugMode) {
+        print('❌ Error general en login: $e');
+      }
       return AuthResult.error('Error durante el login: $e');
     }
   }
@@ -47,10 +68,13 @@ class AuthService {
     if (userCredentials != null) {
       final usuario = Usuario(
         id: email == 'asistente@festispot.com' ? 1 : 2,
-        nombre: userCredentials['nombre']!,
+        nombre: userCredentials['nombre']!.split(' ')[0],
+        apellido: userCredentials['nombre']!.split(' ').length > 1 
+          ? userCredentials['nombre']!.split(' ')[1] 
+          : 'Apellido',
         email: email,
         password: password,
-        tipo: userCredentials['tipo']!,
+        rolId: userCredentials['tipo'] == 'asistente' ? 1 : 2,
       );
 
       await _saveUser(usuario);
@@ -64,33 +88,60 @@ class AuthService {
   /// Registra un nuevo usuario
   static Future<AuthResult> register({
     required String nombre,
+    required String apellido,
     required String email,
     required String password,
-    required String tipo,
+    int rolId = 1, // 1=asistente por defecto
     String? telefono,
     String? fechaNacimiento,
+    String? genero,
   }) async {
     try {
+      if (ApiConfig.isDebugMode) {
+        print('🔄 Iniciando registro de usuario: $email');
+      }
+      
       final nuevoUsuario = Usuario(
         nombre: nombre,
+        apellido: apellido,
         email: email,
         password: password,
-        tipo: tipo,
+        rolId: rolId,
         telefono: telefono,
         fechaNacimiento: fechaNacimiento,
+        genero: genero,
         fechaCreacion: DateTime.now(),
       );
 
       final success = await ApiService.registrarUsuario(nuevoUsuario);
       
       if (success) {
-        // Después de registrar, hacer login automáticamente
-        return await login(email, password);
+        if (ApiConfig.isDebugMode) {
+          print('✅ Registro exitoso');
+        }
+        // Devolver éxito sin hacer login automático para evitar problemas
+        return AuthResult.success(
+          nuevoUsuario, 
+          'Usuario registrado exitosamente. Ya puedes iniciar sesión.'
+        );
       } else {
-        return AuthResult.error('Error al registrar usuario');
+        return AuthResult.error('Error al registrar usuario en el servidor');
       }
+    } on ApiException catch (e) {
+      // Manejar errores específicos de la API
+      String errorMessage = e.message;
+      if (errorMessage.contains('email ya está registrado') || 
+          errorMessage.contains('email already exists')) {
+        errorMessage = 'Este email ya está registrado. Intenta con otro email.';
+      } else if (errorMessage.contains('JSON')) {
+        errorMessage = 'Error de comunicación con el servidor. Inténtalo de nuevo.';
+      }
+      return AuthResult.error(errorMessage);
     } catch (e) {
-      return AuthResult.error('Error durante el registro: $e');
+      if (ApiConfig.isDebugMode) {
+        print('❌ Error durante el registro: $e');
+      }
+      return AuthResult.error('Error durante el registro: ${e.toString()}');
     }
   }
 

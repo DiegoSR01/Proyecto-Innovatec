@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../models/usuario.dart';
+import '../services/auth_service.dart';
+import '../config/api_config.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -14,10 +17,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _phoneController = TextEditingController();
+  
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
   bool _isLoading = false;
-  String _selectedUserType = 'asistente';
+  int _selectedUserType = 1; // 1=asistente, 2=organizador
+  String? _selectedGender;
+  DateTime? _birthDate;
   bool _acceptTerms = false;
   bool _acceptPrivacy = false;
 
@@ -28,39 +35,141 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _phoneController.dispose();
     super.dispose();
   }
 
   void _handleRegister() async {
-    if (_formKey.currentState!.validate()) {
-      if (!_acceptTerms || !_acceptPrivacy) {
-        _showCustomSnackBar(
-          'Debes aceptar los términos y condiciones y la política de privacidad',
-          false,
-        );
-        return;
-      }
+    // Envolver todo en try-catch para prevenir cierre de app
+    try {
+      if (_formKey.currentState!.validate()) {
+        if (!_acceptTerms || !_acceptPrivacy) {
+          _showCustomSnackBar(
+            'Debes aceptar los términos y condiciones y la política de privacidad',
+            false,
+          );
+          return;
+        }
 
-      setState(() {
+        setState(() {
         _isLoading = true;
       });
 
-      // Simular proceso de registro
-      await Future.delayed(const Duration(seconds: 2));
+      try {
+        // Debug: mostrar información de configuración
+        if (ApiConfig.isDebugMode) {
+          print('🔧 Configuración actual:');
+          print('   URL: ${ApiConfig.currentAuthUrl}');
+          print('   Debug Mode: ${ApiConfig.isDebugMode}');
+          print('   Environment: ${ApiConfig.currentEnvironment}');
+        }
 
-      setState(() {
-        _isLoading = false;
-      });
+        // Validar email antes de enviar
+        final email = _emailController.text.trim().toLowerCase();
+        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
+          _showCustomSnackBar('El formato del email no es válido', false);
+          return;
+        }
 
+        // Llamar al servicio de autenticación
+        final result = await AuthService.register(
+          nombre: _firstNameController.text.trim(),
+          apellido: _lastNameController.text.trim(),
+          email: email,
+          password: _passwordController.text,
+          telefono: _phoneController.text.trim().isNotEmpty ? _phoneController.text.trim() : null,
+          fechaNacimiento: _birthDate?.toIso8601String().split('T')[0],
+          genero: _selectedGender,
+          rolId: _selectedUserType,
+        );
+
+        if (result.isSuccess) {
+          _showCustomSnackBar(
+            result.message,
+            true,
+          );
+
+          // Regresar al login después de un momento
+          Future.delayed(const Duration(seconds: 2), () {
+            if (mounted) {
+              Navigator.of(context).pop();
+            }
+          });
+        } else {
+          // Mostrar error específico del servidor
+          String errorMessage = result.message;
+          
+          // Personalizar algunos mensajes de error comunes
+          if (errorMessage.contains('email ya está registrado') || 
+              errorMessage.contains('already exists')) {
+            errorMessage = 'Este email ya está registrado. Intenta iniciar sesión o usa otro email.';
+          } else if (errorMessage.contains('JSON') || errorMessage.contains('decodificar')) {
+            errorMessage = 'Error de comunicación con el servidor. Verifica tu conexión e inténtalo de nuevo.';
+          } else if (errorMessage.contains('conexión') || errorMessage.contains('internet')) {
+            errorMessage = 'Sin conexión a internet. Verifica tu red e inténtalo de nuevo.';
+          } else if (errorMessage.contains('conexión a la base de datos') || 
+                     errorMessage.contains('MySQL') ||
+                     errorMessage.contains('database connection')) {
+            errorMessage = '⚠️ Servidor en mantenimiento. El servicio de base de datos no está disponible temporalmente. Inténtalo más tarde.';
+          } else if (errorMessage.contains('HTML en lugar de JSON') ||
+                     errorMessage.contains('no válida')) {
+            errorMessage = '🔧 Error del servidor. El administrador ha sido notificado. Inténtalo más tarde.';
+          }
+          
+          _showCustomSnackBar(errorMessage, false);
+        }
+      } catch (e) {
+        // Error no controlado
+        String errorMessage = 'Error inesperado: ${e.toString()}';
+        
+        if (e.toString().contains('SocketException')) {
+          errorMessage = 'Sin conexión a internet. Verifica tu red e inténtalo de nuevo.';
+        } else if (e.toString().contains('TimeoutException')) {
+          errorMessage = 'La conexión tardó demasiado. Inténtalo de nuevo.';
+        } else if (e.toString().contains('JSON')) {
+          errorMessage = 'Error de comunicación con el servidor. Inténtalo de nuevo.';
+        } else if (e.toString().contains('conexión a la base de datos') || 
+                   e.toString().contains('MySQL') ||
+                   e.toString().contains('database')) {
+          errorMessage = '⚠️ Servidor en mantenimiento. Inténtalo más tarde.';
+        } else if (e.toString().contains('ApiException')) {
+          // Extraer el mensaje limpio de ApiException
+          String message = e.toString().replaceAll('ApiException: ', '');
+          errorMessage = message;
+        }
+        
+        _showCustomSnackBar(errorMessage, false);
+        
+        // Debug: mostrar error completo en consola
+        if (ApiConfig.isDebugMode) {
+          print('❌ Error completo: $e');
+          print('❌ Stack trace: ${StackTrace.current}');
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
+    }
+    } catch (e) {
+      // Capturar cualquier error no manejado para prevenir cierre de app
+      if (ApiConfig.isDebugMode) {
+        print('❌ Error crítico no manejado en registro: $e');
+        print('❌ Stack trace: ${StackTrace.current}');
+      }
+      
       _showCustomSnackBar(
-        '¡Cuenta creada exitosamente! Ya puedes iniciar sesión',
-        true,
+        'Error inesperado. Por favor, inténtalo de nuevo.',
+        false,
       );
-
-      // Regresar al login después de un momento
-      Future.delayed(const Duration(seconds: 1), () {
-        Navigator.of(context).pop();
-      });
+      
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -213,7 +322,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         children: [
                           Expanded(
                             child: _buildUserTypeCard(
-                              'asistente',
+                              1,
                               'Asistente',
                               Icons.person_outline,
                               'Descubre eventos',
@@ -222,8 +331,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: _buildUserTypeCard(
-                              'productor',
-                              'Productor',
+                              2,
+                              'Organizador',
                               Icons.business_outlined,
                               'Organiza eventos',
                             ),
@@ -264,6 +373,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           return null;
                         },
                       ),
+                      const SizedBox(height: 20),
+
+                      // Campo de teléfono (opcional)
+                      _buildTextField(
+                        controller: _phoneController,
+                        label: 'Teléfono (opcional)',
+                        icon: Icons.phone_outlined,
+                        keyboardType: TextInputType.phone,
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Selector de género (opcional)
+                      _buildGenderSelector(),
+                      const SizedBox(height: 20),
+
+                      // Selector de fecha de nacimiento (opcional)
+                      _buildDateSelector(),
                       const SizedBox(height: 20),
 
                       // Campo de email
@@ -540,7 +666,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget _buildUserTypeCard(
-    String value,
+    int value,
     String title,
     IconData icon,
     String subtitle,
@@ -606,6 +732,120 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildGenderSelector() {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF1A1B2E),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.1),
+          width: 1,
+        ),
+      ),
+      child: DropdownButtonFormField<String>(
+        value: _selectedGender,
+        decoration: InputDecoration(
+          labelText: 'Género (opcional)',
+          labelStyle: TextStyle(
+            color: Colors.white.withOpacity(0.7),
+            fontSize: 16,
+          ),
+          prefixIcon: const Icon(
+            Icons.person_outline,
+            color: Color(0xFFE91E63),
+          ),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 18,
+          ),
+        ),
+        dropdownColor: const Color(0xFF2D2E3F),
+        style: const TextStyle(color: Colors.white, fontSize: 16),
+        items: const [
+          DropdownMenuItem(value: 'masculino', child: Text('Masculino')),
+          DropdownMenuItem(value: 'femenino', child: Text('Femenino')),
+          DropdownMenuItem(value: 'otro', child: Text('Otro')),
+          DropdownMenuItem(value: 'prefiero_no_decir', child: Text('Prefiero no decir')),
+        ],
+        onChanged: (value) {
+          setState(() {
+            _selectedGender = value;
+          });
+        },
+      ),
+    );
+  }
+
+  Widget _buildDateSelector() {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF1A1B2E),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.1),
+          width: 1,
+        ),
+      ),
+      child: ListTile(
+        leading: const Icon(
+          Icons.calendar_today_outlined,
+          color: Color(0xFFE91E63),
+        ),
+        title: Text(
+          _birthDate == null 
+            ? 'Fecha de nacimiento (opcional)'
+            : 'Nacimiento: ${_birthDate!.day}/${_birthDate!.month}/${_birthDate!.year}',
+          style: TextStyle(
+            color: _birthDate == null 
+              ? Colors.white.withOpacity(0.7)
+              : Colors.white,
+            fontSize: 16,
+          ),
+        ),
+        trailing: _birthDate != null 
+          ? IconButton(
+              icon: Icon(
+                Icons.clear,
+                color: Colors.white.withOpacity(0.7),
+              ),
+              onPressed: () {
+                setState(() {
+                  _birthDate = null;
+                });
+              },
+            )
+          : null,
+        onTap: () async {
+          final DateTime? picked = await showDatePicker(
+            context: context,
+            initialDate: _birthDate ?? DateTime(2000),
+            firstDate: DateTime(1900),
+            lastDate: DateTime.now().subtract(const Duration(days: 365 * 13)), // Mínimo 13 años
+            builder: (context, child) {
+              return Theme(
+                data: ThemeData.dark().copyWith(
+                  colorScheme: const ColorScheme.dark(
+                    primary: Color(0xFFE91E63),
+                    onPrimary: Colors.white,
+                    surface: Color(0xFF2D2E3F),
+                    onSurface: Colors.white,
+                  ),
+                ),
+                child: child!,
+              );
+            },
+          );
+          if (picked != null && picked != _birthDate) {
+            setState(() {
+              _birthDate = picked;
+            });
+          }
+        },
       ),
     );
   }

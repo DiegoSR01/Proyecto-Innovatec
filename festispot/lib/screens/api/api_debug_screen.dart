@@ -647,7 +647,7 @@ class _ApiDebugScreenState extends State<ApiDebugScreen> {
                 ),
               ],
             ),
-          )).toList(),
+          )),
         ],
       ),
     );
@@ -832,7 +832,7 @@ class _ApiDebugScreenState extends State<ApiDebugScreen> {
           if (evento['descripcion'] != null || evento['description'] != null) ...[
             const SizedBox(height: 4),
             Text(
-              'Descripción: ${(evento['descripcion'] ?? evento['description']).toString().length > 50 ? (evento['descripcion'] ?? evento['description']).toString().substring(0, 50) + '...' : evento['descripcion'] ?? evento['description']}',
+              'Descripción: ${(evento['descripcion'] ?? evento['description']).toString().length > 50 ? '${(evento['descripcion'] ?? evento['description']).toString().substring(0, 50)}...' : evento['descripcion'] ?? evento['description']}',
               style: const TextStyle(
                 color: Colors.white60,
                 fontSize: 12,
@@ -1068,7 +1068,7 @@ class _ApiDebugScreenState extends State<ApiDebugScreen> {
           if (review['comentario'] != null || review['comment'] != null) ...[
             const SizedBox(height: 4),
             Text(
-              '${(review['comentario'] ?? review['comment']).toString().length > 80 ? (review['comentario'] ?? review['comment']).toString().substring(0, 80) + '...' : review['comentario'] ?? review['comment']}',
+              '${(review['comentario'] ?? review['comment']).toString().length > 80 ? '${(review['comentario'] ?? review['comment']).toString().substring(0, 80)}...' : review['comentario'] ?? review['comment']}',
               style: const TextStyle(
                 color: Color(0xFF00BCD4),
                 fontSize: 14,
@@ -1168,7 +1168,7 @@ class _ApiDebugScreenState extends State<ApiDebugScreen> {
           if (notificacion['mensaje'] != null || notificacion['message'] != null) ...[
             const SizedBox(height: 4),
             Text(
-              '${(notificacion['mensaje'] ?? notificacion['message']).toString().length > 60 ? (notificacion['mensaje'] ?? notificacion['message']).toString().substring(0, 60) + '...' : notificacion['mensaje'] ?? notificacion['message']}',
+              '${(notificacion['mensaje'] ?? notificacion['message']).toString().length > 60 ? '${(notificacion['mensaje'] ?? notificacion['message']).toString().substring(0, 60)}...' : notificacion['mensaje'] ?? notificacion['message']}',
               style: const TextStyle(
                 color: Color(0xFF00BCD4),
                 fontSize: 14,
@@ -1303,7 +1303,7 @@ class _ApiDebugScreenState extends State<ApiDebugScreen> {
           if (imagen['url'] != null) ...[
             const SizedBox(height: 4),
             Text(
-              'URL: ${imagen['url'].toString().length > 50 ? imagen['url'].toString().substring(0, 50) + '...' : imagen['url']}',
+              'URL: ${imagen['url'].toString().length > 50 ? '${imagen['url'].toString().substring(0, 50)}...' : imagen['url']}',
               style: const TextStyle(
                 color: Color(0xFF00BCD4),
                 fontSize: 14,

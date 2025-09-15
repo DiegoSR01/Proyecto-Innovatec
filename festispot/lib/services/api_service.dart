@@ -16,14 +16,75 @@ class ApiService {
     if (ApiConfig.isDebugMode) {
       print('API Response [${response.statusCode}]: ${response.body}');
       print('');
-      _printFormattedResponse(response);
     }
     
     if (response.statusCode >= 200 && response.statusCode < 300) {
       try {
-        return json.decode(response.body);
+        // Limpiar la respuesta para remover posibles elementos HTML
+        String cleanedBody = response.body;
+        
+        // Remover posibles warnings o HTML al inicio/final
+        cleanedBody = cleanedBody.trim();
+        
+        // Detectar errores de conexión específicos
+        if (cleanedBody.contains('Error de conexión') || 
+            cleanedBody.contains('MySQL server has gone away') ||
+            cleanedBody.contains('No se puede establecer una conexión') ||
+            cleanedBody.contains('Fatal error') ||
+            cleanedBody.contains('SQLSTATE[HY000]')) {
+          
+          // Esto es un error de conexión a la base de datos
+          throw ApiException(
+            'Error de conexión a la base de datos. Verifica que el servidor MySQL esté ejecutándose.',
+            500
+          );
+        }
+        
+        // Si contiene HTML, buscar el JSON válido
+        if (cleanedBody.contains('<') && cleanedBody.contains('>')) {
+          // Buscar el primer { o [ que indique el inicio del JSON
+          int jsonStart = -1;
+          for (int i = 0; i < cleanedBody.length; i++) {
+            if (cleanedBody[i] == '{' || cleanedBody[i] == '[') {
+              jsonStart = i;
+              break;
+            }
+          }
+          
+          // Buscar el último } o ] que indique el final del JSON
+          int jsonEnd = -1;
+          for (int i = cleanedBody.length - 1; i >= 0; i--) {
+            if (cleanedBody[i] == '}' || cleanedBody[i] == ']') {
+              jsonEnd = i + 1;
+              break;
+            }
+          }
+          
+          if (jsonStart != -1 && jsonEnd != -1 && jsonStart < jsonEnd) {
+            cleanedBody = cleanedBody.substring(jsonStart, jsonEnd);
+          } else {
+            // No se encontró JSON válido en respuesta HTML
+            throw ApiException(
+              'Respuesta del servidor no válida. Se recibió HTML en lugar de JSON.',
+              500
+            );
+          }
+        }
+        
+        final data = json.decode(cleanedBody);
+        
+        if (ApiConfig.isDebugMode) {
+          _printFormattedResponse(response);
+        }
+        
+        return data;
       } catch (e) {
-        throw ApiException('Error al decodificar JSON: $e', response.statusCode);
+        // Si hay error de decodificación, mostrar más información
+        print('Error al decodificar JSON:');
+        print('Response body: ${response.body}');
+        print('Status code: ${response.statusCode}');
+        print('Error: $e');
+        throw ApiException('Error al decodificar JSON: $e\nResponse: ${response.body}', response.statusCode);
       }
     } else {
       throw ApiException('Error HTTP ${response.statusCode}: ${response.body}', response.statusCode);
@@ -33,7 +94,32 @@ class ApiService {
   // Método para formatear y mostrar la respuesta como una consulta de base de datos
   static void _printFormattedResponse(http.Response response) {
     try {
-      final data = json.decode(response.body);
+      // Usar el mismo proceso de limpieza que en _handleResponse
+      String cleanedBody = response.body.trim();
+      
+      if (cleanedBody.contains('<') && cleanedBody.contains('>')) {
+        int jsonStart = -1;
+        for (int i = 0; i < cleanedBody.length; i++) {
+          if (cleanedBody[i] == '{' || cleanedBody[i] == '[') {
+            jsonStart = i;
+            break;
+          }
+        }
+        
+        int jsonEnd = -1;
+        for (int i = cleanedBody.length - 1; i >= 0; i--) {
+          if (cleanedBody[i] == '}' || cleanedBody[i] == ']') {
+            jsonEnd = i + 1;
+            break;
+          }
+        }
+        
+        if (jsonStart != -1 && jsonEnd != -1 && jsonStart < jsonEnd) {
+          cleanedBody = cleanedBody.substring(jsonStart, jsonEnd);
+        }
+      }
+      
+      final data = json.decode(cleanedBody);
       print('═══════════════════════════════════════════════════════════════');
       print('🗃️  CONSULTA API - RESULTADO FORMATEADO');
       print('═══════════════════════════════════════════════════════════════');
@@ -168,6 +254,11 @@ class ApiService {
   /// Login de usuario con email y contraseña usando auth.php
   static Future<Usuario?> loginUsuario(String email, String password) async {
     try {
+      if (ApiConfig.isDebugMode) {
+        print('🔄 Iniciando login: $email');
+        print('📡 URL: ${ApiConfig.currentAuthUrl}');
+      }
+      
       final response = await http
           .post(
             Uri.parse(ApiConfig.currentAuthUrl),
@@ -180,21 +271,45 @@ class ApiService {
           )
           .timeout(timeout);
 
+      if (ApiConfig.isDebugMode) {
+        print('📥 Respuesta de login - Status: ${response.statusCode}');
+        print('📥 Body: ${response.body}');
+      }
+
       final data = _handleResponse(response);
       
-      // Adaptar respuesta según la estructura de tu API
-      if (data != null && data['success'] == true && data['data'] != null) {
-        return Usuario.fromJson(data['data']);
-      } else if (data != null && data['error'] == false && data['user'] != null) {
-        // Formato alternativo que podría usar tu API
-        return Usuario.fromJson(data['user']);
+      if (ApiConfig.isDebugMode) {
+        print('📋 Datos procesados del login: $data');
       }
+      
+      // Verificar estructura de respuesta exitosa
+      if (data != null && data['success'] == true && data['user'] != null) {
+        if (ApiConfig.isDebugMode) {
+          print('✅ Login exitoso, creando objeto Usuario');
+          print('📊 Datos del usuario: ${data['user']}');
+        }
+        
+        // Crear usuario desde los datos de la BD
+        return Usuario.fromJson(data['user']);
+      } else if (data != null && data['error'] != null) {
+        if (ApiConfig.isDebugMode) {
+          print('❌ Error en login: ${data['error']}');
+        }
+        throw ApiException(data['error'].toString());
+      }
+      
       return null;
     } on SocketException {
       throw ApiException('No hay conexión a internet');
     } on TimeoutException {
       throw ApiException('Tiempo de espera agotado');
     } catch (e) {
+      if (ApiConfig.isDebugMode) {
+        print('❌ Error en loginUsuario: $e');
+      }
+      if (e is ApiException) {
+        rethrow; // Re-lanzar ApiException
+      }
       throw ApiException('Error en login: $e');
     }
   }
@@ -202,6 +317,25 @@ class ApiService {
   /// Registra un nuevo usuario usando auth.php
   static Future<bool> registrarUsuario(Usuario usuario) async {
     try {
+      if (ApiConfig.isDebugMode) {
+        print('🔄 Registrando usuario: ${usuario.email}');
+        print('📡 URL: ${ApiConfig.currentAuthUrl}');
+        
+        final dataToSend = {
+          'action': 'register',
+          ...usuario.toJson(),
+        };
+        
+        print(' Datos a enviar:');
+        dataToSend.forEach((key, value) {
+          if (key == 'password') {
+            print('   $key: [OCULTO]');
+          } else {
+            print('   $key: $value');
+          }
+        });
+      }
+      
       final response = await http
           .post(
             Uri.parse(ApiConfig.currentAuthUrl),
@@ -213,9 +347,54 @@ class ApiService {
           )
           .timeout(timeout);
 
+      if (ApiConfig.isDebugMode) {
+        print('📥 Código de respuesta: ${response.statusCode}');
+        print('📥 Headers de respuesta: ${response.headers}');
+        print('📥 Cuerpo de respuesta RAW:');
+        print('═══════════════════════════════════════');
+        print(response.body);
+        print('═══════════════════════════════════════');
+      }
+
       final data = _handleResponse(response);
-      return data['success'] == true || data['error'] == false;
-    } on SocketException {
+      
+      if (ApiConfig.isDebugMode) {
+        print(' Datos procesados: $data');
+        print('📊 Tipo de datos: ${data.runtimeType}');
+        if (data is Map) {
+          print('📊 Claves disponibles: ${data.keys.toList()}');
+        }
+      }
+      
+      // Verificar diferentes formatos de respuesta exitosa
+      if (data is Map<String, dynamic>) {
+        bool isSuccess = data['success'] == true || 
+                        data['error'] == false ||
+                        (data.containsKey('user_id') && data['user_id'] != null);
+        
+        if (ApiConfig.isDebugMode) {
+          print('📊 ¿Es exitoso?: $isSuccess');
+          if (!isSuccess) {
+            print('❌ Motivo del fallo:');
+            print('   success: ${data['success']}');
+            print('   error: ${data['error']}');
+            print('   user_id: ${data['user_id']}');
+            print('   message: ${data['message']}');
+          }
+        }
+        
+        return isSuccess;
+      }
+      
+      if (ApiConfig.isDebugMode) {
+        print('❌ Formato de respuesta inesperado');
+      }
+      
+      return false;
+    } on SocketException catch (e) {
+      if (ApiConfig.isDebugMode) {
+        print('❌ Error de conexión: $e');
+      }
       throw ApiException('No hay conexión a internet');
     } on TimeoutException {
       throw ApiException('Tiempo de espera agotado');
