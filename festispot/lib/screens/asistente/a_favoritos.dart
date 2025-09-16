@@ -49,7 +49,8 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
       final favoritosData = await ApiService.getFavoritos(_currentUserId!);
       
       // Filtrar eventos que están en favoritos
-      final eventosIds = favoritosData.map((fav) => fav['event_id']).toList();
+      // La API devuelve campo 'evento_id', convertir para compatibilidad
+      final eventosIds = favoritosData.map((fav) => fav['evento_id']).toList();
       final eventosFavoritos = carrusel.where((evento) => 
         eventosIds.contains(evento.id)
       ).toList();
@@ -64,6 +65,32 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
         _favoritos = [];
         _isLoading = false;
       });
+      
+      // Mostrar mensaje de error más específico al usuario
+      String errorMessage = 'Error al cargar favoritos';
+      if (e.toString().contains('conexión') || e.toString().contains('internet')) {
+        errorMessage = 'Sin conexión a internet. Verifica tu red.';
+      } else if (e.toString().contains('servidor') || e.toString().contains('timeout')) {
+        errorMessage = 'Servidor no disponible. Inténtalo más tarde.';
+      } else if (e.toString().contains('PHP') || e.toString().contains('Fatal error')) {
+        errorMessage = 'Error del servidor. Contacta al soporte técnico.';
+      }
+      
+      // Mostrar el error en un snackbar si el widget sigue montado
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+            action: SnackBarAction(
+              label: 'Reintentar',
+              textColor: Colors.white,
+              onPressed: () => _loadFavoritos(),
+            ),
+          ),
+        );
+      }
     }
   }
 
@@ -360,7 +387,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        evento.nombre ?? 'Evento',
+                        evento.nombre,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -545,7 +572,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        evento.nombre ?? 'Evento',
+                        evento.nombre,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 14,
@@ -627,11 +654,9 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
             ),
           ),
           ElevatedButton(
-            onPressed: () {
-              setState(() {
-                _favoritos.clear();
-              });
+            onPressed: () async {
               Navigator.pop(context);
+              await _clearAllFavoritos();
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFE91E63),
@@ -647,5 +672,53 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _clearAllFavoritos() async {
+    if (_currentUserId == null) return;
+
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      final success = await ApiService.clearAllFavoritos(_currentUserId!);
+      
+      if (success) {
+        setState(() {
+          _favoritos.clear();
+          _isLoading = false;
+        });
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Todos los favoritos eliminados'),
+            backgroundColor: Color(0xFF4CAF50),
+          ),
+        );
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error al eliminar favoritos'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }

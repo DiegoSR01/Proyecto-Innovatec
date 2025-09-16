@@ -31,11 +31,12 @@ class ApiService {
             cleanedBody.contains('MySQL server has gone away') ||
             cleanedBody.contains('No se puede establecer una conexión') ||
             cleanedBody.contains('Fatal error') ||
+            cleanedBody.contains('Cannot redeclare') ||
             cleanedBody.contains('SQLSTATE[HY000]')) {
           
-          // Esto es un error de conexión a la base de datos
+          // Esto es un error de servidor
           throw ApiException(
-            'Error de conexión a la base de datos. Verifica que el servidor MySQL esté ejecutándose.',
+            'Error en el servidor. Por favor, verifica que el servidor web esté configurado correctamente.',
             500
           );
         }
@@ -65,7 +66,7 @@ class ApiService {
           } else {
             // No se encontró JSON válido en respuesta HTML
             throw ApiException(
-              'Respuesta del servidor no válida. Se recibió HTML en lugar de JSON.',
+              'Error del servidor. La respuesta contiene HTML en lugar de JSON.',
               500
             );
           }
@@ -84,7 +85,19 @@ class ApiService {
         print('Response body: ${response.body}');
         print('Status code: ${response.statusCode}');
         print('Error: $e');
-        throw ApiException('Error al decodificar JSON: $e\nResponse: ${response.body}', response.statusCode);
+        
+        // Si es un error de servidor conocido, lanzar error más descriptivo
+        if (response.body.contains('Fatal error') || response.body.contains('Cannot redeclare')) {
+          throw ApiException(
+            'Error en el servidor: Conflicto en el código PHP. Contacta al administrador.',
+            response.statusCode
+          );
+        }
+        
+        throw ApiException(
+          'Error al procesar respuesta del servidor. Verifica que el servidor esté funcionando correctamente.',
+          response.statusCode
+        );
       }
     } else {
       throw ApiException('Error HTTP ${response.statusCode}: ${response.body}', response.statusCode);
@@ -672,6 +685,11 @@ class ApiService {
   /// Obtiene favoritos de un usuario
   static Future<List<Map<String, dynamic>>> getFavoritos(int userId) async {
     try {
+      if (ApiConfig.isDebugMode) {
+        print('🔄 Obteniendo favoritos del usuario: $userId');
+        print('📡 URL: ${ApiConfig.favoritesUrl}?user_id=$userId');
+      }
+
       final response = await http
           .get(
             Uri.parse('${ApiConfig.favoritesUrl}?user_id=$userId'),
@@ -679,30 +697,54 @@ class ApiService {
           )
           .timeout(timeout);
 
+      if (ApiConfig.isDebugMode) {
+        print('📥 Respuesta favoritos - Status: ${response.statusCode}');
+        print('📥 Body: ${response.body}');
+      }
+
       final data = _handleResponse(response);
       
       List<dynamic> favoritesList;
       if (data is List) {
         favoritesList = data;
-      } else if (data['data'] is List) {
+      } else if (data is Map && data['data'] is List) {
+        favoritesList = data['data'];
+      } else if (data is Map && data['success'] == true && data['data'] is List) {
         favoritesList = data['data'];
       } else {
-        throw ApiException('Formato de respuesta inesperado');
+        if (ApiConfig.isDebugMode) {
+          print('⚠️ Formato de respuesta inesperado para favoritos: $data');
+        }
+        favoritesList = [];
+      }
+      
+      if (ApiConfig.isDebugMode) {
+        print('✅ Favoritos obtenidos: ${favoritesList.length} elementos');
       }
       
       return favoritesList.cast<Map<String, dynamic>>();
     } on SocketException {
-      throw ApiException('No hay conexión a internet');
+      throw ApiException('No hay conexión a internet. Verifica tu conexión de red.');
     } on TimeoutException {
-      throw ApiException('Tiempo de espera agotado');
+      throw ApiException('Tiempo de espera agotado. El servidor tardó demasiado en responder.');
+    } on ApiException {
+      rethrow; // Re-lanzar ApiException sin modificar
     } catch (e) {
-      throw ApiException('Error al obtener favoritos: $e');
+      if (ApiConfig.isDebugMode) {
+        print('❌ Error en getFavoritos: $e');
+      }
+      throw ApiException('Error al obtener favoritos. Verifica que el servidor esté funcionando.');
     }
   }
 
   /// Agrega o quita un evento de favoritos
   static Future<bool> toggleFavorito(int userId, int eventId) async {
     try {
+      if (ApiConfig.isDebugMode) {
+        print('🔄 Toggle favorito - Usuario: $userId, Evento: $eventId');
+        print('📡 URL: ${ApiConfig.favoritesUrl}');
+      }
+
       final response = await http
           .post(
             Uri.parse(ApiConfig.favoritesUrl),
@@ -715,14 +757,84 @@ class ApiService {
           )
           .timeout(timeout);
 
+      if (ApiConfig.isDebugMode) {
+        print('📥 Respuesta toggle favorito - Status: ${response.statusCode}');
+        print('📥 Body: ${response.body}');
+      }
+
       final data = _handleResponse(response);
-      return data['success'] == true || data['error'] == false;
+      
+      if (data['success'] == true) {
+        if (ApiConfig.isDebugMode) {
+          print('✅ Toggle favorito exitoso: ${data['action']} - ${data['message']}');
+        }
+        return true;
+      } else {
+        if (ApiConfig.isDebugMode) {
+          print('❌ Error en toggle favorito: ${data['error']}');
+        }
+        return false;
+      }
     } on SocketException {
       throw ApiException('No hay conexión a internet');
     } on TimeoutException {
       throw ApiException('Tiempo de espera agotado');
     } catch (e) {
+      if (ApiConfig.isDebugMode) {
+        print('❌ Error en toggleFavorito: $e');
+      }
+      if (e is ApiException) {
+        rethrow;
+      }
       throw ApiException('Error al actualizar favoritos: $e');
+    }
+  }
+
+  /// Elimina todos los favoritos de un usuario
+  static Future<bool> clearAllFavoritos(int userId) async {
+    try {
+      if (ApiConfig.isDebugMode) {
+        print('🔄 Eliminando todos los favoritos del usuario: $userId');
+        print('📡 URL: ${ApiConfig.favoritesUrl}');
+      }
+
+      final response = await http
+          .delete(
+            Uri.parse('${ApiConfig.favoritesUrl}?user_id=$userId'),
+            headers: headers,
+          )
+          .timeout(timeout);
+
+      if (ApiConfig.isDebugMode) {
+        print('📥 Respuesta eliminar favoritos - Status: ${response.statusCode}');
+        print('📥 Body: ${response.body}');
+      }
+
+      final data = _handleResponse(response);
+      
+      if (data['success'] == true) {
+        if (ApiConfig.isDebugMode) {
+          print('✅ Favoritos eliminados exitosamente');
+        }
+        return true;
+      } else {
+        if (ApiConfig.isDebugMode) {
+          print('❌ Error eliminando favoritos: ${data['error']}');
+        }
+        return false;
+      }
+    } on SocketException {
+      throw ApiException('No hay conexión a internet');
+    } on TimeoutException {
+      throw ApiException('Tiempo de espera agotado');
+    } catch (e) {
+      if (ApiConfig.isDebugMode) {
+        print('❌ Error en clearAllFavoritos: $e');
+      }
+      if (e is ApiException) {
+        rethrow;
+      }
+      throw ApiException('Error al eliminar favoritos: $e');
     }
   }
 

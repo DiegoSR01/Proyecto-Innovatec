@@ -23,7 +23,7 @@ class ApiConfig {
   static String get usersUrl => '$baseUrl/api/users.php';
   static String get eventsUrl => '$baseUrl/api/get_events.php';
   static String get categoriesUrl => '$baseUrl/api/get_categorias.php';
-  static String get favoritesUrl => '$baseUrl/api/get_favoritos.php';
+  static String get favoritesUrl => '$baseUrl/api/favoritos.php';
   static String get reviewsUrl => '$baseUrl/api/get_reviews.php';
   static String get notificationsUrl => '$baseUrl/api/get_notificaciones.php';
   static String get analyticsUrl => '$baseUrl/api/get_analytics_evento.php';

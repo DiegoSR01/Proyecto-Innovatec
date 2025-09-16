@@ -1,7 +1,7 @@
 import 'package:festispot/utils/variables.dart';
 import 'package:festispot/services/api_service.dart';
+import 'package:festispot/services/auth_service.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MostrarEvento extends StatefulWidget {
   final Evento carrusel;
@@ -49,14 +49,23 @@ class _MostrarEventoState extends State<MostrarEvento>
 
   Future<void> _loadUserSession() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final userId = prefs.getInt('user_id');
+      // Obtener el usuario actual desde AuthService
+      final currentUser = AuthService.currentUser;
       
-      if (userId != null) {
+      if (currentUser?.id != null) {
         setState(() {
-          _currentUserId = userId;
+          _currentUserId = currentUser!.id!;
         });
         await _checkFavoriteStatus();
+      } else {
+        // Si no hay usuario en memoria, intentar restaurar sesión
+        final sessionRestored = await AuthService.restoreSession();
+        if (sessionRestored && AuthService.currentUser?.id != null) {
+          setState(() {
+            _currentUserId = AuthService.currentUser!.id!;
+          });
+          await _checkFavoriteStatus();
+        }
       }
     } catch (e) {
       print('Error al cargar sesión de usuario: $e');
@@ -72,7 +81,8 @@ class _MostrarEventoState extends State<MostrarEvento>
     
     try {
       final favoritos = await ApiService.getFavoritos(_currentUserId!);
-      final isFavorite = favoritos.any((fav) => fav['event_id'] == widget.carrusel.id);
+      // La API devuelve campo 'evento_id'
+      final isFavorite = favoritos.any((fav) => fav['evento_id'] == widget.carrusel.id);
       
       setState(() {
         _isFavorite = isFavorite;
@@ -145,14 +155,50 @@ class _MostrarEventoState extends State<MostrarEvento>
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error: $e'),
+          content: Row(
+            children: [
+              const Icon(Icons.error, color: Colors.white),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  _getErrorMessage(e.toString()),
+                ),
+              ),
+            ],
+          ),
           backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          margin: const EdgeInsets.all(16),
+          duration: const Duration(seconds: 4),
+          action: SnackBarAction(
+            label: 'Reintentar',
+            textColor: Colors.white,
+            onPressed: () => _toggleFavorite(),
+          ),
         ),
       );
     } finally {
       setState(() {
         // Error handling complete
       });
+    }
+  }
+
+  /// Obtiene un mensaje de error más amigable para el usuario
+  String _getErrorMessage(String error) {
+    if (error.contains('conexión') || error.contains('internet')) {
+      return 'Sin conexión a internet. Verifica tu red.';
+    } else if (error.contains('timeout') || error.contains('tiempo')) {
+      return 'El servidor tardó demasiado en responder.';
+    } else if (error.contains('servidor') || error.contains('Fatal error') || error.contains('PHP')) {
+      return 'Error del servidor. Inténtalo más tarde.';
+    } else if (error.contains('login') || error.contains('sesión')) {
+      return 'Debes iniciar sesión para usar favoritos.';
+    } else {
+      return 'Error al actualizar favoritos. Inténtalo de nuevo.';
     }
   }
 
