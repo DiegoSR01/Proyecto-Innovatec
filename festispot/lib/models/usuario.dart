@@ -8,7 +8,7 @@ class Usuario {
   final String? fechaNacimiento;
   final String? genero;
   final String? avatarUrl;
-  final int rolId; // 1=asistente, 2=organizador/productor, 3=admin
+  final int rolId; // 1=asistente, 2=productor, 3=organizador
   final String estado; // activo, inactivo, suspendido
   final DateTime? fechaRegistro;
   final DateTime? ultimoAcceso;

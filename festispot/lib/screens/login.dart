@@ -1,7 +1,6 @@
 import 'package:festispot/screens/asistente/a_inicio.dart';
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
-import '../config/api_config.dart';
 import 'productor/p_inicio.dart';
 import 'registro.dart';
 
@@ -34,10 +33,6 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       try {
-        if (ApiConfig.isDebugMode) {
-          print('🔄 Iniciando login desde UI para: ${_emailController.text.trim()}');
-        }
-        
         // Usar el servicio de autenticación
         final result = await AuthService.login(
           _emailController.text.trim(),
@@ -49,43 +44,23 @@ class _LoginScreenState extends State<LoginScreen> {
         });
 
         result.onSuccess((user, message) {
-          if (ApiConfig.isDebugMode) {
-            print('✅ Login exitoso en UI:');
-            print('   Usuario: ${user?.nombre} ${user?.apellido}');
-            print('   Rol: ${user?.rolId} (${user?.nombreRol})');
-            print('   Es Asistente: ${user?.esAsistente}');
-            print('   Es Productor: ${user?.esProductor}');
-          }
-          
           _showCustomSnackBar(message, true);
           
           // Navegar según el tipo de usuario
           if (user?.esAsistente == true) {
-            if (ApiConfig.isDebugMode) {
-              print('🔀 Navegando a pantalla de Asistente');
-            }
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (context) => const MainScreen()),
             );
           } else if (user?.esProductor == true) {
-            if (ApiConfig.isDebugMode) {
-              print('🔀 Navegando a pantalla de Productor');
-            }
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (context) => const MainProductor()),
             );
           } else {
-            if (ApiConfig.isDebugMode) {
-              print('⚠️ Rol no reconocido: ${user?.rolId}');
-            }
             _showCustomSnackBar('Rol de usuario no reconocido. Contacta al administrador.', false);
           }
         });
 
         result.onError((errorMessage) {
-          if (ApiConfig.isDebugMode) {
-            print('❌ Error en login desde UI: $errorMessage');
-          }
           _showCustomSnackBar(errorMessage, false);
         });
 
@@ -93,9 +68,6 @@ class _LoginScreenState extends State<LoginScreen> {
         setState(() {
           _isLoading = false;
         });
-        if (ApiConfig.isDebugMode) {
-          print('❌ Excepción en _handleLogin: $e');
-        }
         _showCustomSnackBar('Error inesperado: $e', false);
       }
     }
@@ -129,81 +101,85 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1B2E),
-      body: SafeArea(
-        child: Center(
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF2A2B3D), // Color más claro arriba
+              Color(0xFF1A1B2E), // Color más oscuro abajo
+            ],
+          ),
+        ),
+        child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Logo con efecto glassmorphism
+                const SizedBox(height: 60), // Espacio superior
+                
+                // Logo image centered - exacto como en la imagen
                 Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Colors.white.withOpacity(0.2),
-                        Colors.white.withOpacity(0.1),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.2),
-                      width: 1,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        blurRadius: 20,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
+                  margin: const EdgeInsets.only(bottom: 32),
+                  child: Column(
                     children: [
+                      // Logo image con resplandor rosa
                       Container(
-                        padding: const EdgeInsets.all(12),
+                        width: 200,
+                        height: 200,
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
-                          ),
-                          borderRadius: BorderRadius.circular(16),
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFFE91E63).withOpacity(0.4),
+                              blurRadius: 40,
+                              offset: const Offset(0, 0),
+                            ),
+                            BoxShadow(
+                              color: const Color(0xFFE91E63).withOpacity(0.2),
+                              blurRadius: 80,
+                              offset: const Offset(0, 0),
+                            ),
+                          ],
                         ),
-                        child: const Icon(
-                          Icons.celebration,
-                          color: Colors.white,
-                          size: 32,
+                        child: ClipOval(
+                          child: Image.asset(
+                            'assets/icons/logo-festispot.png',
+                            width: 200,
+                            height: 200,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
-                      const SizedBox(width: 16),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'FestiSpot',
-                            style: TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Text(
-                            'Descubre los mejores festivales',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.white.withOpacity(0.7),
-                            ),
-                          ),
-                        ],
+                      const SizedBox(height: 32),
+                      // FestiSpot title - exacto como en la imagen
+                      const Text(
+                        'FestiSpot',
+                        style: TextStyle(
+                          fontSize: 40,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Descubre los mejores festivales',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.white.withOpacity(0.8),
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 48),
+
+                const SizedBox(height: 60), // Espacio antes del formulario
 
                 // Formulario de login
                 Container(
@@ -281,51 +257,97 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 32),
 
-                        // Botón de login
-                        Container(
-                          height: 56,
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
-                            ),
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFFE91E63).withOpacity(0.3),
-                                blurRadius: 20,
-                                offset: const Offset(0, 8),
-                              ),
-                            ],
-                          ),
-                          child: ElevatedButton(
-                            onPressed: _isLoading ? null : _handleLogin,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.transparent,
-                              shadowColor: Colors.transparent,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                            ),
-                            child: _isLoading
-                                ? const SizedBox(
-                                    height: 24,
-                                    width: 24,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white,
-                                      ),
+                        // Botones de login y registro
+                        Row(
+                          children: [
+                            // Botón de login
+                            Expanded(
+                              child: Container(
+                                height: 56,
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
+                                  ),
+                                  borderRadius: BorderRadius.circular(16),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFFE91E63).withOpacity(0.3),
+                                      blurRadius: 20,
+                                      offset: const Offset(0, 8),
                                     ),
-                                  )
-                                : const Text(
-                                    'Iniciar Sesión',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
+                                  ],
+                                ),
+                                child: ElevatedButton(
+                                  onPressed: _isLoading ? null : _handleLogin,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.transparent,
+                                    shadowColor: Colors.transparent,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
                                     ),
                                   ),
-                          ),
+                                  child: _isLoading
+                                      ? const SizedBox(
+                                          height: 24,
+                                          width: 24,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor: AlwaysStoppedAnimation<Color>(
+                                              Colors.white,
+                                            ),
+                                          ),
+                                        )
+                                      : const Text(
+                                          'Iniciar Sesión',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            // Botón de registro
+                            Expanded(
+                              child: Container(
+                                height: 56,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: const Color(0xFFE91E63),
+                                    width: 2,
+                                  ),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const RegisterScreen(),
+                                      ),
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.transparent,
+                                    shadowColor: Colors.transparent,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Registrarse',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFFE91E63),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 20),
 
@@ -350,177 +372,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 32),
-
-                // Credenciales de prueba
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF2D2E3F).withOpacity(0.5),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: const Color(0xFF00BCD4).withOpacity(0.3),
-                      width: 1,
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF00BCD4).withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Icon(
-                              Icons.info_outline,
-                              color: Color(0xFF00BCD4),
-                              size: 20,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          const Text(
-                            'Credenciales de prueba:',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF00BCD4),
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      _buildCredentialInfo(
-                        'Asistente',
-                        'asistente@festispot.com',
-                        'asistente123',
-                        Icons.person_outline,
-                      ),
-                      const SizedBox(height: 12),
-                      _buildCredentialInfo(
-                        'Productor',
-                        'productor@festispot.com',
-                        'productor123',
-                        Icons.business_outlined,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                // Opción de registro
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '¿No tienes cuenta? ',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.7),
-                        fontSize: 16,
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const RegisterScreen(),
-                          ),
-                        );
-                      },
-                      child: const Text(
-                        'Regístrate',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFFE91E63),
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-
-                // Botones de debug
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF2D2E3F).withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.1),
-                      width: 1,
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        'Herramientas de Desarrollo',
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.6),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Botón único de Debug API con el estilo del botón de login
-                          Container(
-                            height: 48,
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
-                              ),
-                              borderRadius: BorderRadius.circular(16),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0xFFE91E63).withOpacity(0.3),
-                                  blurRadius: 15,
-                                  offset: const Offset(0, 6),
-                                ),
-                              ],
-                            ),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.pushNamed(context, '/api-debug');
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                              ),
-                              child: const Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.api_outlined,
-                                    color: Colors.white,
-                                    size: 20,
-                                  ),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    'Debug API',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
               ],
             ),
           ),
@@ -583,49 +434,6 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         validator: validator,
-      ),
-    );
-  }
-
-  Widget _buildCredentialInfo(
-    String type,
-    String email,
-    String password,
-    IconData icon,
-  ) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1A1B2E).withOpacity(0.5),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.white.withOpacity(0.7), size: 20),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  type,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                  ),
-                ),
-                Text(
-                  '$email • $password',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.7),
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

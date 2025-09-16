@@ -1,20 +1,8 @@
-/// Configuración de la API y entornos
+/// Configuración de la API
 class ApiConfig {
   // IP única - CAMBIAR SOLO AQUÍ
   static const String _apiHost = '192.168.1.78';
-  static const String apiUrl = 'http://$_apiHost/festispot_api';
-  
-  // Tipo de entorno
-  static const ApiEnvironment environment = ApiEnvironment.production;
-  
-  // Configuraciones por entorno - Una sola API
-  static const Map<ApiEnvironment, String> _baseUrls = {
-    ApiEnvironment.production: apiUrl, // API única
-    ApiEnvironment.testing: apiUrl,    // Misma API
-  };
-  
-  // URL base actual según el entorno
-  static String get baseUrl => _baseUrls[environment]!;
+  static const String baseUrl = 'http://$_apiHost/festispot_api';
   
   // Configuraciones adicionales
   static const Duration timeout = Duration(seconds: 30);
@@ -46,56 +34,6 @@ class ApiConfig {
   static String get rolesUrl => '$baseUrl/api/get_roles.php';
   static String get eventImagesUrl => '$baseUrl/api/get_imagenes_evento.php';
   static String get organizerSubscriptionsUrl => '$baseUrl/api/get_suscripciones_organizador.php';
-  
-  // Variable para cambio dinámico de entorno (para testing)
-  static ApiEnvironment _currentEnvironment = environment;
-  
-  /// Cambia el entorno dinámicamente
-  static void setEnvironment(ApiEnvironment env) {
-    _currentEnvironment = env;
-    print('🔄 Entorno cambiado a: ${env.displayName}');
-    print('🌐 Nueva URL: ${_baseUrls[env]}');
-  }
-  
-  /// Obtiene el entorno actual (puede haber cambiado dinámicamente)
-  static ApiEnvironment get currentEnvironment => _currentEnvironment;
-  
-  /// Obtiene la URL base del entorno actual
-  static String get currentBaseUrl => _baseUrls[_currentEnvironment]!;
-  
-  /// URLs específicas basadas en el entorno actual
-  static String get currentAuthUrl => '$currentBaseUrl/api/auth.php';
-  static String get currentUsersUrl => '$currentBaseUrl/api/users.php';
-  static String get currentEventsUrl => '$currentBaseUrl/api/get_events.php';
-  static String get currentCategoriesUrl => '$currentBaseUrl/api/get_categorias.php';
-  static String get currentFavoritesUrl => '$currentBaseUrl/api/get_favoritos.php';
-  
-  // Información del entorno actual
-  static Map<String, dynamic> get environmentInfo => {
-    'environment': _currentEnvironment.name,
-    'baseUrl': currentBaseUrl,
-    'isDebugMode': isDebugMode,
-    'timeout': timeout.inSeconds,
-  };
-  
-  /// Obtiene todas las configuraciones disponibles
-  static List<Map<String, dynamic>> get allEnvironments {
-    return ApiEnvironment.values.map((env) => {
-      'environment': env,
-      'name': env.displayName,
-      'url': _baseUrls[env],
-      'isCurrent': env == _currentEnvironment,
-    }).toList();
-  }
-}
-
-/// Enum para los diferentes entornos - API única
-enum ApiEnvironment {
-  production('API Principal (10.228.2.29)'),
-  testing('API de Testing (10.228.2.29)');
-  
-  const ApiEnvironment(this.displayName);
-  final String displayName;
 }
 
 

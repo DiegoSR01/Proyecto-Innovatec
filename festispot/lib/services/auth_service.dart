@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/usuario.dart';
-import '../services/api_service.dart';
+import 'api_service.dart';
 import '../config/api_config.dart';
 
 class AuthService {

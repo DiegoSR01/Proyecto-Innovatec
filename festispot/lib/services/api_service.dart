@@ -7,7 +7,7 @@ import '../config/api_config.dart';
 
 class ApiService {
   // Configuración dinámica basada en ApiConfig
-  static String get baseUrl => ApiConfig.currentBaseUrl;
+  static String get baseUrl => ApiConfig.baseUrl;
   static Duration get timeout => ApiConfig.timeout;
   static Map<String, String> get headers => ApiConfig.headers;
 
@@ -256,12 +256,12 @@ class ApiService {
     try {
       if (ApiConfig.isDebugMode) {
         print('🔄 Iniciando login: $email');
-        print('📡 URL: ${ApiConfig.currentAuthUrl}');
+        print('📡 URL: ${ApiConfig.authUrl}');
       }
       
       final response = await http
           .post(
-            Uri.parse(ApiConfig.currentAuthUrl),
+            Uri.parse(ApiConfig.authUrl),
             headers: headers,
             body: json.encode({
               'action': 'login',
@@ -319,7 +319,7 @@ class ApiService {
     try {
       if (ApiConfig.isDebugMode) {
         print('🔄 Registrando usuario: ${usuario.email}');
-        print('📡 URL: ${ApiConfig.currentAuthUrl}');
+        print('📡 URL: ${ApiConfig.authUrl}');
         
         final dataToSend = {
           'action': 'register',
@@ -338,7 +338,7 @@ class ApiService {
       
       final response = await http
           .post(
-            Uri.parse(ApiConfig.currentAuthUrl),
+            Uri.parse(ApiConfig.authUrl),
             headers: headers,
             body: json.encode({
               'action': 'register',
@@ -410,7 +410,7 @@ class ApiService {
     try {
       final response = await http
           .get(
-            Uri.parse('${ApiConfig.currentUsersUrl}?action=get_all'),
+            Uri.parse('${ApiConfig.usersUrl}?action=get_all'),
             headers: headers,
           )
           .timeout(timeout);
@@ -444,7 +444,7 @@ class ApiService {
     try {
       final response = await http
           .get(
-            Uri.parse('${ApiConfig.currentUsersUrl}?action=get_by_id&id=$id'),
+            Uri.parse('${ApiConfig.usersUrl}?action=get_by_id&id=$id'),
             headers: headers,
           )
           .timeout(timeout);
@@ -481,7 +481,7 @@ class ApiService {
 
       final response = await http
           .get(
-            Uri.parse('${ApiConfig.baseUrl}/get_user.php?id=$userId'),
+            Uri.parse('${baseUrl}/api/get_user.php?id=$userId'),
             headers: headers,
           )
           .timeout(timeout);
@@ -527,7 +527,7 @@ class ApiService {
     try {
       final response = await http
           .put(
-            Uri.parse('${ApiConfig.baseUrl}/update_user.php'),
+            Uri.parse('${baseUrl}/api/update_user.php'),
             headers: headers,
             body: json.encode(usuario.toJson()),
           )
@@ -554,7 +554,7 @@ class ApiService {
     try {
       final response = await http
           .post(
-            Uri.parse(ApiConfig.currentUsersUrl),
+            Uri.parse(ApiConfig.usersUrl),
             headers: headers,
             body: json.encode({
               'action': 'delete',
@@ -641,7 +641,7 @@ class ApiService {
     try {
       final response = await http
           .get(
-            Uri.parse(ApiConfig.currentCategoriesUrl),
+            Uri.parse(ApiConfig.categoriesUrl),
             headers: headers,
           )
           .timeout(timeout);
@@ -674,7 +674,7 @@ class ApiService {
     try {
       final response = await http
           .get(
-            Uri.parse('${ApiConfig.currentFavoritesUrl}?user_id=$userId'),
+            Uri.parse('${ApiConfig.favoritesUrl}?user_id=$userId'),
             headers: headers,
           )
           .timeout(timeout);

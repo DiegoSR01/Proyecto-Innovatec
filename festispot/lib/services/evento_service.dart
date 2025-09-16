@@ -1,5 +1,5 @@
 import '../models/evento.dart';
-import '../services/api_service.dart';
+import 'api_service.dart';
 
 /// Servicio para gestionar eventos desde la API
 class EventoService {

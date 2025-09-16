@@ -1,6 +1,7 @@
 import '../models/usuario.dart';
-import '../services/auth_service.dart';
-import '../services/api_service.dart';
+import 'auth_service.dart';
+import 'api_service.dart';
+import 'dart:io';
 
 /// Servicio para gestión de perfil de usuario
 class UserService {
@@ -132,6 +133,83 @@ class UserService {
     }
   }
 
+  /// Actualiza el avatar del usuario
+  static Future<UserUpdateResult> updateAvatar(File imageFile) async {
+    try {
+      final currentUser = AuthService.currentUser;
+      
+      if (currentUser == null) {
+        return UserUpdateResult.error('No hay usuario autenticado');
+      }
+
+      // Subir la imagen al servidor
+      final avatarUrl = await _uploadAvatar(imageFile, currentUser.id!);
+      
+      if (avatarUrl == null) {
+        return UserUpdateResult.error('Error al subir la imagen');
+      }
+
+      // Actualizar el usuario con la nueva URL del avatar
+      final updatedUser = currentUser.copyWith(
+        avatarUrl: avatarUrl,
+        fechaActualizacion: DateTime.now(),
+      );
+
+      // Actualizar en la API
+      final updatedUserFromApi = await ApiService.actualizarUsuario(updatedUser);
+      
+      // Actualizar usuario en AuthService
+      await AuthService.updateCurrentUser(updatedUserFromApi);
+      
+      return UserUpdateResult.success(
+        updatedUserFromApi,
+        'Foto de perfil actualizada exitosamente'
+      );
+      
+    } catch (e) {
+      return UserUpdateResult.error('Error al actualizar avatar: $e');
+    }
+  }
+
+  /// Sube la imagen del avatar al servidor
+  static Future<String?> _uploadAvatar(File imageFile, int userId) async {
+    try {
+      // Aquí deberías implementar la subida real al servidor
+      // Por ahora, simularemos una URL
+      
+      // En una implementación real, subirías la imagen a tu servidor
+      // y devolvería la URL donde está almacenada
+      
+      // Ejemplo de implementación:
+      /*
+      var request = http.MultipartRequest(
+        'POST', 
+        Uri.parse('${ApiConfig.baseUrl}/upload-avatar')
+      );
+      
+      request.fields['user_id'] = userId.toString();
+      request.files.add(await http.MultipartFile.fromPath('avatar', imageFile.path));
+      
+      var response = await request.send();
+      
+      if (response.statusCode == 200) {
+        var responseData = await response.stream.toBytes();
+        var responseString = String.fromCharCodes(responseData);
+        var jsonResponse = json.decode(responseString);
+        return jsonResponse['avatar_url'];
+      }
+      */
+      
+      // Por ahora, devolvemos una URL de ejemplo
+      await Future.delayed(const Duration(seconds: 1)); // Simular subida
+      return 'https://example.com/avatars/user_${userId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      
+    } catch (e) {
+      print('Error al subir avatar: $e');
+      return null;
+    }
+  }
+
   /// Refresca la información del usuario desde la BD
   static Future<UserUpdateResult> refreshUserData() async {
     try {
@@ -223,10 +301,10 @@ class UserStats {
     
     if (difference.inDays > 365) {
       final years = (difference.inDays / 365).floor();
-      return 'Miembro desde hace ${years} año${years > 1 ? 's' : ''}';
+      return 'Miembro desde hace $years año${years > 1 ? 's' : ''}';
     } else if (difference.inDays > 30) {
       final months = (difference.inDays / 30).floor();
-      return 'Miembro desde hace ${months} mes${months > 1 ? 'es' : ''}';
+      return 'Miembro desde hace $months mes${months > 1 ? 'es' : ''}';
     } else if (difference.inDays > 0) {
       return 'Miembro desde hace ${difference.inDays} día${difference.inDays > 1 ? 's' : ''}';
     } else {

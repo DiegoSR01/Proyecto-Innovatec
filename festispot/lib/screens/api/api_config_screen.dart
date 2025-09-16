@@ -9,8 +9,6 @@ class ApiConfigScreen extends StatefulWidget {
 }
 
 class _ApiConfigScreenState extends State<ApiConfigScreen> {
-  ApiEnvironment selectedEnvironment = ApiConfig.currentEnvironment;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,35 +70,9 @@ class _ApiConfigScreenState extends State<ApiConfigScreen> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  _buildInfoRow('Entorno', ApiConfig.currentEnvironment.displayName),
-                  _buildInfoRow('URL Base', ApiConfig.currentBaseUrl),
+                  _buildInfoRow('URL Base', ApiConfig.baseUrl),
                   _buildInfoRow('Timeout', '${ApiConfig.timeout.inSeconds}s'),
                   _buildInfoRow('Debug Mode', ApiConfig.isDebugMode ? 'Habilitado' : 'Deshabilitado'),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // Selección de entorno
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: const Color(0xFF2D2E3F),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Seleccionar API:',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  ...ApiEnvironment.values.map((env) => _buildEnvironmentOption(env)),
                 ],
               ),
             ),
@@ -125,12 +97,12 @@ class _ApiConfigScreenState extends State<ApiConfigScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  _buildEndpointInfo('Autenticación', '${ApiConfig.currentBaseUrl}/auth.php'),
-                  _buildEndpointInfo('Usuarios', '${ApiConfig.currentBaseUrl}/users.php'),
-                  _buildEndpointInfo('Eventos', '${ApiConfig.currentBaseUrl}/get_events.php'),
-                  _buildEndpointInfo('Categorías', '${ApiConfig.currentBaseUrl}/get_categorias.php'),
-                  _buildEndpointInfo('Favoritos', '${ApiConfig.currentBaseUrl}/get_favoritos.php'),
-                  _buildEndpointInfo('Reviews', '${ApiConfig.currentBaseUrl}/get_reviews.php'),
+                  _buildEndpointInfo('Autenticación', ApiConfig.authUrl),
+                  _buildEndpointInfo('Usuarios', ApiConfig.usersUrl),
+                  _buildEndpointInfo('Eventos', ApiConfig.eventsUrl),
+                  _buildEndpointInfo('Categorías', ApiConfig.categoriesUrl),
+                  _buildEndpointInfo('Favoritos', ApiConfig.favoritesUrl),
+                  _buildEndpointInfo('Reviews', ApiConfig.reviewsUrl),
                 ],
               ),
             ),
@@ -233,75 +205,6 @@ class _ApiConfigScreenState extends State<ApiConfigScreen> {
     );
   }
 
-  Widget _buildEnvironmentOption(ApiEnvironment env) {
-    final isSelected = selectedEnvironment == env;
-    final isCurrent = ApiConfig.currentEnvironment == env;
-    
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: isSelected 
-          ? const Color(0xFFE91E63).withOpacity(0.1)
-          : const Color(0xFF1A1B2E),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isSelected 
-            ? const Color(0xFFE91E63)
-            : Colors.white.withOpacity(0.1),
-          width: 1,
-        ),
-      ),
-      child: RadioListTile<ApiEnvironment>(
-        value: env,
-        groupValue: selectedEnvironment,
-        onChanged: (value) {
-          setState(() {
-            selectedEnvironment = value!;
-          });
-          // Cambiar el entorno inmediatamente
-          ApiConfig.setEnvironment(value!);
-        },
-        title: Row(
-          children: [
-            Text(
-              env.displayName,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            if (isCurrent) ...[
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF4CAF50),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Text(
-                  'ACTUAL',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ],
-        ),
-        subtitle: Text(
-          _getEnvironmentUrl(env),
-          style: TextStyle(
-            color: Colors.white.withOpacity(0.6),
-            fontSize: 12,
-          ),
-        ),
-        activeColor: const Color(0xFFE91E63),
-      ),
-    );
-  }
-
   Widget _buildEndpointInfo(String name, String url) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -328,11 +231,6 @@ class _ApiConfigScreenState extends State<ApiConfigScreen> {
         ],
       ),
     );
-  }
-
-  String _getEnvironmentUrl(ApiEnvironment env) {
-    // Usar la configuración centralizada
-    return ApiConfig.apiUrl;
   }
 
   void _testConnection() async {

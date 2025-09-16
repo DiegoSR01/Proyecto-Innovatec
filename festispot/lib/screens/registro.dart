@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../models/usuario.dart';
 import '../services/auth_service.dart';
 import '../config/api_config.dart';
 
@@ -59,9 +58,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         // Debug: mostrar información de configuración
         if (ApiConfig.isDebugMode) {
           print('🔧 Configuración actual:');
-          print('   URL: ${ApiConfig.currentAuthUrl}');
+          print('   URL: ${ApiConfig.authUrl}');
           print('   Debug Mode: ${ApiConfig.isDebugMode}');
-          print('   Environment: ${ApiConfig.currentEnvironment}');
         }
 
         // Validar email antes de enviar
@@ -233,41 +231,41 @@ class _RegisterScreenState extends State<RegisterScreen> {
           padding: const EdgeInsets.all(24.0),
           child: Column(
             children: [
-              // Header
+              // Logo igual al del login - sin minitarjeta de fondo
               Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Colors.white.withOpacity(0.1),
-                      Colors.white.withOpacity(0.05),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.2),
-                    width: 1,
-                  ),
-                ),
+                margin: const EdgeInsets.only(bottom: 32),
                 child: Column(
                   children: [
+                    // Logo con resplandor rosa igual al login
                     Container(
-                      padding: const EdgeInsets.all(16),
+                      width: 200,
+                      height: 200,
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
-                        ),
-                        borderRadius: BorderRadius.circular(20),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFFE91E63).withOpacity(0.4),
+                            blurRadius: 40,
+                            offset: const Offset(0, 0),
+                          ),
+                          BoxShadow(
+                            color: const Color(0xFFE91E63).withOpacity(0.2),
+                            blurRadius: 80,
+                            offset: const Offset(0, 0),
+                          ),
+                        ],
                       ),
-                      child: const Icon(
-                        Icons.person_add,
-                        color: Colors.white,
-                        size: 32,
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/icons/logo-festispot.png',
+                          width: 200,
+                          height: 200,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 32),
+                    // Títulos
                     const Text(
                       '¡Únete a FestiSpot!',
                       style: TextStyle(
@@ -747,7 +745,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       ),
       child: DropdownButtonFormField<String>(
-        value: _selectedGender,
+        initialValue: _selectedGender,
         decoration: InputDecoration(
           labelText: 'Género (opcional)',
           labelStyle: TextStyle(

@@ -4,6 +4,8 @@ import 'package:festispot/screens/login.dart';
 import 'package:festispot/services/user_service.dart';
 import 'package:festispot/services/auth_service.dart';
 import 'package:festispot/models/usuario.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class PerfilUsuario extends StatefulWidget {
   const PerfilUsuario({super.key});
@@ -19,7 +21,6 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
   late Animation<Offset> _slideAnimation;
   
   Usuario? _currentUser;
-  UserStats? _userStats;
   bool _isLoading = true;
 
   @override
@@ -53,18 +54,11 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
         _isLoading = true;
       });
 
-      // Cargar información del usuario y estadísticas en paralelo
-      final results = await Future.wait([
-        UserService.getCurrentUserProfile(),
-        UserService.getUserStats(),
-      ]);
-
-      final user = results[0] as Usuario?;
-      final stats = results[1] as UserStats;
+      // Cargar información del usuario
+      final user = await UserService.getCurrentUserProfile();
 
       setState(() {
         _currentUser = user;
-        _userStats = stats;
         _isLoading = false;
       });
 
@@ -79,7 +73,144 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
     }
   }
 
-  /// Muestra el diálogo para editar el perfil
+  /// Muestra el diálogo para cambiar la foto de perfil
+  void _mostrarDialogoCambiarFoto() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF2D2E3F),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: const Row(
+            children: [
+              Icon(Icons.camera_alt, color: Color(0xFF4CAF50)),
+              SizedBox(width: 12),
+              Text(
+                'Cambiar Foto de Perfil',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Selecciona cómo quieres agregar tu foto:',
+                style: TextStyle(color: Colors.white70),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                      _seleccionarImagen(ImageSource.camera);
+                    },
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF4CAF50).withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.camera_alt,
+                            color: Color(0xFF4CAF50),
+                            size: 32,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Cámara',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                      _seleccionarImagen(ImageSource.gallery);
+                    },
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF2196F3).withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.photo_library,
+                            color: Color(0xFF2196F3),
+                            size: 32,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Galería',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                'Cancelar',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Selecciona una imagen de la cámara o galería
+  Future<void> _seleccionarImagen(ImageSource source) async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: source,
+        maxWidth: 800,
+        maxHeight: 800,
+        imageQuality: 80,
+      );
+
+      if (image != null) {
+        _showCustomSnackBar('Subiendo imagen...', true);
+        
+        // Subir la imagen usando UserService
+        final result = await UserService.updateAvatar(File(image.path));
+        
+        result.onSuccess((user, message) {
+          setState(() {
+            _currentUser = user;
+          });
+          _showCustomSnackBar(message, true);
+        });
+
+        result.onError((message) {
+          _showCustomSnackBar(message, false);
+        });
+      }
+    } catch (e) {
+      _showCustomSnackBar('Error al seleccionar imagen: $e', false);
+    }
+  }
   void _mostrarDialogoEditarPerfil() {
     if (_currentUser == null) return;
 
@@ -595,10 +726,6 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
                 _buildAccountSection(),
                 const SizedBox(height: 24),
 
-                // Estadísticas del usuario
-                _buildStatsSection(),
-                const SizedBox(height: 24),
-
                 // Configuraciones de cuenta
                 _buildSecuritySection(),
                 const SizedBox(height: 24),
@@ -752,8 +879,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
                 bottom: 0,
                 right: 0,
                 child: GestureDetector(
-                  onTap: () =>
-                      _showCustomSnackBar('Cambio de foto próximamente', false),
+                  onTap: _mostrarDialogoCambiarFoto,
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
@@ -808,11 +934,6 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            _userStats?.tiempoDesdeRegistro ?? 'Miembro nuevo',
-            style: const TextStyle(color: Colors.white60, fontSize: 14),
           ),
           if (_currentUser!.telefono != null && _currentUser!.telefono!.isNotEmpty) ...[
             const SizedBox(height: 8),
@@ -926,51 +1047,6 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
             : 'Agregar número de teléfono',
         const Color(0xFF4CAF50),
         _mostrarDialogoEditarPerfil,
-      ),
-    ]);
-  }
-
-  Widget _buildStatsSection() {
-    if (_isLoading || _userStats == null) {
-      return _buildSection('Mi Actividad', [
-        const Center(
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFE91E63)),
-          ),
-        ),
-      ]);
-    }
-
-    return _buildSection('Mi Actividad', [
-      Row(
-        children: [
-          Expanded(
-            child: _buildStatCard(
-              'Eventos\nAsistidos',
-              '${_userStats!.eventosAsistidos}',
-              Icons.event,
-              const Color(0xFFE91E63),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _buildStatCard(
-              'Favoritos',
-              '${_userStats!.eventosFavoritos}',
-              Icons.favorite,
-              const Color(0xFF9C27B0),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _buildStatCard(
-              'Reviews\nEscritas',
-              '${_userStats!.reviewsEscritas}',
-              Icons.star,
-              const Color(0xFFFFD700),
-            ),
-          ),
-        ],
       ),
     ]);
   }
@@ -1125,43 +1201,4 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
     );
   }
 
-  Widget _buildStatCard(
-    String label,
-    String value,
-    IconData icon,
-    Color color,
-  ) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1A1B2E),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3), width: 1),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: color, size: 28),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
-              fontSize: 12,
-              height: 1.2,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
