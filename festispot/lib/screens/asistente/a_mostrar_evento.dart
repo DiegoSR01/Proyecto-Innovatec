@@ -3,15 +3,15 @@ import 'package:festispot/services/api_service.dart';
 import 'package:festispot/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
-class MostrarEvento extends StatefulWidget {
+class MostrarEventoAsistente extends StatefulWidget {
   final Evento carrusel;
-  const MostrarEvento({super.key, required this.carrusel});
+  const MostrarEventoAsistente({super.key, required this.carrusel});
 
   @override
-  State<MostrarEvento> createState() => _MostrarEventoState();
+  State<MostrarEventoAsistente> createState() => _MostrarEventoState();
 }
 
-class _MostrarEventoState extends State<MostrarEvento>
+class _MostrarEventoState extends State<MostrarEventoAsistente>
     with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -286,6 +286,24 @@ class _MostrarEventoState extends State<MostrarEvento>
                         child: Image.asset(
                           widget.carrusel.imagen,
                           fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              width: double.infinity,
+                              height: double.infinity,
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF3D3D3D),
+                                borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(30),
+                                  bottomRight: Radius.circular(30),
+                                ),
+                              ),
+                              child: Icon(
+                                Icons.image_outlined,
+                                color: Colors.grey[500],
+                                size: 60,
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -785,7 +803,7 @@ class _MostrarEventoState extends State<MostrarEvento>
                   '👥',
                   'Capacidad',
                   widget.carrusel.capacidad ?? '500 personas',
-                  const Color(0xFFFF9800),
+                  const Color(0xFF5E35B1),
                 ),
               ),
             ],

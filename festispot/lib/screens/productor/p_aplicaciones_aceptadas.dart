@@ -230,7 +230,7 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MostrarEvento(carrusel: evento),
+                builder: (context) => MostrarEventoProductor(carrusel: evento),
               ),
             );
           },
@@ -242,12 +242,27 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
                   tag: 'aplicacion_${evento.id}',
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: Image.asset(
-                      evento.imagen,
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
-                    ),
+                    child: evento.imagen.isNotEmpty
+                        ? Image.asset(
+                            evento.imagen,
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                'assets/images/placeholder.png',
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              );
+                            },
+                          )
+                        : Image.asset(
+                            'assets/images/placeholder.png',
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -364,7 +379,7 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MostrarEvento(carrusel: evento),
+                builder: (context) => MostrarEventoProductor(carrusel: evento),
               ),
             );
           },
@@ -379,12 +394,27 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
                       borderRadius: const BorderRadius.vertical(
                         top: Radius.circular(16),
                       ),
-                      child: Image.asset(
-                        evento.imagen,
-                        width: double.infinity,
-                        height: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
+                      child: evento.imagen.isNotEmpty
+                          ? Image.asset(
+                              evento.imagen,
+                              width: double.infinity,
+                              height: double.infinity,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Image.asset(
+                                  'assets/images/placeholder.png',
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  fit: BoxFit.cover,
+                                );
+                              },
+                            )
+                          : Image.asset(
+                              'assets/images/placeholder.png',
+                              width: double.infinity,
+                              height: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
                     ),
                     Positioned(
                       top: 8,

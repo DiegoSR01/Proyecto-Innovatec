@@ -494,7 +494,7 @@ class ApiService {
 
       final response = await http
           .get(
-            Uri.parse('${baseUrl}/api/get_user.php?id=$userId'),
+            Uri.parse('$baseUrl/api/get_user.php?id=$userId'),
             headers: headers,
           )
           .timeout(timeout);
@@ -540,7 +540,7 @@ class ApiService {
     try {
       final response = await http
           .put(
-            Uri.parse('${baseUrl}/api/update_user.php'),
+            Uri.parse('$baseUrl/api/update_user.php'),
             headers: headers,
             body: json.encode(usuario.toJson()),
           )

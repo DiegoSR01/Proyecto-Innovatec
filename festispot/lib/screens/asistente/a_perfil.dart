@@ -1033,7 +1033,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
         Icons.attach_money,
         'Suscripción',
         'Gestionar plan de suscripción',
-        const Color.fromARGB(255, 255, 64, 129),
+        const Color(0xFF8E24AA),
         () => Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const SuscripcionScreenA()),

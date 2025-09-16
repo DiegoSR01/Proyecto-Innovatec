@@ -628,7 +628,7 @@ class _InicioState extends State<Inicio> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MostrarEvento(carrusel: evento),
+                builder: (context) => MostrarEventoProductor(carrusel: evento),
               ),
             );
           },
@@ -638,12 +638,26 @@ class _InicioState extends State<Inicio> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: FadeInImage(
-                    placeholder: const AssetImage("assets/images/loading.gif"),
-                    image: AssetImage(evento.imagen),
+                  child: Image.asset(
+                    evento.imagen,
                     fit: BoxFit.cover,
                     width: 80,
                     height: 80,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.image_outlined,
+                          color: Colors.grey[600],
+                          size: 20,
+                        ),
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -833,16 +847,29 @@ class _CardImagesState extends State<CardImages> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => MostrarEvento(carrusel: widget.carrusel),
+                    builder: (context) => MostrarEventoProductor(carrusel: widget.carrusel),
                   ),
                 );
               },
-              child: FadeInImage(
-                placeholder: const AssetImage("assets/images/loading.gif"),
-                image: AssetImage(widget.carrusel.imagen),
+              child: Image.asset(
+                widget.carrusel.imagen,
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: double.infinity,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF3D3D3D),
+                    ),
+                    child: Icon(
+                      Icons.image_outlined,
+                      color: Colors.grey[500],
+                      size: 40,
+                    ),
+                  );
+                },
               ),
             ),
             // Overlay gradient

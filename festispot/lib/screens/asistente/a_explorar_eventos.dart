@@ -260,7 +260,7 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MostrarEvento(carrusel: evento),
+                builder: (context) => MostrarEventoAsistente(carrusel: evento),
               ),
             );
           },
@@ -271,12 +271,26 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
                 // Imagen del evento
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: FadeInImage(
-                    placeholder: const AssetImage("assets/images/loading.gif"),
-                    image: AssetImage(evento.imagen),
+                  child: Image.asset(
+                    evento.imagen,
                     fit: BoxFit.cover,
                     width: 100,
                     height: 100,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.image_outlined,
+                          color: Colors.grey[600],
+                          size: 24,
+                        ),
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(width: 16),

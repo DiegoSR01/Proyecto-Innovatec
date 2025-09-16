@@ -59,7 +59,7 @@ class SuscripcionScreenA extends StatelessWidget {
                 'Notificaciones básicas',
               ],
               color: Colors.black,
-              isRecommended: false,
+              isRecommended: true,
             ),
             const SizedBox(height: 20),
             _buildPlanCard(
@@ -98,7 +98,7 @@ class SuscripcionScreenA extends StatelessWidget {
                 'Estadísticas avanzadas',
               ],
               color: Colors.black,
-              isRecommended: false,
+              isRecommended: true,
               accentColor: const Color.fromARGB(
                 255,
                 255,

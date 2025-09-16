@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:festispot/utils/eventos_carrusel.dart';
 import 'package:festispot/utils/variables.dart';
-import 'package:festispot/screens/asistente/a_mostrar_evento.dart';
+import 'package:festispot/screens/productor/p_mostrar_evento.dart';
 import 'package:festispot/services/api_service.dart';
 import 'package:festispot/services/auth_service.dart';
 
@@ -358,7 +358,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MostrarEvento(carrusel: evento),
+                builder: (context) => MostrarEventoProductor(carrusel: evento),
               ),
             );
           },
@@ -371,12 +371,26 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                   tag: 'evento_${evento.id}',
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: FadeInImage(
-                      placeholder: const AssetImage("assets/images/loading.gif"),
-                      image: AssetImage(evento.imagen),
+                    child: Image.asset(
+                      evento.imagen,
                       fit: BoxFit.cover,
                       width: 100,
                       height: 100,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: 100,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            Icons.image_outlined,
+                            color: Colors.grey[600],
+                            size: 24,
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ),
@@ -518,7 +532,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MostrarEvento(carrusel: evento),
+                builder: (context) => MostrarEventoProductor(carrusel: evento),
               ),
             );
           },
@@ -532,12 +546,26 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                   children: [
                     ClipRRect(
                       borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                      child: FadeInImage(
-                        placeholder: const AssetImage("assets/images/loading.gif"),
-                        image: AssetImage(evento.imagen),
+                      child: Image.asset(
+                        evento.imagen,
                         fit: BoxFit.cover,
                         width: double.infinity,
                         height: double.infinity,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            width: double.infinity,
+                            height: double.infinity,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFF3D3D3D),
+                              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                            ),
+                            child: Icon(
+                              Icons.image_outlined,
+                              color: Colors.grey[500],
+                              size: 40,
+                            ),
+                          );
+                        },
                       ),
                     ),
                     Positioned(

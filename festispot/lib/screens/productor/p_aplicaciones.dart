@@ -153,7 +153,7 @@ class _AplicacionesPendientesState extends State<AplicacionesPendientes> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MostrarEvento(carrusel: evento),
+                builder: (context) => MostrarEventoProductor(carrusel: evento),
               ),
             );
           },
@@ -163,12 +163,27 @@ class _AplicacionesPendientesState extends State<AplicacionesPendientes> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    evento.imagen,
-                    width: 80,
-                    height: 80,
-                    fit: BoxFit.cover,
-                  ),
+                  child: evento.imagen.isNotEmpty
+                      ? Image.asset(
+                          evento.imagen,
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              'assets/images/placeholder.png',
+                              width: 80,
+                              height: 80,
+                              fit: BoxFit.cover,
+                            );
+                          },
+                        )
+                      : Image.asset(
+                          'assets/images/placeholder.png',
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                        ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
