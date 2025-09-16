@@ -134,7 +134,7 @@ class _MostrarEventoState extends State<MostrarEvento>
               ],
             ),
             backgroundColor: _isFavorite 
-              ? const Color(0xFFE91E63)
+              ? const Color(0xFF8E24AA)
               : const Color(0xFF757575),
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
@@ -234,7 +234,7 @@ class _MostrarEventoState extends State<MostrarEvento>
             child: IconButton(
               icon: Icon(
                 _isFavorite ? Icons.favorite : Icons.favorite_border,
-                color: _isFavorite ? const Color(0xFFE91E63) : Colors.white,
+                color: _isFavorite ? const Color(0xFF8E24AA) : Colors.white,
               ),
               onPressed: _toggleFavorite,
             ),
@@ -254,7 +254,7 @@ class _MostrarEventoState extends State<MostrarEvento>
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: const Text('¡Evento compartido!'),
-                    backgroundColor: const Color(0xFF4CAF50),
+                    backgroundColor: const Color(0xFF8E24AA),
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -324,7 +324,7 @@ class _MostrarEventoState extends State<MostrarEvento>
                               ),
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
-                                  colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
+                                  colors: [Color(0xFF8E24AA), Color(0xFF7B1FA2)],
                                 ),
                                 borderRadius: BorderRadius.circular(20),
                               ),
@@ -486,7 +486,7 @@ class _MostrarEventoState extends State<MostrarEvento>
           ),
         ],
         border: Border.all(
-          color: const Color(0xFFE91E63).withOpacity(0.2),
+          color: const Color(0xFF8E24AA).withOpacity(0.2),
           width: 1,
         ),
       ),
@@ -499,7 +499,7 @@ class _MostrarEventoState extends State<MostrarEvento>
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
+                    colors: [Color(0xFF8E24AA), Color(0xFF7B1FA2)],
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -527,21 +527,21 @@ class _MostrarEventoState extends State<MostrarEvento>
             Icons.calendar_today,
             'Fecha',
             fechaCompleta,
-            const Color(0xFFE91E63),
+            const Color(0xFF8E24AA),
           ),
           const SizedBox(height: 16),
           _buildInfoRow(
             Icons.access_time,
             'Horario',
             horaCompleta,
-            const Color(0xFF9C27B0),
+            const Color(0xFF7B1FA2),
           ),
           const SizedBox(height: 16),
           _buildInfoRow(
             Icons.location_on,
             'Ubicación',
             ubicacionCompleta,
-            const Color(0xFF00BCD4),
+            const Color(0xFF673AB7),
           ),
           if (widget.carrusel.tipoEvento != null) ...[
             const SizedBox(height: 16),
@@ -549,7 +549,7 @@ class _MostrarEventoState extends State<MostrarEvento>
               Icons.event_available,
               'Tipo de Evento',
               widget.carrusel.tipoEvento!,
-              const Color(0xFF4CAF50),
+              const Color(0xFF5E35B1),
             ),
           ],
         ],
@@ -579,7 +579,7 @@ class _MostrarEventoState extends State<MostrarEvento>
           ),
         ],
         border: Border.all(
-          color: const Color(0xFF00BCD4).withOpacity(0.2),
+          color: const Color(0xFF673AB7).withOpacity(0.2),
           width: 1,
         ),
       ),
@@ -592,7 +592,7 @@ class _MostrarEventoState extends State<MostrarEvento>
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF00BCD4), Color(0xFF4CAF50)],
+                    colors: [Color(0xFF673AB7), Color(0xFF5E35B1)],
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -622,7 +622,7 @@ class _MostrarEventoState extends State<MostrarEvento>
               color: const Color(0xFF1A1B2E).withOpacity(0.5),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: const Color(0xFF00BCD4).withOpacity(0.1),
+                color: const Color(0xFF673AB7).withOpacity(0.1),
                 width: 1,
               ),
             ),
@@ -732,7 +732,7 @@ class _MostrarEventoState extends State<MostrarEvento>
           ),
         ],
         border: Border.all(
-          color: const Color(0xFF4CAF50).withOpacity(0.2),
+          color: const Color(0xFF5E35B1).withOpacity(0.2),
           width: 1,
         ),
       ),
@@ -745,7 +745,7 @@ class _MostrarEventoState extends State<MostrarEvento>
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF4CAF50), Color(0xFF2196F3)],
+                    colors: [Color(0xFF5E35B1), Color(0xFF2196F3)],
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -776,7 +776,7 @@ class _MostrarEventoState extends State<MostrarEvento>
                   '💰',
                   'Precio',
                   widget.carrusel.precio ?? 'Gratuito',
-                  const Color(0xFF4CAF50),
+                  const Color(0xFF5E35B1),
                 ),
               ),
               const SizedBox(width: 16),
@@ -798,7 +798,7 @@ class _MostrarEventoState extends State<MostrarEvento>
                   '🎵',
                   'Género',
                   widget.carrusel.categoria,
-                  const Color(0xFFE91E63),
+                  const Color(0xFF8E24AA),
                 ),
               ),
               const SizedBox(width: 16),
@@ -807,7 +807,7 @@ class _MostrarEventoState extends State<MostrarEvento>
                   '🔞',
                   'Edad',
                   widget.carrusel.edad ?? '18+',
-                  const Color(0xFF9C27B0),
+                  const Color(0xFF7B1FA2),
                 ),
               ),
             ],
@@ -839,7 +839,7 @@ class _MostrarEventoState extends State<MostrarEvento>
           ),
         ],
         border: Border.all(
-          color: const Color(0xFFE91E63).withOpacity(0.2),
+          color: const Color(0xFF8E24AA).withOpacity(0.2),
           width: 1,
         ),
       ),
@@ -851,7 +851,7 @@ class _MostrarEventoState extends State<MostrarEvento>
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
+                    colors: [Color(0xFF8E24AA), Color(0xFF7B1FA2)],
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -882,12 +882,12 @@ class _MostrarEventoState extends State<MostrarEvento>
                 height: 70,
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
+                    colors: [Color(0xFF8E24AA), Color(0xFF7B1FA2)],
                   ),
                   borderRadius: BorderRadius.circular(35),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFFE91E63).withOpacity(0.3),
+                      color: const Color(0xFF8E24AA).withOpacity(0.3),
                       blurRadius: 12,
                       offset: const Offset(0, 6),
                     ),
@@ -920,12 +920,12 @@ class _MostrarEventoState extends State<MostrarEvento>
                           Container(
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF00BCD4).withOpacity(0.2),
+                              color: const Color(0xFF673AB7).withOpacity(0.2),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Icon(
                               Icons.email_outlined,
-                              color: Color(0xFF00BCD4),
+                              color: Color(0xFF673AB7),
                               size: 16,
                             ),
                           ),
@@ -950,12 +950,12 @@ class _MostrarEventoState extends State<MostrarEvento>
                           Container(
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF4CAF50).withOpacity(0.2),
+                              color: const Color(0xFF5E35B1).withOpacity(0.2),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Icon(
                               Icons.phone_outlined,
-                              color: Color(0xFF4CAF50),
+                              color: Color(0xFF5E35B1),
                               size: 16,
                             ),
                           ),
@@ -1003,7 +1003,7 @@ class _MostrarEventoState extends State<MostrarEvento>
           ),
         ],
         border: Border.all(
-          color: const Color(0xFF00BCD4).withOpacity(0.2),
+          color: const Color(0xFF673AB7).withOpacity(0.2),
           width: 1,
         ),
       ),
@@ -1016,7 +1016,7 @@ class _MostrarEventoState extends State<MostrarEvento>
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF00BCD4), Color(0xFF4CAF50)],
+                    colors: [Color(0xFF673AB7), Color(0xFF5E35B1)],
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -1046,12 +1046,12 @@ class _MostrarEventoState extends State<MostrarEvento>
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(18),
               border: Border.all(
-                color: const Color(0xFF00BCD4).withOpacity(0.3),
+                color: const Color(0xFF673AB7).withOpacity(0.3),
                 width: 1,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF00BCD4).withOpacity(0.1),
+                  color: const Color(0xFF673AB7).withOpacity(0.1),
                   blurRadius: 12,
                   offset: const Offset(0, 6),
                 ),
@@ -1114,7 +1114,7 @@ class _MostrarEventoState extends State<MostrarEvento>
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
-                                    colors: [Color(0xFF00BCD4), Color(0xFF4CAF50)],
+                                    colors: [Color(0xFF673AB7), Color(0xFF5E35B1)],
                                   ),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -1159,12 +1159,12 @@ class _MostrarEventoState extends State<MostrarEvento>
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color(0xFF00BCD4), Color(0xFF4CAF50)],
+                          colors: [Color(0xFF673AB7), Color(0xFF5E35B1)],
                         ),
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF00BCD4).withOpacity(0.3),
+                            color: const Color(0xFF673AB7).withOpacity(0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -1391,7 +1391,7 @@ class _MostrarEventoState extends State<MostrarEvento>
             ),
           ],
         ),
-        backgroundColor: const Color(0xFF00BCD4),
+        backgroundColor: const Color(0xFF673AB7),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),

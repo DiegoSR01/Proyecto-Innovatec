@@ -226,12 +226,12 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE91E63).withOpacity(0.2),
+                    color: const Color(0xFF8E24AA).withOpacity(0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
                     icon,
-                    color: const Color(0xFFE91E63),
+                    color: const Color(0xFF8E24AA),
                     size: 20,
                   ),
                 ),
@@ -262,7 +262,8 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
                   Switch(
                     value: switchValue,
                     onChanged: onSwitchChanged,
-                    activeTrackColor: const Color(0xFFE91E63).withOpacity(0.3),
+                    activeColor: const Color(0xFF8E24AA),
+                    activeTrackColor: const Color(0xFF8E24AA).withOpacity(0.3),
                   )
                 else
                   Icon(
@@ -312,7 +313,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
               // Aquí podrías agregar lógica para aplicar el idioma
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFE91E63),
+              backgroundColor: const Color(0xFF8E24AA),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -341,7 +342,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
             _idiomaSeleccionado = value!;
           });
         },
-        activeColor: const Color(0xFFE91E63),
+        activeColor: const Color(0xFF8E24AA),
       ),
     );
   }
@@ -360,7 +361,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
+                  colors: [Color(0xFF8E24AA), Color(0xFF7B1FA2)],
                 ),
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -397,7 +398,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
           ElevatedButton(
             onPressed: () => Navigator.pop(context),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFE91E63),
+              backgroundColor: const Color(0xFF8E24AA),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),

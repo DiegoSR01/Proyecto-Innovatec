@@ -21,7 +21,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
   bool _isLoading = false;
-  int _selectedUserType = 1; // 1=asistente, 2=organizador
+  int _selectedUserType = 1; // 1=asistente, 2=productor
   String? _selectedGender;
   DateTime? _birthDate;
   bool _acceptTerms = false;
@@ -330,7 +330,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           Expanded(
                             child: _buildUserTypeCard(
                               2,
-                              'Organizador',
+                              'Productor',
                               Icons.business_outlined,
                               'Organiza eventos',
                             ),

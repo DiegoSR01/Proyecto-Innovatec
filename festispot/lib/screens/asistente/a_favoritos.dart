@@ -112,7 +112,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
             backgroundColor: const Color(0xFF2D2E3F),
             action: SnackBarAction(
               label: 'Deshacer',
-              textColor: const Color(0xFFE91E63),
+              textColor: const Color(0xFF8E24AA),
               onPressed: () async {
                 // Volver a agregar a favoritos
                 final addSuccess = await ApiService.toggleFavorito(_currentUserId!, evento.id);
@@ -170,7 +170,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
               },
               icon: Icon(
                 _isGridView ? Icons.list : Icons.grid_view,
-                color: const Color(0xFFE91E63),
+                color: const Color(0xFF8E24AA),
               ),
             ),
         ],
@@ -181,7 +181,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFE91E63)),
+                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8E24AA)),
                   ),
                   SizedBox(height: 16),
                   Text(
@@ -250,7 +250,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
               ),
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFE91E63),
+              backgroundColor: const Color(0xFF8E24AA),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(25),
@@ -440,7 +440,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE91E63),
+                          color: const Color(0xFF8E24AA),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
@@ -464,7 +464,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                       },
                       icon: const Icon(
                         Icons.favorite,
-                        color: Color(0xFFE91E63),
+                        color: Color(0xFF8E24AA),
                         size: 24,
                       ),
                     ),
@@ -473,7 +473,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
+                          colors: [Color(0xFF8E24AA), Color(0xFF7B1FA2)],
                         ),
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -554,7 +554,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                           },
                           icon: const Icon(
                             Icons.favorite,
-                            color: Color(0xFFE91E63),
+                            color: Color(0xFF8E24AA),
                             size: 20,
                           ),
                         ),
@@ -659,7 +659,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
               await _clearAllFavoritos();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFE91E63),
+              backgroundColor: const Color(0xFF8E24AA),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),

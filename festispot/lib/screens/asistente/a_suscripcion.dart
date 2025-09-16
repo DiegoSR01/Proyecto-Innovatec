@@ -16,12 +16,12 @@ class SuscripcionScreenA extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
+                colors: [Color(0xFF8E24AA), Color(0xFF7B1FA2)],
               ),
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFE91E63).withOpacity(0.3),
+                  color: const Color(0xFF8E24AA).withOpacity(0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),

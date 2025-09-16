@@ -10,14 +10,14 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+class MainAsistente extends StatefulWidget {
+  const MainAsistente({super.key});
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  State<MainAsistente> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends State<MainAsistente> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [];
@@ -60,7 +60,7 @@ class _MainScreenState extends State<MainScreen> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: const Color(0xFFE91E63),
+          selectedItemColor: const Color(0xFF8E24AA),
           unselectedItemColor: Colors.white.withOpacity(0.6),
           selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
           unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w400),
@@ -188,17 +188,17 @@ class _InicioState extends State<Inicio> {
 
   Color _getColorForCategory(int index) {
     final colors = [
-      const Color(0xFFE91E63),
+      const Color(0xFF8E24AA),
+      const Color(0xFF7B1FA2),
+      const Color(0xFF673AB7),
+      const Color(0xFF5E35B1),
+      const Color(0xFF512DA8),
+      const Color(0xFF4527A0),
+      const Color(0xFF311B92),
       const Color(0xFF9C27B0),
-      const Color(0xFF00BCD4),
-      const Color(0xFFFF9800),
-      const Color(0xFF4CAF50),
-      const Color(0xFF2196F3),
-      const Color(0xFF8BC34A),
-      const Color(0xFF607D8B),
-      const Color(0xFFCDDC39),
-      const Color(0xFFFFC107),
-      const Color(0xFF795548),
+      const Color(0xFFAB47BC),
+      const Color(0xFFBA68C8),
+      const Color(0xFFCE93D8),
     ];
     return colors[index % colors.length];
   }
@@ -221,7 +221,7 @@ class _InicioState extends State<Inicio> {
           child: IconButton(
             icon: const Icon(
               Icons.account_circle_outlined,
-              color: Color(0xFFE91E63),
+              color: Color(0xFF8E24AA),
               size: 24,
             ),
             onPressed: () {
@@ -232,29 +232,13 @@ class _InicioState extends State<Inicio> {
             },
           ),
         ),
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Icon(Icons.celebration, color: Colors.white, size: 20),
-            ),
-            const SizedBox(width: 8),
-            const Text(
-              "FestiSpot",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+        title: const Text(
+          "FestiSpot",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         actions: [
           Container(
@@ -266,7 +250,7 @@ class _InicioState extends State<Inicio> {
             child: IconButton(
               icon: const Icon(
                 Icons.notifications_outlined,
-                color: Color(0xFFE91E63),
+                color: Color(0xFF8E24AA),
                 size: 24,
               ),
               onPressed: () {
@@ -281,7 +265,7 @@ class _InicioState extends State<Inicio> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircularProgressIndicator(color: Color(0xFFE91E63)),
+                  CircularProgressIndicator(color: Color(0xFF8E24AA)),
                   SizedBox(height: 16),
                   Text(
                     'Cargando eventos...',
@@ -297,7 +281,7 @@ class _InicioState extends State<Inicio> {
                     children: [
                       const Icon(
                         Icons.error_outline,
-                        color: Color(0xFFE91E63),
+                        color: Color(0xFF8E24AA),
                         size: 64,
                       ),
                       const SizedBox(height: 16),
@@ -310,7 +294,7 @@ class _InicioState extends State<Inicio> {
                       ElevatedButton(
                         onPressed: _loadData,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFE91E63),
+                          backgroundColor: const Color(0xFF8E24AA),
                         ),
                         child: const Text('Reintentar'),
                       ),
@@ -332,7 +316,7 @@ class _InicioState extends State<Inicio> {
                       title: 'Eventos',
                       subtitle: 'Disponibles',
                       value: '${_eventos.length}',
-                      color: const Color(0xFFE91E63),
+                      color: const Color(0xFF8E24AA),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -342,7 +326,7 @@ class _InicioState extends State<Inicio> {
                       title: 'Usuarios',
                       subtitle: 'Activos',
                       value: '1.2K',
-                      color: const Color(0xFF9C27B0),
+                      color: const Color(0xFF7B1FA2),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -352,7 +336,7 @@ class _InicioState extends State<Inicio> {
                       title: 'Rating',
                       subtitle: 'Promedio',
                       value: '4.8',
-                      color: const Color(0xFF00BCD4),
+                      color: const Color(0xFF673AB7),
                     ),
                   ),
                 ],
@@ -382,7 +366,7 @@ class _InicioState extends State<Inicio> {
                     child: const Text(
                       'Ver todos',
                       style: TextStyle(
-                        color: Color(0xFFE91E63),
+                        color: Color(0xFF8E24AA),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -435,7 +419,7 @@ class _InicioState extends State<Inicio> {
                           child: const Text(
                             'Ver todas',
                             style: TextStyle(
-                              color: Color(0xFFE91E63),
+                              color: Color(0xFF8E24AA),
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -463,7 +447,7 @@ class _InicioState extends State<Inicio> {
                               return _buildCategoryCard(
                                 nombre,
                                 _getIconForCategory(nombre),
-                                isSelected ? const Color(0xFFE91E63) : _getColorForCategory(index),
+                                isSelected ? const Color(0xFF8E24AA) : _getColorForCategory(index),
                                 isSelected: isSelected,
                                 onTap: () => _filtrarEventosPorCategoria(nombre),
                               );
@@ -705,7 +689,7 @@ class _InicioState extends State<Inicio> {
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
+                      colors: [Color(0xFF8E24AA), Color(0xFF7B1FA2)],
                     ),
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -796,7 +780,7 @@ class _CardImagesState extends State<CardImages> {
                 Text(_isFavorite ? '¡Agregado a favoritos!' : 'Eliminado de favoritos'),
               ],
             ),
-            backgroundColor: const Color(0xFFE91E63),
+            backgroundColor: const Color(0xFF8E24AA),
             behavior: SnackBarBehavior.floating,
             duration: const Duration(seconds: 2),
           ),
@@ -891,7 +875,7 @@ class _CardImagesState extends State<CardImages> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE91E63),
+                          color: const Color(0xFF8E24AA),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: const Text(
@@ -930,7 +914,7 @@ class _CardImagesState extends State<CardImages> {
                 child: IconButton(
                   icon: Icon(
                     _isFavorite ? Icons.favorite : Icons.favorite_border, 
-                    color: _isFavorite ? const Color(0xFFE91E63) : Colors.white, 
+                    color: _isFavorite ? const Color(0xFF8E24AA) : Colors.white, 
                     size: 20
                   ),
                   onPressed: () {

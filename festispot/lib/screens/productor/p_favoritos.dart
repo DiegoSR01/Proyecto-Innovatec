@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:festispot/utils/eventos_carrusel.dart';
 import 'package:festispot/utils/variables.dart';
-import 'package:festispot/screens/productor/p_mostrar_evento.dart';
+import 'package:festispot/screens/asistente/a_mostrar_evento.dart';
+import 'package:festispot/services/api_service.dart';
+import 'package:festispot/services/auth_service.dart';
 
 class FavoritosScreen extends StatefulWidget {
   const FavoritosScreen({super.key});
@@ -13,6 +15,8 @@ class FavoritosScreen extends StatefulWidget {
 class _FavoritosScreenState extends State<FavoritosScreen> {
   List<Evento> _favoritos = [];
   bool _isGridView = false;
+  bool _isLoading = true;
+  int? _currentUserId;
 
   @override
   void initState() {
@@ -21,43 +25,122 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
   }
 
   void _loadFavoritos() async {
-    // Cargar eventos desde la API primero
     try {
-      await loadEventosFromAPI();
-      // Aquí simularemos algunos favoritos para la demo
-      // En una app real, cargarías esto desde SharedPreferences o base de datos
       setState(() {
-        _favoritos = carrusel
-            .take(2)
-            .toList(); // Tomar los primeros 2 como ejemplo
+        _isLoading = true;
+      });
+
+      // Obtener el usuario actual
+      final currentUser = AuthService.currentUser;
+      if (currentUser?.id == null) {
+        setState(() {
+          _favoritos = [];
+          _isLoading = false;
+        });
+        return;
+      }
+
+      _currentUserId = currentUser!.id!;
+
+      // Cargar eventos desde la API
+      await loadEventosFromAPI();
+      
+      // Cargar favoritos del usuario desde la BD
+      final favoritosData = await ApiService.getFavoritos(_currentUserId!);
+      
+      // Filtrar eventos que están en favoritos
+      // La API devuelve campo 'evento_id', convertir para compatibilidad
+      final eventosIds = favoritosData.map((fav) => fav['evento_id']).toList();
+      final eventosFavoritos = carrusel.where((evento) => 
+        eventosIds.contains(evento.id)
+      ).toList();
+      
+      setState(() {
+        _favoritos = eventosFavoritos;
+        _isLoading = false;
       });
     } catch (e) {
       print('Error al cargar favoritos: $e');
       setState(() {
-        _favoritos = []; // Lista vacía en caso de error
+        _favoritos = [];
+        _isLoading = false;
       });
+      
+      // Mostrar mensaje de error más específico al usuario
+      String errorMessage = 'Error al cargar favoritos';
+      if (e.toString().contains('conexión') || e.toString().contains('internet')) {
+        errorMessage = 'Sin conexión a internet. Verifica tu red.';
+      } else if (e.toString().contains('servidor') || e.toString().contains('timeout')) {
+        errorMessage = 'Servidor no disponible. Inténtalo más tarde.';
+      } else if (e.toString().contains('PHP') || e.toString().contains('Fatal error')) {
+        errorMessage = 'Error del servidor. Contacta al soporte técnico.';
+      }
+      
+      // Mostrar el error en un snackbar si el widget sigue montado
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+            action: SnackBarAction(
+              label: 'Reintentar',
+              textColor: Colors.white,
+              onPressed: () => _loadFavoritos(),
+            ),
+          ),
+        );
+      }
     }
   }
 
-  void _removeFavorito(Evento evento) {
-    setState(() {
-      _favoritos.removeWhere((e) => e.id == evento.id);
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Evento removido de favoritos'),
-        backgroundColor: const Color(0xFF2D2E3F),
-        action: SnackBarAction(
-          label: 'Deshacer',
-          textColor: Color.fromARGB(255, 0, 229, 255),
-          onPressed: () {
-            setState(() {
-              _favoritos.add(evento);
-            });
-          },
+  void _removeFavorito(Evento evento) async {
+    if (_currentUserId == null) return;
+
+    try {
+      // Remover de la BD
+      final success = await ApiService.toggleFavorito(_currentUserId!, evento.id);
+      
+      if (success) {
+        setState(() {
+          _favoritos.removeWhere((e) => e.id == evento.id);
+        });
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${evento.nombre} removido de favoritos'),
+            backgroundColor: const Color(0xFF2D2E3F),
+            action: SnackBarAction(
+              label: 'Deshacer',
+              textColor: const Color(0xFF00BCD4),
+              onPressed: () async {
+                // Volver a agregar a favoritos
+                final addSuccess = await ApiService.toggleFavorito(_currentUserId!, evento.id);
+                if (addSuccess) {
+                  setState(() {
+                    _favoritos.add(evento);
+                  });
+                }
+              },
+            ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error al remover favorito'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'),
+          backgroundColor: Colors.red,
         ),
-      ),
-    );
+      );
+    }
   }
 
   @override
@@ -78,7 +161,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
           ),
         ),
         actions: [
-          if (_favoritos.isNotEmpty)
+          if (_favoritos.isNotEmpty && !_isLoading)
             IconButton(
               onPressed: () {
                 setState(() {
@@ -87,12 +170,30 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
               },
               icon: Icon(
                 _isGridView ? Icons.list : Icons.grid_view,
-                color: Color.fromARGB(255, 0, 229, 255),
+                color: const Color(0xFF00BCD4),
               ),
             ),
         ],
       ),
-      body: _favoritos.isEmpty ? _buildEmptyState() : _buildFavoritosList(),
+      body: _isLoading 
+          ? const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00BCD4)),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Cargando favoritos...',
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                ],
+              ),
+            )
+          : _favoritos.isEmpty 
+              ? _buildEmptyState() 
+              : _buildFavoritosList(),
     );
   }
 
@@ -149,7 +250,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
               ),
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Color.fromARGB(255, 0, 229, 255),
+              backgroundColor: const Color(0xFF00BCD4),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(25),
@@ -257,7 +358,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MostrarEventoprod(carrusel: evento),
+                builder: (context) => MostrarEvento(carrusel: evento),
               ),
             );
           },
@@ -271,9 +372,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: FadeInImage(
-                      placeholder: const AssetImage(
-                        "assets/images/loading.gif",
-                      ),
+                      placeholder: const AssetImage("assets/images/loading.gif"),
                       image: AssetImage(evento.imagen),
                       fit: BoxFit.cover,
                       width: 100,
@@ -288,7 +387,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        evento.nombre ?? 'Evento',
+                        evento.nombre,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -339,12 +438,9 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                       ),
                       const SizedBox(height: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 0, 229, 255),
+                          color: const Color(0xFF00BCD4),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
@@ -368,19 +464,16 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                       },
                       icon: const Icon(
                         Icons.favorite,
-                        color: Color(0xFFE91E63),
+                        color: Color(0xFF00BCD4),
                         size: 24,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color.fromARGB(255, 0, 229, 255), Color(0xFF9C27B0)],
+                          colors: [Color(0xFF00BCD4), Color(0xFF0097A7)],
                         ),
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -425,7 +518,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MostrarEventoprod(carrusel: evento),
+                builder: (context) => MostrarEvento(carrusel: evento),
               ),
             );
           },
@@ -438,13 +531,9 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                 child: Stack(
                   children: [
                     ClipRRect(
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(16),
-                      ),
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                       child: FadeInImage(
-                        placeholder: const AssetImage(
-                          "assets/images/loading.gif",
-                        ),
+                        placeholder: const AssetImage("assets/images/loading.gif"),
                         image: AssetImage(evento.imagen),
                         fit: BoxFit.cover,
                         width: double.infinity,
@@ -465,7 +554,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                           },
                           icon: const Icon(
                             Icons.favorite,
-                            color: Color(0xFFE91E63),
+                            color: Color(0xFF00BCD4),
                             size: 20,
                           ),
                         ),
@@ -483,7 +572,7 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        evento.nombre ?? 'Evento',
+                        evento.nombre,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 14,
@@ -545,7 +634,9 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF2D2E3F),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
         title: const Text(
           'Limpiar favoritos',
           style: TextStyle(color: Colors.white),
@@ -563,22 +654,71 @@ class _FavoritosScreenState extends State<FavoritosScreen> {
             ),
           ),
           ElevatedButton(
-            onPressed: () {
-              setState(() {
-                _favoritos.clear();
-              });
+            onPressed: () async {
               Navigator.pop(context);
+              await _clearAllFavoritos();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFE91E63),
+              backgroundColor: const Color(0xFF00BCD4),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: const Text('Limpiar', style: TextStyle(color: Colors.white)),
+            child: const Text(
+              'Limpiar',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
     );
+  }
+
+  Future<void> _clearAllFavoritos() async {
+    if (_currentUserId == null) return;
+
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      final success = await ApiService.clearAllFavoritos(_currentUserId!);
+      
+      if (success) {
+        setState(() {
+          _favoritos.clear();
+          _isLoading = false;
+        });
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Todos los favoritos eliminados'),
+            backgroundColor: Color(0xFF4CAF50),
+          ),
+        );
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error al eliminar favoritos'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }

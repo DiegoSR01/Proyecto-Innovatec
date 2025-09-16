@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:festispot/utils/eventos_carrusel.dart';
 import 'package:festispot/utils/variables.dart';
-import 'package:festispot/screens/productor/p_mostrar_evento.dart';
+import 'package:festispot/screens/asistente/a_mostrar_evento.dart';
+import 'package:festispot/services/api_service.dart';
 
 class ExplorarEventos extends StatefulWidget {
   const ExplorarEventos({super.key});
@@ -14,35 +15,58 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
   final TextEditingController _searchController = TextEditingController();
   String _selectedCategory = 'Todos';
   List<Evento> _filteredEventos = [];
-
-  final List<String> _categories = [
-    'Todos',
-    'Conferencia',
-    'Seminario',
-    'Taller',
-    'Networking',
-    'Festival',
-    'Evento Deportivo',
-    'Evento Cultural',
-    'Evento Empresarial',
-    'Educativo',
-    'Evento Social',
-    'Otro',
-  ];
+  List<String> _categories = ['Todos']; // Iniciar solo con "Todos"
+  bool _isLoadingCategories = true;
 
   @override
   void initState() {
     super.initState();
     _filteredEventos = carrusel;
+    _loadCategories();
+  }
+
+  /// Carga las categorías desde la BD
+  Future<void> _loadCategories() async {
+    try {
+      setState(() {
+        _isLoadingCategories = true;
+      });
+
+      final categorias = await ApiService.getCategorias();
+      final categoryNames = categorias.map((cat) => cat['nombre'].toString()).toList();
+      
+      setState(() {
+        _categories = ['Todos', ...categoryNames];
+        _isLoadingCategories = false;
+      });
+    } catch (e) {
+      print('Error al cargar categorías: $e');
+      // Si hay error, usar categorías por defecto
+      setState(() {
+        _categories = [
+          'Todos',
+          'Conferencia',
+          'Seminario',
+          'Taller',
+          'Networking',
+          'Festival',
+          'Evento Deportivo',
+          'Evento Cultural',
+          'Evento Empresarial',
+          'Educativo',
+          'Evento Social',
+          'Otro'
+        ];
+        _isLoadingCategories = false;
+      });
+    }
   }
 
   void _filterEvents() {
     setState(() {
       _filteredEventos = carrusel.where((evento) {
-        bool matchesSearch = evento.nombre.toLowerCase().contains(
-          _searchController.text.toLowerCase(),
-        );
-        bool matchesCategory = _selectedCategory == 'Todos';
+        bool matchesSearch = evento.nombre.toLowerCase().contains(_searchController.text.toLowerCase());
+        bool matchesCategory = _selectedCategory == 'Todos' || evento.categoria == _selectedCategory;
         return matchesSearch && matchesCategory;
       }).toList();
     });
@@ -69,7 +93,7 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
           IconButton(
             icon: const Icon(
               Icons.filter_list,
-              color: Color.fromARGB(255, 0, 229, 255),
+              color: Color(0xFF00BCD4),
               size: 24,
             ),
             onPressed: () {
@@ -101,10 +125,7 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
                 decoration: InputDecoration(
                   hintText: 'Buscar eventos...',
                   hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
-                  prefixIcon: const Icon(
-                    Icons.search,
-                    color: Color.fromARGB(255, 0, 229, 255),
-                  ),
+                  prefixIcon: const Icon(Icons.search, color: Color(0xFF00BCD4)),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 20,
@@ -121,43 +142,48 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
           // Filtros de categorías
           SizedBox(
             height: 50,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: _categories.length,
-              itemBuilder: (context, index) {
-                final category = _categories[index];
-                final isSelected = category == _selectedCategory;
-                return Container(
-                  margin: const EdgeInsets.only(right: 12),
-                  child: FilterChip(
-                    label: Text(category),
-                    selected: isSelected,
-                    onSelected: (selected) {
-                      setState(() {
-                        _selectedCategory = category;
-                        _filterEvents();
-                      });
+            child: _isLoadingCategories 
+                ? const Center(
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00BCD4)),
+                      ),
+                    ),
+                  )
+                : ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: _categories.length,
+                    itemBuilder: (context, index) {
+                      final category = _categories[index];
+                      final isSelected = category == _selectedCategory;
+                      return Container(
+                        margin: const EdgeInsets.only(right: 12),
+                        child: FilterChip(
+                          label: Text(category),
+                          selected: isSelected,
+                          onSelected: (selected) {
+                            setState(() {
+                              _selectedCategory = category;
+                            });
+                            _filterEvents();
+                          },
+                          backgroundColor: const Color(0xFF2D2E3F),
+                          selectedColor: const Color(0xFF00BCD4),
+                          labelStyle: TextStyle(
+                            color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
+                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                          ),
+                          side: BorderSide(
+                            color: isSelected ? const Color(0xFF00BCD4) : Colors.transparent,
+                          ),
+                        ),
+                      );
                     },
-                    backgroundColor: const Color(0xFF2D2E3F),
-                    selectedColor: Color.fromARGB(255, 0, 229, 255),
-                    labelStyle: TextStyle(
-                      color: isSelected
-                          ? Colors.white
-                          : Colors.white.withOpacity(0.7),
-                      fontWeight: isSelected
-                          ? FontWeight.w600
-                          : FontWeight.normal,
-                    ),
-                    side: BorderSide(
-                      color: isSelected
-                          ? Color.fromARGB(255, 0, 229, 255)
-                          : Colors.transparent,
-                    ),
                   ),
-                );
-              },
-            ),
           ),
 
           const SizedBox(height: 16),
@@ -182,7 +208,10 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
                       // Toggle entre grid y lista
                     });
                   },
-                  icon: const Icon(Icons.grid_view, color: Color(0xFFE91E63)),
+                  icon: const Icon(
+                    Icons.grid_view,
+                    color: Color(0xFF00BCD4),
+                  ),
                 ),
               ],
             ),
@@ -231,7 +260,7 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MostrarEventoprod(carrusel: evento),
+                builder: (context) => MostrarEvento(carrusel: evento),
               ),
             );
           },
@@ -310,12 +339,9 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
                       Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
-                              color: Color.fromARGB(255, 0, 229, 255),
+                              color: const Color(0xFF00BCD4),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
@@ -330,11 +356,7 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
                           const Spacer(),
                           Row(
                             children: [
-                              const Icon(
-                                Icons.star,
-                                color: Colors.amber,
-                                size: 16,
-                              ),
+                              const Icon(Icons.star, color: Colors.amber, size: 16),
                               const SizedBox(width: 4),
                               Text(
                                 '4.8',
@@ -360,18 +382,15 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
                       },
                       icon: const Icon(
                         Icons.favorite_border,
-                        color: Color(0xFFE91E63),
+                        color: Color(0xFF00BCD4),
                         size: 24,
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color.fromARGB(255, 0, 229, 255), Color(0xFF9C27B0)],
+                          colors: [Color(0xFF00BCD4), Color(0xFF0097A7)],
                         ),
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -483,7 +502,7 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
                         Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color.fromARGB(255, 0, 229, 255),
+                        backgroundColor: const Color(0xFF00BCD4),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -505,14 +524,17 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
 
   Widget _buildFilterOption(String title) {
     return ListTile(
-      title: Text(title, style: const TextStyle(color: Colors.white)),
+      title: Text(
+        title,
+        style: const TextStyle(color: Colors.white),
+      ),
       leading: Radio<String>(
         value: title,
         groupValue: null, // Aquí puedes manejar el estado seleccionado
         onChanged: (value) {
           // Manejar selección
         },
-        activeColor:Color.fromARGB(255, 0, 229, 255),
+        activeColor: const Color(0xFF00BCD4),
       ),
     );
   }

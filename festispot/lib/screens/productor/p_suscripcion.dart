@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class SuscripcionScreen extends StatelessWidget {
-  const SuscripcionScreen({super.key});
+class SuscripcionScreenA extends StatelessWidget {
+  const SuscripcionScreenA({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,11 +12,31 @@ class SuscripcionScreen extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF00BCD4), Color(0xFF0097A7)],
+              ),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF00BCD4).withOpacity(0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+              size: 20,
+            ),
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text(
-          'Suscripción',
+          'Planes de Suscripción',
           style: TextStyle(
             color: Colors.white,
             fontSize: 24,
@@ -29,11 +49,12 @@ class SuscripcionScreen extends StatelessWidget {
         child: Column(
           children: [
             _buildPlanCard(
+              context: context,
               title: 'Plan Básico',
               price: '99',
               features: [
                 'Sin anuncios',
-                'Aviso a eventos básicos',
+                'Acceso a eventos básicos',
                 'Soporte por correo',
                 'Notificaciones básicas',
               ],
@@ -42,6 +63,7 @@ class SuscripcionScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             _buildPlanCard(
+              context: context,
               title: 'Plan Fav',
               price: '199',
               features: [
@@ -54,25 +76,35 @@ class SuscripcionScreen extends StatelessWidget {
               ],
               color: Colors.black,
               isRecommended: true,
-              accentColor: const Color.fromARGB(255, 255, 64, 129),
+              accentColor: const Color.fromARGB(
+                255,
+                255,
+                64,
+                129,
+              ), 
             ),
             const SizedBox(height: 20),
             _buildPlanCard(
+              context: context,
               title: 'Plan Pro',
               price: '299',
               features: [
                 'Todas las ventajas del Plan Fav',
                 'Eventos verificados',
-                'Aviso prioritario a eventos',
+                'Acceso prioritario a eventos',
                 'Soporte 24/7',
                 'Notificaciones avanzadas',
                 'Eventos ilimitados',
                 'Estadísticas avanzadas',
-                'Herramientas de marketing',
               ],
               color: Colors.black,
               isRecommended: false,
-              accentColor: const Color.fromARGB(255, 255, 193, 7),
+              accentColor: const Color.fromARGB(
+                255,
+                255,
+                193,
+                7,
+              ), 
             ),
           ],
         ),
@@ -81,6 +113,7 @@ class SuscripcionScreen extends StatelessWidget {
   }
 
   Widget _buildPlanCard({
+    required BuildContext context,
     required String title,
     required String price,
     required List<String> features,
@@ -95,45 +128,69 @@ class SuscripcionScreen extends StatelessWidget {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: color,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFF2D2E3F),
+            const Color(0xFF2D2E3F).withOpacity(0.8),
+          ],
+        ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isRecommended ? accentColor : Colors.transparent,
+          color: isRecommended ? accentColor.withOpacity(0.6) : Colors.white.withOpacity(0.1),
           width: 2,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: isRecommended ? accentColor.withOpacity(0.2) : Colors.black.withOpacity(0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(24),
         child: Column(
           children: [
             if (isRecommended)
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 4,
+                  horizontal: 16,
+                  vertical: 8,
                 ),
                 decoration: BoxDecoration(
-                  color: accentColor,
+                  gradient: LinearGradient(
+                    colors: [accentColor, accentColor.withOpacity(0.8)],
+                  ),
                   borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: accentColor.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
                 child: const Text(
-                  'Recomendado',
+                  '⭐ Recomendado',
                   style: TextStyle(
-                    color: Colors.black,
+                    color: Colors.white,
                     fontWeight: FontWeight.bold,
+                    fontSize: 13,
                   ),
                 ),
               ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 16),
             Text(
               title,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 24,
+                fontSize: 26,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
             RichText(
               text: TextSpan(
                 children: [
@@ -141,31 +198,50 @@ class SuscripcionScreen extends StatelessWidget {
                     text: '\$$price ',
                     style: TextStyle(
                       color: accentColor,
-                      fontSize: 32,
+                      fontSize: 36,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const TextSpan(
                     text: '/mes',
-                    style: TextStyle(color: Colors.grey, fontSize: 16),
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             ...features.map(
               (feature) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Row(
                   children: [
-                    Icon(Icons.check_circle, color: accentColor, size: 20),
-                    const SizedBox(width: 10),
+                    Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [accentColor, accentColor.withOpacity(0.7)],
+                        ),
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: const Icon(
+                        Icons.check,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
                     Expanded(
                       child: Text(
                         feature,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          height: 1.3,
                         ),
                       ),
                     ),
@@ -173,26 +249,53 @@ class SuscripcionScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  // Implementar lógica de suscripción
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: accentColor,
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [accentColor, accentColor.withOpacity(0.8)],
                   ),
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(
+                      color: accentColor.withOpacity(0.3),
+                      blurRadius: 12,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
                 ),
-                child: const Text(
-                  'Comenzar',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Implementar lógica de suscripción
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Seleccionaste el $title'),
+                        backgroundColor: accentColor,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        margin: const EdgeInsets.all(16),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    padding: const EdgeInsets.symmetric(vertical: 18),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  child: const Text(
+                    'Comenzar',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),

@@ -13,8 +13,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
   bool _notificacionesEventos = true;
   bool _notificacionesOfertas = false;
   bool _ubicacionActiva = true;
-  String _idiomaSeleccionado =
-      'Español'; // Agregado para manejar el idioma seleccionado
+  String _idiomaSeleccionado = 'Español'; // Agregado para manejar el idioma seleccionado
 
   @override
   Widget build(BuildContext context) {
@@ -227,22 +226,12 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Color.fromARGB(
-                      255,
-                      0,
-                      229,
-                      255,
-                    ).withOpacity(0.2), // Changed opacity for container
+                    color: const Color(0xFF00BCD4).withOpacity(0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
                     icon,
-                    color: const Color.fromARGB(
-                      255,
-                      0,
-                      229,
-                      255,
-                    ), // Kept original color for icon
+                    color: const Color(0xFF00BCD4),
                     size: 20,
                   ),
                 ),
@@ -273,7 +262,8 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
                   Switch(
                     value: switchValue,
                     onChanged: onSwitchChanged,
-                    activeTrackColor: Color.fromARGB(255, 0, 229, 255),
+                    activeColor: const Color(0xFF00BCD4),
+                    activeTrackColor: const Color(0xFF00BCD4).withOpacity(0.3),
                   )
                 else
                   Icon(
@@ -294,7 +284,9 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF2D2E3F),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
         title: const Text(
           'Seleccionar Idioma',
           style: TextStyle(color: Colors.white),
@@ -321,12 +313,15 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
               // Aquí podrías agregar lógica para aplicar el idioma
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Color.fromARGB(255, 0, 229, 255),
+              backgroundColor: const Color(0xFF00BCD4),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: const Text('Aplicar', style: TextStyle(color: Colors.white)),
+            child: const Text(
+              'Aplicar',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
@@ -335,7 +330,10 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
 
   Widget _buildLanguageOption(String language) {
     return ListTile(
-      title: Text(language, style: const TextStyle(color: Colors.white)),
+      title: Text(
+        language,
+        style: const TextStyle(color: Colors.white),
+      ),
       leading: Radio<String>(
         value: language,
         groupValue: _idiomaSeleccionado,
@@ -344,7 +342,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
             _idiomaSeleccionado = value!;
           });
         },
-        activeColor: Color.fromARGB(255, 0, 229, 255),
+        activeColor: const Color(0xFF00BCD4),
       ),
     );
   }
@@ -354,30 +352,25 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF2D2E3F),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
         title: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color.fromARGB(255, 0, 229, 255), Color(0xFF9C27B0)],
+                  colors: [Color(0xFF00BCD4), Color(0xFF0097A7)],
                 ),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(
-                Icons.celebration,
-                color: Colors.white,
-                size: 24,
-              ),
+              child: const Icon(Icons.celebration, color: Colors.white, size: 24),
             ),
             const SizedBox(width: 12),
             const Text(
               'FestiSpot',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -405,12 +398,15 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
           ElevatedButton(
             onPressed: () => Navigator.pop(context),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Color.fromARGB(255, 0, 229, 255),
+              backgroundColor: const Color(0xFF00BCD4),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: const Text('Cerrar', style: TextStyle(color: Colors.white)),
+            child: const Text(
+              'Cerrar',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),

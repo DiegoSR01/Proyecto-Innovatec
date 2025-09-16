@@ -140,10 +140,10 @@ class Usuario {
   /// Verifica si es un asistente
   bool get esAsistente => rolId == 1;
 
-  /// Verifica si es un organizador/productor
+  /// Verifica si es un productor
   bool get esProductor => rolId == 2;
 
-  /// Verifica si es un administrador
+  /// Verifica si es un Organizador
   bool get esAdmin => rolId == 3;
 
   /// Obtiene el nombre del rol
@@ -152,9 +152,9 @@ class Usuario {
       case 1:
         return 'Asistente';
       case 2:
-        return 'Organizador';
+        return 'Productor';
       case 3:
-        return 'Administrador';
+        return 'Organizador';
       default:
         return 'Desconocido';
     }

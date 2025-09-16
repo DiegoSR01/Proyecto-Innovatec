@@ -165,7 +165,7 @@ class _ApiDebugScreenState extends State<ApiDebugScreen> with TickerProviderStat
         case 'Planes Suscripción':
           planesSuscripcion = result is List ? result : [];
           break;
-        case 'Suscripciones Organizador':
+        case 'Suscripciones':
           suscripcionesOrganizador = result is List ? result : [];
           break;
         default:
@@ -583,8 +583,8 @@ class _ApiDebugScreenState extends State<ApiDebugScreen> with TickerProviderStat
             _buildDataSection('Notificaciones', notificaciones.length, notificaciones.take(10).map((n) => _buildGenericCard(n, 'notificacion')).toList()),
           if (planesSuscripcion.isNotEmpty && lastTestedEndpoint == 'Planes Suscripción')
             _buildDataSection('Planes de Suscripción', planesSuscripcion.length, planesSuscripcion.take(10).map((p) => _buildGenericCard(p, 'plan')).toList()),
-          if (suscripcionesOrganizador.isNotEmpty && lastTestedEndpoint == 'Suscripciones Organizador')
-            _buildDataSection('Suscripciones de Organizador', suscripcionesOrganizador.length, suscripcionesOrganizador.take(10).map((s) => _buildGenericCard(s, 'suscripcion')).toList()),
+          if (suscripcionesOrganizador.isNotEmpty && lastTestedEndpoint == 'Suscripciones')
+            _buildDataSection('Suscripciones', suscripcionesOrganizador.length, suscripcionesOrganizador.take(10).map((s) => _buildGenericCard(s, 'suscripcion')).toList()),
           if (imagenesEvento.isNotEmpty && lastTestedEndpoint == 'Imágenes Evento')
             _buildDataSection('Imágenes de Evento', imagenesEvento.length, imagenesEvento.take(5).map((i) => _buildGenericCard(i, 'imagen')).toList()),
           if (configuracionUsuario.isNotEmpty && lastTestedEndpoint == 'Config Usuario')
@@ -834,7 +834,7 @@ class _ApiDebugScreenState extends State<ApiDebugScreen> with TickerProviderStat
             _buildTestButton('Analytics', Icons.analytics, () => _testEndpoint('Analytics', () => ApiService.getAnalyticsEvento(1))),
             _buildTestButton('Notificaciones', Icons.notifications, () => _testEndpoint('Notificaciones', () => ApiService.getNotificaciones(1))),
             _buildTestButton('Suscripciones', Icons.subscriptions, () => _testEndpoint('Planes Suscripción', ApiService.getPlanesSuscripcion)),
-            _buildTestButton('Organizador', Icons.group, () => _testEndpoint('Suscripciones Organizador', () => ApiService.getSuscripcionesOrganizador(1))),
+            _buildTestButton('Productor', Icons.group, () => _testEndpoint('Suscripciones', () => ApiService.getSuscripcionesOrganizador(1))),
           ],
         ),
       ],
@@ -1067,7 +1067,7 @@ class _ApiDebugScreenState extends State<ApiDebugScreen> with TickerProviderStat
         break;
       case 'suscripcion':
         title = 'Suscripción #${item['id'] ?? 'N/A'}';
-        subtitle = 'Organizador: ${item['organizador_id'] ?? 'N/A'}';
+        subtitle = 'Productor: ${item['organizador_id'] ?? 'N/A'}';
         detail = 'Plan: ${item['plan'] ?? item['plan_name'] ?? 'N/A'}';
         cardIcon = Icons.group;
         break;

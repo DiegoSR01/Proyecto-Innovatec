@@ -76,7 +76,7 @@ class _AplicacionesPendientesState extends State<AplicacionesPendientes> {
               },
               icon: Icon(
                 _isGridView ? Icons.list : Icons.grid_view,
-                color: Color.fromARGB(255, 0, 229, 255),
+                color: const Color(0xFF00BCD4),
               ),
             ),
         ],
@@ -95,20 +95,20 @@ class _AplicacionesPendientesState extends State<AplicacionesPendientes> {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.grey[200],
+              color: const Color(0xFF2D2E3F),
               borderRadius: BorderRadius.circular(50),
             ),
             child: Icon(
               Icons.pending_actions,
               size: 60,
-              color: Colors.grey[400],
+              color: Colors.white.withOpacity(0.3),
             ),
           ),
           const SizedBox(height: 24),
           Text(
             'No hay aplicaciones pendientes',
             style: TextStyle(
-              color: Colors.grey[800],
+              color: Colors.white.withOpacity(0.8),
               fontSize: 20,
               fontWeight: FontWeight.w600,
             ),
@@ -120,7 +120,7 @@ class _AplicacionesPendientesState extends State<AplicacionesPendientes> {
               'Las aplicaciones a tus eventos aparecerán aquí para que puedas revisarlas',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.grey[600],
+                color: Colors.white.withOpacity(0.5),
                 fontSize: 16,
                 height: 1.5,
               ),
@@ -153,7 +153,7 @@ class _AplicacionesPendientesState extends State<AplicacionesPendientes> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MostrarEventoprod(carrusel: evento),
+                builder: (context) => MostrarEvento(carrusel: evento),
               ),
             );
           },

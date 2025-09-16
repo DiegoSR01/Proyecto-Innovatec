@@ -49,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
           // Navegar según el tipo de usuario
           if (user?.esAsistente == true) {
             Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const MainScreen()),
+              MaterialPageRoute(builder: (context) => const MainAsistente()),
             );
           } else if (user?.esProductor == true) {
             Navigator.of(context).pushReplacement(

@@ -56,7 +56,7 @@ class _AplicacionesCombinedState extends State<AplicacionesCombined>
         ),
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: Color.fromARGB(255, 0, 229, 255),
+          indicatorColor: const Color(0xFF00BCD4),
           tabs: const [
             Tab(text: 'Pendientes'),
             Tab(text: 'Aceptadas'),
@@ -71,7 +71,7 @@ class _AplicacionesCombinedState extends State<AplicacionesCombined>
             },
             icon: Icon(
               _isGridView ? Icons.list : Icons.grid_view,
-              color: Color.fromARGB(255, 0, 229, 255),
+              color: const Color(0xFF00BCD4),
             ),
           ),
         ],
@@ -183,7 +183,7 @@ class _AplicacionesCombinedState extends State<AplicacionesCombined>
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MostrarEventoprod(carrusel: evento),
+                builder: (context) => MostrarEvento(carrusel: evento),
               ),
             );
           },
@@ -279,7 +279,7 @@ class _AplicacionesCombinedState extends State<AplicacionesCombined>
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MostrarEventoprod(carrusel: evento),
+                builder: (context) => MostrarEvento(carrusel: evento),
               ),
             );
           },
@@ -359,7 +359,7 @@ class _AplicacionesCombinedState extends State<AplicacionesCombined>
         backgroundColor: const Color(0xFF2D2E3F),
         action: SnackBarAction(
           label: 'Deshacer',
-          textColor: const Color.fromARGB(255, 0, 229, 255),
+          textColor: const Color(0xFF00BCD4),
           onPressed: () {
             setState(() {
               _aplicacionesPendientes.add(evento);
@@ -380,7 +380,7 @@ class _AplicacionesCombinedState extends State<AplicacionesCombined>
         backgroundColor: const Color(0xFF2D2E3F),
         action: SnackBarAction(
           label: 'Deshacer',
-          textColor: const Color.fromARGB(255, 0, 229, 255),
+          textColor: const Color(0xFF00BCD4),
           onPressed: () {
             setState(() {
               _aplicacionesAceptadas.add(evento);

@@ -45,7 +45,7 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
         backgroundColor: const Color(0xFF2D2E3F),
         action: SnackBarAction(
           label: 'Deshacer',
-          textColor: Color.fromARGB(255, 0, 229, 255),
+          textColor: const Color(0xFF00BCD4),
           onPressed: () {
             setState(() {
               _aplicacionesAceptadas.add(evento);
@@ -83,7 +83,7 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
               },
               icon: Icon(
                 _isGridView ? Icons.list : Icons.grid_view,
-                color: Color.fromARGB(255, 0, 229, 255),
+                color: const Color(0xFF00BCD4),
               ),
             ),
         ],
@@ -230,7 +230,7 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MostrarEventoprod(carrusel: evento),
+                builder: (context) => MostrarEvento(carrusel: evento),
               ),
             );
           },
@@ -364,7 +364,7 @@ class _AplicacionesAceptadasState extends State<AplicacionesAceptadas> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MostrarEventoprod(carrusel: evento),
+                builder: (context) => MostrarEvento(carrusel: evento),
               ),
             );
           },

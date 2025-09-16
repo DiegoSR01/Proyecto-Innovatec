@@ -85,7 +85,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
           ),
           title: const Row(
             children: [
-              Icon(Icons.camera_alt, color: Color(0xFF4CAF50)),
+              Icon(Icons.camera_alt, color: Color(0xFF8E24AA)),
               SizedBox(width: 12),
               Text(
                 'Cambiar Foto de Perfil',
@@ -117,12 +117,12 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF4CAF50).withOpacity(0.2),
+                            color: const Color(0xFF8E24AA).withOpacity(0.2),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: const Icon(
                             Icons.camera_alt,
-                            color: Color(0xFF4CAF50),
+                            color: Color(0xFF8E24AA),
                             size: 32,
                           ),
                         ),
@@ -144,12 +144,12 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF2196F3).withOpacity(0.2),
+                            color: const Color(0xFF7B1FA2).withOpacity(0.2),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: const Icon(
                             Icons.photo_library,
-                            color: Color(0xFF2196F3),
+                            color: Color(0xFF7B1FA2),
                             size: 32,
                           ),
                         ),
@@ -237,7 +237,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
               ),
               title: const Row(
                 children: [
-                  Icon(Icons.edit, color: Color(0xFF00BCD4)),
+                  Icon(Icons.edit, color: Color(0xFF8E24AA)),
                   SizedBox(width: 12),
                   Text(
                     'Editar Perfil',
@@ -309,7 +309,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    color: const Color(0xFF00BCD4),
+                    color: const Color(0xFF8E24AA),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: TextButton(
@@ -363,7 +363,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
           ),
           title: const Row(
             children: [
-              Icon(Icons.email, color: Color(0xFFFF9800)),
+              Icon(Icons.email, color: Color(0xFF673AB7)),
               SizedBox(width: 12),
               Text(
                 'Cambiar Email',
@@ -401,7 +401,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
             ),
             Container(
               decoration: BoxDecoration(
-                color: const Color(0xFFFF9800),
+                color: const Color(0xFF673AB7),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: TextButton(
@@ -455,7 +455,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
           ),
           title: const Row(
             children: [
-              Icon(Icons.lock, color: Color(0xFF9C27B0)),
+              Icon(Icons.lock, color: Color(0xFF7B1FA2)),
               SizedBox(width: 12),
               Text(
                 'Cambiar Contraseña',
@@ -486,7 +486,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
             ),
             Container(
               decoration: BoxDecoration(
-                color: const Color(0xFF9C27B0),
+                color: const Color(0xFF7B1FA2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: TextButton(
@@ -556,7 +556,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFE91E63)),
+          borderSide: const BorderSide(color: Color(0xFF8E24AA)),
         ),
       ),
     );
@@ -582,8 +582,8 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
           ],
         ),
         backgroundColor: isSuccess
-            ? const Color(0xFF4CAF50)
-            : const Color(0xFFE91E63),
+            ? const Color(0xFF8E24AA)
+            : const Color(0xFF757575),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.all(16),
@@ -838,13 +838,13 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFFE91E63).withOpacity(0.1),
-            const Color(0xFF9C27B0).withOpacity(0.1),
+            _getUserThemeColor().withOpacity(0.1),
+            _getUserThemeColor().withOpacity(0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: const Color(0xFFE91E63).withOpacity(0.3),
+          color: _getUserThemeColor().withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -857,8 +857,8 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
+                  gradient: LinearGradient(
+                    colors: [_getUserThemeColor(), _getUserThemeColor().withOpacity(0.7)],
                   ),
                   borderRadius: BorderRadius.circular(60),
                 ),
@@ -883,7 +883,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF4CAF50),
+                      color: _getUserThemeColor(),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(color: Colors.white, width: 2),
                     ),
@@ -972,11 +972,11 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
   Color _getRoleColor() {
     switch (_currentUser?.rolId) {
       case 1: // Asistente
-        return const Color(0xFFE91E63);
-      case 2: // Organizador
-        return const Color(0xFF4CAF50);
-      case 3: // Admin
-        return const Color(0xFFFF9800);
+        return const Color(0xFF8E24AA); // Morado
+      case 2: // Productor
+        return const Color(0xFF00BCD4); // Azul/Cyan
+      case 3: // Organizador
+        return const Color(0xFF4CAF50); // Verde
       default:
         return const Color(0xFFE91E63);
     }
@@ -1013,6 +1013,20 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
     }
   }
 
+  /// Obtiene el color del tema según el tipo de usuario
+  Color _getUserThemeColor() {
+    switch (_currentUser?.rolId) {
+      case 1: // Asistente
+        return const Color(0xFF8E24AA); // Morado
+      case 2: // Productor
+        return const Color(0xFF00BCD4); // Azul/Cyan
+      case 3: // Organizador
+        return const Color(0xFF4CAF50); // Verde
+      default:
+        return const Color(0xFF8E24AA); // Por defecto morado para asistente
+    }
+  }
+
   Widget _buildAccountSection() {
     return _buildSection('Información Personal', [
       _buildSettingTile(
@@ -1029,14 +1043,14 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
         Icons.edit_outlined,
         'Editar Perfil',
         'Modificar nombre y información básica',
-        const Color(0xFF00BCD4),
+        const Color(0xFF8E24AA),
         _mostrarDialogoEditarPerfil,
       ),
       _buildSettingTile(
         Icons.email_outlined,
         'Cambiar Correo',
         'Actualizar dirección de correo electrónico',
-        const Color(0xFFFF9800),
+        const Color(0xFF8E24AA),
         _mostrarDialogoCambiarEmail,
       ),
       _buildSettingTile(
@@ -1045,7 +1059,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
         _currentUser?.telefono != null && _currentUser!.telefono!.isNotEmpty
             ? 'Teléfono: ${_currentUser!.telefono}'
             : 'Agregar número de teléfono',
-        const Color(0xFF4CAF50),
+        const Color(0xFF8E24AA),
         _mostrarDialogoEditarPerfil,
       ),
     ]);
@@ -1057,21 +1071,21 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
         Icons.lock_outline,
         'Cambiar Contraseña',
         'Modificar tu contraseña de acceso',
-        const Color(0xFF9C27B0),
+        const Color(0xFF8E24AA),
         _mostrarDialogoCambiarPassword,
       ),
       _buildSettingTile(
         Icons.security_outlined,
         'Autenticación de Dos Factores',
         'Agregar capa extra de seguridad',
-        const Color(0xFF00BCD4),
+        const Color(0xFF8E24AA),
         () => _showCustomSnackBar('Función próximamente disponible', false),
       ),
       _buildSettingTile(
         Icons.privacy_tip_outlined,
         'Privacidad de Datos',
         'Controla qué información compartes',
-        const Color(0xFF4CAF50),
+        const Color(0xFF8E24AA),
         () => _showCustomSnackBar(
           'Configuración de privacidad próximamente',
           false,
@@ -1162,6 +1176,9 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
     Color color,
     VoidCallback onTap,
   ) {
+    // Usar el color del rol del usuario para el fondo del ícono si no se especifica uno personalizado
+    Color iconBackgroundColor = _getUserThemeColor();
+    
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -1173,7 +1190,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.2),
+            color: iconBackgroundColor.withOpacity(0.2),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(icon, color: color, size: 24),
