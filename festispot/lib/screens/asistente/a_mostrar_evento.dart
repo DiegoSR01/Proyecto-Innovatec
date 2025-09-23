@@ -1,4 +1,5 @@
 import 'package:festispot/utils/variables.dart';
+import 'package:festispot/utils/image_helper.dart';
 import 'package:festispot/services/api_service.dart';
 import 'package:festispot/services/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -283,27 +284,10 @@ class _MostrarEventoState extends State<MostrarEventoAsistente>
                           bottomLeft: Radius.circular(30),
                           bottomRight: Radius.circular(30),
                         ),
-                        child: Image.asset(
-                          widget.carrusel.imagen,
+                        child: widget.carrusel.toEventImageWidget(
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              width: double.infinity,
-                              height: double.infinity,
-                              decoration: const BoxDecoration(
-                                color: Color(0xFF3D3D3D),
-                                borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(30),
-                                  bottomRight: Radius.circular(30),
-                                ),
-                              ),
-                              child: Icon(
-                                Icons.image_outlined,
-                                color: Colors.grey[500],
-                                size: 60,
-                              ),
-                            );
-                          },
+                          width: double.infinity,
+                          height: 400,
                         ),
                       ),
                     ),

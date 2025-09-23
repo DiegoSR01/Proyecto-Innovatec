@@ -5,6 +5,7 @@ import 'package:festispot/screens/productor/p_configuracion.dart';
 import 'package:festispot/screens/productor/p_aplicaciones_combined.dart';
 import 'package:festispot/utils/variables.dart';
 import 'package:festispot/utils/eventos_carrusel.dart';
+import 'package:festispot/utils/image_helper.dart';
 import 'package:festispot/screens/productor/p_mostrar_evento.dart';
 import 'package:festispot/services/api_service.dart';
 import 'package:flutter/material.dart';
@@ -638,26 +639,10 @@ class _InicioState extends State<Inicio> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    evento.imagen,
+                  child: evento.imagen.toImageWidget(
                     fit: BoxFit.cover,
                     width: 80,
                     height: 80,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          Icons.image_outlined,
-                          color: Colors.grey[600],
-                          size: 20,
-                        ),
-                      );
-                    },
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -851,25 +836,10 @@ class _CardImagesState extends State<CardImages> {
                   ),
                 );
               },
-              child: Image.asset(
-                widget.carrusel.imagen,
+              child: widget.carrusel.imagen.toImageWidget(
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: double.infinity,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: double.infinity,
-                    height: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF3D3D3D),
-                    ),
-                    child: Icon(
-                      Icons.image_outlined,
-                      color: Colors.grey[500],
-                      size: 40,
-                    ),
-                  );
-                },
               ),
             ),
             // Overlay gradient

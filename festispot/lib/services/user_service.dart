@@ -25,13 +25,11 @@ class UserService {
     }
   }
 
-  /// Actualiza el perfil del usuario
+  /// Actualiza el perfil del usuario (sin género ni teléfono)
   static Future<UserUpdateResult> updateProfile({
     String? nombre,
     String? apellido,
-    String? telefono,
     String? fechaNacimiento,
-    String? genero,
   }) async {
     try {
       final currentUser = AuthService.currentUser;
@@ -40,27 +38,80 @@ class UserService {
         return UserUpdateResult.error('No hay usuario autenticado');
       }
 
+      // Validar que se proporcione al menos un campo para actualizar
+      if (nombre == null && apellido == null && fechaNacimiento == null) {
+        return UserUpdateResult.error('Debe proporcionar al menos un campo para actualizar');
+      }
+
+      print('🔄 Actualizando perfil del usuario ${currentUser.id}');
+      print('📝 Campos a actualizar: nombre=$nombre, apellido=$apellido, fechaNacimiento=$fechaNacimiento');
+
       // Crear usuario actualizado con los nuevos datos
       final updatedUser = currentUser.copyWith(
         nombre: nombre ?? currentUser.nombre,
         apellido: apellido ?? currentUser.apellido,
-        telefono: telefono ?? currentUser.telefono,
         fechaNacimiento: fechaNacimiento ?? currentUser.fechaNacimiento,
-        genero: genero ?? currentUser.genero,
         fechaActualizacion: DateTime.now(),
       );
+
+      print('👤 Usuario a enviar: ${updatedUser.toString()}');
 
       // Actualizar a través del AuthService que maneja la persistencia
       final authResult = await AuthService.updateCurrentUser(updatedUser);
       
       if (authResult.isSuccess) {
+        print('✅ Perfil actualizado exitosamente');
         return UserUpdateResult.success(authResult.user!, 'Perfil actualizado correctamente');
       } else {
+        print('❌ Error al actualizar perfil: ${authResult.message}');
         return UserUpdateResult.error(authResult.message);
       }
       
     } catch (e) {
+      print('💥 Excepción al actualizar perfil: $e');
       return UserUpdateResult.error('Error al actualizar perfil: $e');
+    }
+  }
+
+  /// Actualiza solo el teléfono del usuario
+  static Future<UserUpdateResult> updatePhone(String telefono) async {
+    try {
+      final currentUser = AuthService.currentUser;
+      
+      if (currentUser == null) {
+        return UserUpdateResult.error('No hay usuario autenticado');
+      }
+
+      // Validar que se proporcione el teléfono
+      if (telefono.trim().isEmpty) {
+        return UserUpdateResult.error('Debe proporcionar un número de teléfono');
+      }
+
+      print('📞 Actualizando teléfono del usuario ${currentUser.id}');
+      print('📝 Nuevo teléfono: $telefono');
+
+      // Crear usuario actualizado solo con el teléfono
+      final updatedUser = currentUser.copyWith(
+        telefono: telefono.trim(),
+        fechaActualizacion: DateTime.now(),
+      );
+
+      print('👤 Usuario a enviar: ${updatedUser.toString()}');
+
+      // Actualizar a través del AuthService que maneja la persistencia
+      final authResult = await AuthService.updateCurrentUser(updatedUser);
+      
+      if (authResult.isSuccess) {
+        print('✅ Teléfono actualizado exitosamente');
+        return UserUpdateResult.success(authResult.user!, 'Teléfono actualizado correctamente');
+      } else {
+        print('❌ Error al actualizar teléfono: ${authResult.message}');
+        return UserUpdateResult.error(authResult.message);
+      }
+      
+    } catch (e) {
+      print('💥 Excepción al actualizar teléfono: $e');
+      return UserUpdateResult.error('Error al actualizar teléfono: $e');
     }
   }
 

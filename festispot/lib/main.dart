@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'screens/login.dart';
 import 'screens/api/api_debug_screen.dart';
 import 'screens/api/api_config_screen.dart';
-import 'services/auth_service.dart';
 
 // Función principal que inicia la aplicación
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Restaurar sesión si existe
-  await AuthService.restoreSession();
+  // Restaurar sesión si existez
   
   runApp(const MyApp());
 }

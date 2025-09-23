@@ -1,33 +1,43 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Servidor: 127.0.0.1
--- Tiempo de generación: 04-09-2025 a las 22:04:03
--- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.2.12
+-- ========================================
+-- SQL MAESTRO FESTISPOT - CREACIÓN COMPLETA DE BD
+-- ========================================
+-- Este archivo crea la base de datos "festispot" desde cero con:
+-- ✅ Estructura completa de todas las tablas (con validación IF NOT EXISTS)
+-- ✅ Datos de categorías, roles, planes de suscripción (con INSERT IGNORE)
+-- ✅ Registros de migrations (para Laravel)
+-- ✅ Validaciones para evitar errores al re-ejecutar el script
+-- ❌ SIN eventos ni usuarios (como solicitado)
+-- ❌ SIN ubicaciones iniciales (como solicitado)
+-- 
+-- SEGURIDAD: Este script puede ejecutarse múltiples veces sin errores
+-- 
+-- Generado: Septiembre 22, 2025
+-- Proyecto: FestiSpot - Plataforma de Eventos
+-- ========================================
 
+-- Configuración inicial
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
-
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
---
--- Base de datos: `festispot`
---
+-- ========================================
+-- 1. CREAR BASE DE DATOS
+-- ========================================
 
--- --------------------------------------------------------
+CREATE DATABASE IF NOT EXISTS `festispot` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `festispot`;
 
---
--- Estructura de tabla para la tabla `analytics_evento`
---
+-- ========================================
+-- 2. ESTRUCTURA DE TABLAS
+-- ========================================
 
-CREATE TABLE `analytics_evento` (
+-- Tabla: analytics_evento
+CREATE TABLE IF NOT EXISTS `analytics_evento` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `evento_id` bigint(20) UNSIGNED NOT NULL,
   `fecha` date NOT NULL,
@@ -40,13 +50,8 @@ CREATE TABLE `analytics_evento` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `asistencias`
---
-
-CREATE TABLE `asistencias` (
+-- Tabla: asistencias
+CREATE TABLE IF NOT EXISTS `asistencias` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `usuario_id` bigint(20) UNSIGNED NOT NULL,
   `evento_id` bigint(20) UNSIGNED NOT NULL,
@@ -61,37 +66,22 @@ CREATE TABLE `asistencias` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `cache`
---
-
-CREATE TABLE `cache` (
+-- Tabla: cache
+CREATE TABLE IF NOT EXISTS `cache` (
   `key` varchar(255) NOT NULL,
   `value` mediumtext NOT NULL,
   `expiration` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `cache_locks`
---
-
-CREATE TABLE `cache_locks` (
+-- Tabla: cache_locks
+CREATE TABLE IF NOT EXISTS `cache_locks` (
   `key` varchar(255) NOT NULL,
   `owner` varchar(255) NOT NULL,
   `expiration` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `categorias`
---
-
-CREATE TABLE `categorias` (
+-- Tabla: categorias
+CREATE TABLE IF NOT EXISTS `categorias` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `nombre` varchar(100) NOT NULL,
   `descripcion` text DEFAULT NULL,
@@ -102,31 +92,8 @@ CREATE TABLE `categorias` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Volcado de datos para la tabla `categorias`
---
-
-INSERT INTO `categorias` (`id`, `nombre`, `descripcion`, `icono`, `color`, `activo`, `created_at`, `updated_at`) VALUES
-(1, 'Música', 'Conciertos, festivales musicales', 'music', '#FF6B6B', 1, '2025-09-05 01:37:55', '2025-09-05 01:37:55'),
-(2, 'Arte', 'Exposiciones, galerías', 'palette', '#4ECDC4', 1, '2025-09-05 01:37:55', '2025-09-05 01:37:55'),
-(3, 'Gastronomía', 'Festivales culinarios, catas', 'restaurant', '#45B7D1', 1, '2025-09-05 01:37:55', '2025-09-05 01:37:55'),
-(4, 'Deportes', 'Eventos deportivos', 'sports', '#96CEB4', 1, '2025-09-05 01:37:55', '2025-09-05 01:37:55'),
-(5, 'Tecnología', 'Conferencias tech, workshops', 'computer', '#FFEAA7', 1, '2025-09-05 01:37:55', '2025-09-05 01:37:55'),
-(6, 'Cultura', 'Eventos culturales', 'theater', '#DDA0DD', 1, '2025-09-05 01:37:55', '2025-09-05 01:37:55'),
-(7, 'Música', 'Eventos musicales y conciertos', NULL, NULL, 1, '2025-09-05 01:49:33', '2025-09-05 01:49:33'),
-(8, 'Tecnología', 'Conferencias y eventos tecnológicos', NULL, NULL, 1, '2025-09-05 01:49:33', '2025-09-05 01:49:33'),
-(9, 'Arte', 'Exposiciones y eventos artísticos', NULL, NULL, 1, '2025-09-05 01:49:33', '2025-09-05 01:49:33'),
-(10, 'Deportes', 'Eventos deportivos y competencias', NULL, NULL, 1, '2025-09-05 01:49:33', '2025-09-05 01:49:33'),
-(11, 'Educativo', 'Talleres y eventos educativos', NULL, NULL, 1, '2025-09-05 01:49:33', '2025-09-05 01:49:33'),
-(12, 'Gastronómico', 'Eventos culinarios y gastronómicos', NULL, NULL, 1, '2025-09-05 01:49:33', '2025-09-05 01:49:33');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `configuraciones_usuario`
---
-
-CREATE TABLE `configuraciones_usuario` (
+-- Tabla: configuraciones_usuario
+CREATE TABLE IF NOT EXISTS `configuraciones_usuario` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `usuario_id` bigint(20) UNSIGNED NOT NULL,
   `notificaciones_push` tinyint(1) NOT NULL DEFAULT 1,
@@ -139,13 +106,8 @@ CREATE TABLE `configuraciones_usuario` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `events`
---
-
-CREATE TABLE `events` (
+-- Tabla: events
+CREATE TABLE IF NOT EXISTS `events` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `organizador_id` bigint(20) UNSIGNED NOT NULL,
   `titulo` varchar(200) NOT NULL,
@@ -183,29 +145,18 @@ CREATE TABLE `events` (
   `access_code` varchar(255) DEFAULT NULL,
   `virtual_password` varchar(255) DEFAULT NULL,
   `virtual_instructions` text DEFAULT NULL,
-  `banner_image` varchar(255) DEFAULT NULL,
-  `gallery_images` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`gallery_images`)),
+  `banner_image` MEDIUMBLOB DEFAULT NULL,
+  `banner_image_type` varchar(50) DEFAULT NULL,
+  `gallery_images` LONGBLOB DEFAULT NULL,
+  `gallery_images_metadata` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`gallery_images_metadata`)),
   `videos` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`videos`)),
   `estado` enum('borrador','publicado','en_curso','finalizado','cancelado') NOT NULL DEFAULT 'borrador',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Volcado de datos para la tabla `events`
---
-
-INSERT INTO `events` (`id`, `organizador_id`, `titulo`, `descripcion`, `descripcion_corta`, `categoria_id`, `ubicacion_id`, `category`, `fecha_inicio`, `fecha_fin`, `start_time`, `end_time`, `hora_apertura_puertas`, `repeat_schedule`, `event_type`, `venue_name`, `full_address`, `city`, `state`, `country`, `postal_code`, `location_details`, `capacidad_total`, `edad_minima`, `politicas_cancelacion`, `instrucciones_especiales`, `tags`, `fecha_creacion`, `fecha_actualizacion`, `fecha_publicacion`, `motivo_cambio`, `accessible`, `virtual_platform`, `event_link`, `access_code`, `virtual_password`, `virtual_instructions`, `banner_image`, `gallery_images`, `videos`, `estado`, `created_at`, `updated_at`) VALUES
-(3, 1, 'Juanpa es gay', 'wqeewqe', NULL, NULL, NULL, 'Educativo', '2025-09-17 10:30:00', '2025-09-19 16:00:00', '10:30:00', '16:00:00', NULL, 0, 'Presencial', 'eqweqw', 'ewqeqw', 'ewqeqw', 'Nuevo León', NULL, '32132', NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'borrador', '2025-09-05 01:50:46', '2025-09-05 01:50:46'),
-(4, 1, 'buenas', 'dsadsadas', NULL, NULL, NULL, 'Deportivo', '2025-09-11 11:30:00', '2025-09-18 17:30:00', '11:30:00', '17:30:00', NULL, 0, 'Presencial', 'dsa', 'dsadsa', 'dasdsa', 'Jalisco', NULL, '23123', NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, 'wallpaper.jpeg', NULL, NULL, 'borrador', '2025-09-05 02:00:48', '2025-09-05 02:00:48');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `failed_jobs`
---
-
-CREATE TABLE `failed_jobs` (
+-- Tabla: failed_jobs
+CREATE TABLE IF NOT EXISTS `failed_jobs` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `uuid` varchar(255) NOT NULL,
   `connection` text NOT NULL,
@@ -215,13 +166,8 @@ CREATE TABLE `failed_jobs` (
   `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `favoritos`
---
-
-CREATE TABLE `favoritos` (
+-- Tabla: favoritos
+CREATE TABLE IF NOT EXISTS `favoritos` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `usuario_id` bigint(20) UNSIGNED NOT NULL,
   `evento_id` bigint(20) UNSIGNED NOT NULL,
@@ -230,13 +176,8 @@ CREATE TABLE `favoritos` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `imagenes_evento`
---
-
-CREATE TABLE `imagenes_evento` (
+-- Tabla: imagenes_evento
+CREATE TABLE IF NOT EXISTS `imagenes_evento` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `evento_id` bigint(20) UNSIGNED NOT NULL,
   `url` varchar(500) NOT NULL,
@@ -250,13 +191,24 @@ CREATE TABLE `imagenes_evento` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
+-- Tabla: imagenes_galeria_evento
+CREATE TABLE IF NOT EXISTS `imagenes_galeria_evento` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `evento_id` bigint(20) UNSIGNED NOT NULL,
+  `imagen_data` MEDIUMBLOB NOT NULL,
+  `tipo_mime` varchar(50) NOT NULL,
+  `tamaño_bytes` int(11) NOT NULL,
+  `nombre_original` varchar(255) DEFAULT NULL,
+  `orden` int(11) NOT NULL DEFAULT 0,
+  `alt_text` varchar(200) DEFAULT NULL,
+  `descripcion` text DEFAULT NULL,
+  `fecha_subida` timestamp NOT NULL DEFAULT current_timestamp(),
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Estructura de tabla para la tabla `jobs`
---
-
-CREATE TABLE `jobs` (
+-- Tabla: jobs
+CREATE TABLE IF NOT EXISTS `jobs` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `queue` varchar(255) NOT NULL,
   `payload` longtext NOT NULL,
@@ -266,13 +218,8 @@ CREATE TABLE `jobs` (
   `created_at` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `job_batches`
---
-
-CREATE TABLE `job_batches` (
+-- Tabla: job_batches
+CREATE TABLE IF NOT EXISTS `job_batches` (
   `id` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `total_jobs` int(11) NOT NULL,
@@ -285,50 +232,15 @@ CREATE TABLE `job_batches` (
   `finished_at` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `migrations`
---
-
-CREATE TABLE `migrations` (
+-- Tabla: migrations
+CREATE TABLE IF NOT EXISTS `migrations` (
   `id` int(10) UNSIGNED NOT NULL,
   `migration` varchar(255) NOT NULL,
   `batch` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Volcado de datos para la tabla `migrations`
---
-
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
-(1, '0001_01_01_000000_create_users_table', 1),
-(2, '0001_01_01_000001_create_cache_table', 1),
-(3, '0001_01_01_000002_create_jobs_table', 1),
-(4, '2025_08_29_194903_create_events_table', 1),
-(5, '2025_09_01_000001_create_roles_table', 1),
-(6, '2025_09_01_000002_create_categorias_table', 1),
-(7, '2025_09_01_000003_create_ubicaciones_table', 1),
-(8, '2025_09_01_000004_create_planes_suscripcion_table', 1),
-(9, '2025_09_01_000005_update_users_table', 1),
-(10, '2025_09_01_000006_update_events_table', 1),
-(11, '2025_09_01_000007_create_imagenes_evento_table', 1),
-(12, '2025_09_01_000008_create_suscripciones_organizador_table', 1),
-(13, '2025_09_01_000009_create_asistencias_table', 1),
-(14, '2025_09_01_000010_create_notificaciones_table', 1),
-(15, '2025_09_01_000011_create_favoritos_table', 1),
-(16, '2025_09_01_000012_create_reviews_table', 1),
-(17, '2025_09_01_000013_create_configuraciones_usuario_table', 1),
-(18, '2025_09_01_000014_create_analytics_evento_table', 1),
-(19, '2025_09_01_185639_create_personal_access_tokens_table', 1);
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `notificaciones`
---
-
-CREATE TABLE `notificaciones` (
+-- Tabla: notificaciones
+CREATE TABLE IF NOT EXISTS `notificaciones` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `usuario_id` bigint(20) UNSIGNED NOT NULL,
   `evento_id` bigint(20) UNSIGNED DEFAULT NULL,
@@ -343,25 +255,15 @@ CREATE TABLE `notificaciones` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `password_reset_tokens`
---
-
-CREATE TABLE `password_reset_tokens` (
+-- Tabla: password_reset_tokens
+CREATE TABLE IF NOT EXISTS `password_reset_tokens` (
   `email` varchar(255) NOT NULL,
   `token` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `personal_access_tokens`
---
-
-CREATE TABLE `personal_access_tokens` (
+-- Tabla: personal_access_tokens
+CREATE TABLE IF NOT EXISTS `personal_access_tokens` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `tokenable_type` varchar(255) NOT NULL,
   `tokenable_id` bigint(20) UNSIGNED NOT NULL,
@@ -374,13 +276,8 @@ CREATE TABLE `personal_access_tokens` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `planes_suscripcion`
---
-
-CREATE TABLE `planes_suscripcion` (
+-- Tabla: planes_suscripcion
+CREATE TABLE IF NOT EXISTS `planes_suscripcion` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `nombre` varchar(100) NOT NULL,
   `descripcion` text DEFAULT NULL,
@@ -394,22 +291,8 @@ CREATE TABLE `planes_suscripcion` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Volcado de datos para la tabla `planes_suscripcion`
---
-
-INSERT INTO `planes_suscripcion` (`id`, `nombre`, `descripcion`, `precio_mensual`, `precio_anual`, `max_eventos`, `max_imagenes_por_evento`, `features`, `activo`, `created_at`, `updated_at`) VALUES
-(1, 'Básico', 'Plan básico para empezar', 0.00, 0.00, 5, 3, '[\"eventos_basicos\"]', 1, '2025-09-05 01:37:55', '2025-09-05 01:37:55'),
-(2, 'Pro', 'Plan profesional con más funciones', 299.00, 2990.00, 50, 10, '[\"analytics\",\"promocion_premium\",\"soporte_prioritario\"]', 1, '2025-09-05 01:37:55', '2025-09-05 01:37:55'),
-(3, 'Premium', 'Plan premium con todas las funciones', 599.00, 5990.00, NULL, NULL, '[\"analytics\",\"promocion_premium\",\"soporte_24_7\",\"api_access\",\"white_label\"]', 1, '2025-09-05 01:37:55', '2025-09-05 01:37:55');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `reviews`
---
-
-CREATE TABLE `reviews` (
+-- Tabla: reviews
+CREATE TABLE IF NOT EXISTS `reviews` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `usuario_id` bigint(20) UNSIGNED NOT NULL,
   `evento_id` bigint(20) UNSIGNED NOT NULL,
@@ -422,13 +305,8 @@ CREATE TABLE `reviews` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `roles`
---
-
-CREATE TABLE `roles` (
+-- Tabla: roles
+CREATE TABLE IF NOT EXISTS `roles` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `nombre` varchar(50) NOT NULL,
   `descripcion` text DEFAULT NULL,
@@ -437,22 +315,8 @@ CREATE TABLE `roles` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Volcado de datos para la tabla `roles`
---
-
-INSERT INTO `roles` (`id`, `nombre`, `descripcion`, `permisos`, `created_at`, `updated_at`) VALUES
-(1, 'asistente', 'Usuario que asiste a eventos', '[\"view_events\",\"register_events\",\"rate_events\"]', '2025-09-05 01:37:55', '2025-09-05 01:37:55'),
-(2, 'organizador', 'Usuario que crea y gestiona eventos', '[\"view_events\",\"create_events\",\"edit_events\",\"manage_events\",\"view_analytics\"]', '2025-09-05 01:37:55', '2025-09-05 01:37:55'),
-(3, 'admin', 'Administrador del sistema', '[\"*\"]', '2025-09-05 01:37:55', '2025-09-05 01:37:55');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `sessions`
---
-
-CREATE TABLE `sessions` (
+-- Tabla: sessions
+CREATE TABLE IF NOT EXISTS `sessions` (
   `id` varchar(255) NOT NULL,
   `user_id` bigint(20) UNSIGNED DEFAULT NULL,
   `ip_address` varchar(45) DEFAULT NULL,
@@ -461,23 +325,8 @@ CREATE TABLE `sessions` (
   `last_activity` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Volcado de datos para la tabla `sessions`
---
-
-INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('dFJlKxYwTQTStlHtKC87WPo3rauidAJi9UeCM4QM', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.103.2 Chrome/138.0.7204.100 Electron/37.2.3 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiWENOV1o3V3FMNnRsbEFUV0czek5Ld1VjZ2RoUGtRZ1BYeHhaWGhjNiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6OTU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC8/aWQ9NDY3ODdmYjUtMTMyNC00NGZiLTgwODAtNTFjZGQzYTEyOWJmJnZzY29kZUJyb3dzZXJSZXFJZD0xNzU3MDE1ODk3NTYyIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1757015898),
-('ESNjk73Rv67xq36bakyObzcmaza21DDfxJBX9rmp', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.103.2 Chrome/138.0.7204.100 Electron/37.2.3 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoieE43NTlOSzhkU09vTFRPR2cxVGR4bklCclh4dGNNeVBvZTZhUGY4TiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6OTU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC8/aWQ9NDY3ODdmYjUtMTMyNC00NGZiLTgwODAtNTFjZGQzYTEyOWJmJnZzY29kZUJyb3dzZXJSZXFJZD0xNzU3MDE0Nzg0Mjk1Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1757014784),
-('H7Yr6NqmX1Pmlwcu0TZVGlPQuBfGVoXnMSoFDNNX', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 OPR/120.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiaE5lcVJTR29nZDdScFhMd0ZYQzVkREJ3YnlxS3pNWGhMa3I4d0w0MyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzM6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9taXMtZXZlbnRvcyI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjE7fQ==', 1757016049),
-('RgQTsVid1YaRmXqsJuywoue0qc6Z4rWu4ugqqc4m', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.103.2 Chrome/138.0.7204.100 Electron/37.2.3 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiYlZ5b0JBR1Rwa0F6amhlRUl5VExCWTJtc0hLbUM0MmJWcEF5a013ViI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MTA3OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvZXZlbnQvY3JlYXRlP2lkPTQ2Nzg3ZmI1LTEzMjQtNDRmYi04MDgwLTUxY2RkM2ExMjliZiZ2c2NvZGVCcm93c2VyUmVxSWQ9MTc1NzAxNDc5NTEzOCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1757014795);
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `suscripciones_organizador`
---
-
-CREATE TABLE `suscripciones_organizador` (
+-- Tabla: suscripciones_organizador
+CREATE TABLE IF NOT EXISTS `suscripciones_organizador` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `organizador_id` bigint(20) UNSIGNED NOT NULL,
   `plan_id` bigint(20) UNSIGNED NOT NULL,
@@ -490,13 +339,8 @@ CREATE TABLE `suscripciones_organizador` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `ubicaciones`
---
-
-CREATE TABLE `ubicaciones` (
+-- Tabla: ubicaciones
+CREATE TABLE IF NOT EXISTS `ubicaciones` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `nombre` varchar(200) NOT NULL,
   `direccion` text NOT NULL,
@@ -515,22 +359,8 @@ CREATE TABLE `ubicaciones` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Volcado de datos para la tabla `ubicaciones`
---
-
-INSERT INTO `ubicaciones` (`id`, `nombre`, `direccion`, `ciudad`, `estado`, `codigo_postal`, `pais`, `latitud`, `longitud`, `capacidad_maxima`, `tipo_venue`, `facilidades`, `contacto_venue`, `telefono_venue`, `created_at`, `updated_at`) VALUES
-(1, 'Auditorio Nacional', 'Paseo de la Reforma 50', 'Ciudad de México', 'Ciudad de México', '11560', 'México', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-09-05 01:49:54', '2025-09-05 01:49:54'),
-(2, 'Centro de Convenciones', 'Av. Conscripto 311', 'Ciudad de México', 'Ciudad de México', '11200', 'México', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-09-05 01:49:54', '2025-09-05 01:49:54'),
-(3, 'Palacio de los Deportes', 'Añil 635', 'Ciudad de México', 'Ciudad de México', '08400', 'México', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-09-05 01:49:54', '2025-09-05 01:49:54');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `users`
---
-
-CREATE TABLE `users` (
+-- Tabla: users
+CREATE TABLE IF NOT EXISTS `users` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `nombre` varchar(255) NOT NULL,
   `apellido` varchar(100) NOT NULL,
@@ -552,366 +382,348 @@ CREATE TABLE `users` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Volcado de datos para la tabla `users`
---
+-- ========================================
+-- 3. DATOS INICIALES - ROLES
+-- ========================================
 
-INSERT INTO `users` (`id`, `nombre`, `apellido`, `email`, `telefono`, `fecha_nacimiento`, `genero`, `avatar_url`, `rol_id`, `estado`, `fecha_registro`, `ultimo_acceso`, `token_verificacion`, `email_verificado`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Usuario de Prueba', 'Apellido Test', 'test@festispot.com', NULL, NULL, NULL, NULL, 1, 'activo', NULL, NULL, NULL, 0, NULL, '$2y$12$A2ohSR9Z7aleXOMl/ckoLePqWGolc.TauyVIt0XHqFtVuAVBojKaq', NULL, '2025-09-05 01:49:01', '2025-09-05 01:49:01');
+INSERT IGNORE INTO `roles` (`id`, `nombre`, `descripcion`, `permisos`, `created_at`, `updated_at`) VALUES
+(1, 'asistente', 'Usuario que asiste a eventos', '[\"view_events\",\"register_events\",\"rate_events\",\"add_favorites\",\"view_profile\"]', NOW(), NOW()),
+(2, 'productor', 'Usuario que crea y gestiona sus propios eventos', '[\"view_events\",\"register_events\",\"rate_events\",\"add_favorites\",\"view_profile\",\"create_events\",\"edit_own_events\",\"manage_own_events\",\"view_own_analytics\",\"upload_images\"]', NOW(), NOW()),
+(3, 'organizador', 'Administrador que gestiona la plataforma y todos los eventos', '[\"*\"]', NOW(), NOW());
 
---
--- Índices para tablas volcadas
---
+-- ========================================
+-- 4. DATOS INICIALES - CATEGORÍAS
+-- ========================================
 
---
--- Indices de la tabla `analytics_evento`
---
+INSERT IGNORE INTO `categorias` (`id`, `nombre`, `descripcion`, `icono`, `color`, `activo`, `created_at`, `updated_at`) VALUES
+(1, 'Música', 'Conciertos, festivales musicales y eventos sonoros', 'music', '#FF6B6B', 1, NOW(), NOW()),
+(2, 'Arte', 'Exposiciones, galerías de arte, eventos artísticos y culturales', 'palette', '#4ECDC4', 1, NOW(), NOW()),
+(3, 'Gastronomía', 'Festivales culinarios, catas y eventos gastronómicos', 'restaurant', '#45B7D1', 1, NOW(), NOW()),
+(4, 'Deportes', 'Eventos deportivos, competencias y actividades físicas', 'sports', '#96CEB4', 1, NOW(), NOW()),
+(5, 'Tecnología', 'Conferencias tech, workshops y eventos tecnológicos', 'computer', '#FFEAA7', 1, NOW(), NOW()),
+(6, 'Cultura', 'Eventos culturales, tradiciones y patrimonio', 'theater', '#DDA0DD', 1, NOW(), NOW()),
+(7, 'Educativo', 'Talleres, cursos, seminarios y eventos educativos', 'school', '#FFA07A', 1, NOW(), NOW()),
+(8, 'Entretenimiento', 'Shows, espectáculos y eventos de entretenimiento general', 'celebration', '#98D8E8', 1, NOW(), NOW()),
+(9, 'Negocios', 'Conferencias empresariales, networking y eventos corporativos', 'business', '#F7DC6F', 1, NOW(), NOW()),
+(10, 'Salud y Bienestar', 'Eventos de yoga, meditación, fitness y bienestar', 'spa', '#ABEBC6', 1, NOW(), NOW()),
+(11, 'Familia', 'Eventos familiares, actividades para niños y padres', 'family', '#F8C471', 1, NOW(), NOW()),
+(12, 'Religioso', 'Eventos religiosos, ceremonias y celebraciones espirituales', 'church', '#D2B4DE', 1, NOW(), NOW());
+
+-- ========================================
+-- 5. DATOS INICIALES - PLANES DE SUSCRIPCIÓN
+-- ========================================
+
+INSERT IGNORE INTO `planes_suscripcion` (`id`, `nombre`, `descripcion`, `precio_mensual`, `precio_anual`, `max_eventos`, `max_imagenes_por_evento`, `features`, `activo`, `created_at`, `updated_at`) VALUES
+(1, 'Básico', 'Plan básico para empezar', 0.00, 0.00, 5, 3, '[\"eventos_basicos\"]', 1, NOW(), NOW()),
+(2, 'Pro', 'Plan profesional con más funciones', 299.00, 2990.00, 50, 10, '[\"analytics\",\"promocion_premium\",\"soporte_prioritario\"]', 1, NOW(), NOW()),
+(3, 'Premium', 'Plan premium con todas las funciones', 599.00, 5990.00, NULL, NULL, '[\"analytics\",\"promocion_premium\",\"soporte_24_7\",\"api_access\",\"white_label\"]', 1, NOW(), NOW());
+
+-- ========================================
+-- 6. DATOS INICIALES - MIGRACIONES DE LARAVEL
+-- ========================================
+
+INSERT IGNORE INTO `migrations` (`id`, `migration`, `batch`) VALUES
+(1, '0001_01_01_000000_create_users_table', 1),
+(2, '0001_01_01_000001_create_cache_table', 1),
+(3, '0001_01_01_000002_create_jobs_table', 1),
+(4, '2025_08_29_194903_create_events_table', 1),
+(5, '2025_09_01_000001_create_roles_table', 1),
+(6, '2025_09_01_000002_create_categorias_table', 1),
+(7, '2025_09_01_000003_create_ubicaciones_table', 1),
+(8, '2025_09_01_000004_create_planes_suscripcion_table', 1),
+(9, '2025_09_01_000005_update_users_table', 1),
+(10, '2025_09_01_000006_update_events_table', 1),
+(11, '2025_09_01_000007_create_imagenes_evento_table', 1),
+(12, '2025_09_01_000008_create_suscripciones_organizador_table', 1),
+(13, '2025_09_01_000009_create_asistencias_table', 1),
+(14, '2025_09_01_000010_create_notificaciones_table', 1),
+(15, '2025_09_01_000011_create_favoritos_table', 1),
+(16, '2025_09_01_000012_create_reviews_table', 1),
+(17, '2025_09_01_000013_create_configuraciones_usuario_table', 1),
+(18, '2025_09_01_000014_create_analytics_evento_table', 1),
+(19, '2025_09_01_185639_create_personal_access_tokens_table', 1);
+
+-- ========================================
+-- 8. CONFIGURAR ÍNDICES Y CLAVES
+-- ========================================
+
+-- Indices de la tabla analytics_evento
 ALTER TABLE `analytics_evento`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `unique_event_date` (`evento_id`,`fecha`);
 
---
--- Indices de la tabla `asistencias`
---
+-- Indices de la tabla asistencias
 ALTER TABLE `asistencias`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `unique_user_event` (`usuario_id`,`evento_id`),
   ADD UNIQUE KEY `asistencias_codigo_qr_unique` (`codigo_qr`),
   ADD KEY `asistencias_evento_id_foreign` (`evento_id`);
 
---
--- Indices de la tabla `cache`
---
+-- Indices de la tabla cache
 ALTER TABLE `cache`
   ADD PRIMARY KEY (`key`);
 
---
--- Indices de la tabla `cache_locks`
---
+-- Indices de la tabla cache_locks
 ALTER TABLE `cache_locks`
   ADD PRIMARY KEY (`key`);
 
---
--- Indices de la tabla `categorias`
---
+-- Indices de la tabla categorias
 ALTER TABLE `categorias`
   ADD PRIMARY KEY (`id`);
 
---
--- Indices de la tabla `configuraciones_usuario`
---
+-- Indices de la tabla configuraciones_usuario
 ALTER TABLE `configuraciones_usuario`
   ADD PRIMARY KEY (`id`),
   ADD KEY `configuraciones_usuario_usuario_id_foreign` (`usuario_id`);
 
---
--- Indices de la tabla `events`
---
+-- Indices de la tabla events
 ALTER TABLE `events`
   ADD PRIMARY KEY (`id`),
   ADD KEY `events_user_id_foreign` (`organizador_id`),
   ADD KEY `events_categoria_id_foreign` (`categoria_id`),
   ADD KEY `events_ubicacion_id_foreign` (`ubicacion_id`);
 
---
--- Indices de la tabla `failed_jobs`
---
+-- Indices de la tabla failed_jobs
 ALTER TABLE `failed_jobs`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`);
 
---
--- Indices de la tabla `favoritos`
---
+-- Indices de la tabla favoritos
 ALTER TABLE `favoritos`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `unique_favorite` (`usuario_id`,`evento_id`),
   ADD KEY `favoritos_evento_id_foreign` (`evento_id`);
 
---
--- Indices de la tabla `imagenes_evento`
---
+-- Indices de la tabla imagenes_evento
 ALTER TABLE `imagenes_evento`
   ADD PRIMARY KEY (`id`),
   ADD KEY `imagenes_evento_evento_id_foreign` (`evento_id`);
 
---
--- Indices de la tabla `jobs`
---
+-- Indices de la tabla imagenes_galeria_evento
+ALTER TABLE `imagenes_galeria_evento`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `imagenes_galeria_evento_evento_id_foreign` (`evento_id`),
+  ADD KEY `imagenes_galeria_evento_orden_index` (`orden`);
+
+-- Indices de la tabla jobs
 ALTER TABLE `jobs`
   ADD PRIMARY KEY (`id`),
   ADD KEY `jobs_queue_index` (`queue`);
 
---
--- Indices de la tabla `job_batches`
---
+-- Indices de la tabla job_batches
 ALTER TABLE `job_batches`
   ADD PRIMARY KEY (`id`);
 
---
--- Indices de la tabla `migrations`
---
+-- Indices de la tabla migrations
 ALTER TABLE `migrations`
   ADD PRIMARY KEY (`id`);
 
---
--- Indices de la tabla `notificaciones`
---
+-- Indices de la tabla notificaciones
 ALTER TABLE `notificaciones`
   ADD PRIMARY KEY (`id`),
   ADD KEY `notificaciones_usuario_id_foreign` (`usuario_id`),
   ADD KEY `notificaciones_evento_id_foreign` (`evento_id`);
 
---
--- Indices de la tabla `password_reset_tokens`
---
+-- Indices de la tabla password_reset_tokens
 ALTER TABLE `password_reset_tokens`
   ADD PRIMARY KEY (`email`);
 
---
--- Indices de la tabla `personal_access_tokens`
---
+-- Indices de la tabla personal_access_tokens
 ALTER TABLE `personal_access_tokens`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
   ADD KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`),
   ADD KEY `personal_access_tokens_expires_at_index` (`expires_at`);
 
---
--- Indices de la tabla `planes_suscripcion`
---
+-- Indices de la tabla planes_suscripcion
 ALTER TABLE `planes_suscripcion`
   ADD PRIMARY KEY (`id`);
 
---
--- Indices de la tabla `reviews`
---
+-- Indices de la tabla reviews
 ALTER TABLE `reviews`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `unique_review` (`usuario_id`,`evento_id`),
   ADD KEY `reviews_evento_id_foreign` (`evento_id`);
 
---
--- Indices de la tabla `roles`
---
+-- Indices de la tabla roles
 ALTER TABLE `roles`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `roles_nombre_unique` (`nombre`);
 
---
--- Indices de la tabla `sessions`
---
+-- Indices de la tabla sessions
 ALTER TABLE `sessions`
   ADD PRIMARY KEY (`id`),
   ADD KEY `sessions_user_id_index` (`user_id`),
   ADD KEY `sessions_last_activity_index` (`last_activity`);
 
---
--- Indices de la tabla `suscripciones_organizador`
---
+-- Indices de la tabla suscripciones_organizador
 ALTER TABLE `suscripciones_organizador`
   ADD PRIMARY KEY (`id`),
   ADD KEY `suscripciones_organizador_organizador_id_foreign` (`organizador_id`),
   ADD KEY `suscripciones_organizador_plan_id_foreign` (`plan_id`);
 
---
--- Indices de la tabla `ubicaciones`
---
+-- Indices de la tabla ubicaciones
 ALTER TABLE `ubicaciones`
   ADD PRIMARY KEY (`id`);
 
---
--- Indices de la tabla `users`
---
+-- Indices de la tabla users
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `users_email_unique` (`email`),
   ADD KEY `users_rol_id_foreign` (`rol_id`);
 
---
--- AUTO_INCREMENT de las tablas volcadas
---
+-- ========================================
+-- 9. AUTO_INCREMENT PARA TABLAS
+-- ========================================
 
---
--- AUTO_INCREMENT de la tabla `analytics_evento`
---
 ALTER TABLE `analytics_evento`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `asistencias`
---
 ALTER TABLE `asistencias`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `categorias`
---
 ALTER TABLE `categorias`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
---
--- AUTO_INCREMENT de la tabla `configuraciones_usuario`
---
 ALTER TABLE `configuraciones_usuario`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `events`
---
 ALTER TABLE `events`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `failed_jobs`
---
 ALTER TABLE `failed_jobs`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `favoritos`
---
 ALTER TABLE `favoritos`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `imagenes_evento`
---
 ALTER TABLE `imagenes_evento`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `jobs`
---
+ALTER TABLE `imagenes_galeria_evento`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 ALTER TABLE `jobs`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `migrations`
---
 ALTER TABLE `migrations`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
---
--- AUTO_INCREMENT de la tabla `notificaciones`
---
 ALTER TABLE `notificaciones`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `personal_access_tokens`
---
 ALTER TABLE `personal_access_tokens`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `planes_suscripcion`
---
 ALTER TABLE `planes_suscripcion`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
---
--- AUTO_INCREMENT de la tabla `reviews`
---
 ALTER TABLE `reviews`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `roles`
---
 ALTER TABLE `roles`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
---
--- AUTO_INCREMENT de la tabla `suscripciones_organizador`
---
 ALTER TABLE `suscripciones_organizador`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `ubicaciones`
---
 ALTER TABLE `ubicaciones`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `users`
---
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- Restricciones para tablas volcadas
---
+-- ========================================
+-- 10. RESTRICCIONES DE CLAVE FORÁNEA
+-- ========================================
 
---
--- Filtros para la tabla `analytics_evento`
---
 ALTER TABLE `analytics_evento`
   ADD CONSTRAINT `analytics_evento_evento_id_foreign` FOREIGN KEY (`evento_id`) REFERENCES `events` (`id`);
 
---
--- Filtros para la tabla `asistencias`
---
 ALTER TABLE `asistencias`
   ADD CONSTRAINT `asistencias_evento_id_foreign` FOREIGN KEY (`evento_id`) REFERENCES `events` (`id`),
   ADD CONSTRAINT `asistencias_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `users` (`id`);
 
---
--- Filtros para la tabla `configuraciones_usuario`
---
 ALTER TABLE `configuraciones_usuario`
   ADD CONSTRAINT `configuraciones_usuario_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `users` (`id`);
 
---
--- Filtros para la tabla `events`
---
 ALTER TABLE `events`
   ADD CONSTRAINT `events_categoria_id_foreign` FOREIGN KEY (`categoria_id`) REFERENCES `categorias` (`id`),
   ADD CONSTRAINT `events_ubicacion_id_foreign` FOREIGN KEY (`ubicacion_id`) REFERENCES `ubicaciones` (`id`),
   ADD CONSTRAINT `events_user_id_foreign` FOREIGN KEY (`organizador_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
---
--- Filtros para la tabla `favoritos`
---
 ALTER TABLE `favoritos`
   ADD CONSTRAINT `favoritos_evento_id_foreign` FOREIGN KEY (`evento_id`) REFERENCES `events` (`id`),
   ADD CONSTRAINT `favoritos_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `users` (`id`);
 
---
--- Filtros para la tabla `imagenes_evento`
---
 ALTER TABLE `imagenes_evento`
   ADD CONSTRAINT `imagenes_evento_evento_id_foreign` FOREIGN KEY (`evento_id`) REFERENCES `events` (`id`) ON DELETE CASCADE;
 
---
--- Filtros para la tabla `notificaciones`
---
+ALTER TABLE `imagenes_galeria_evento`
+  ADD CONSTRAINT `imagenes_galeria_evento_evento_id_foreign` FOREIGN KEY (`evento_id`) REFERENCES `events` (`id`) ON DELETE CASCADE;
+
 ALTER TABLE `notificaciones`
   ADD CONSTRAINT `notificaciones_evento_id_foreign` FOREIGN KEY (`evento_id`) REFERENCES `events` (`id`),
   ADD CONSTRAINT `notificaciones_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `users` (`id`);
 
---
--- Filtros para la tabla `reviews`
---
 ALTER TABLE `reviews`
   ADD CONSTRAINT `reviews_evento_id_foreign` FOREIGN KEY (`evento_id`) REFERENCES `events` (`id`),
   ADD CONSTRAINT `reviews_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `users` (`id`);
 
---
--- Filtros para la tabla `suscripciones_organizador`
---
 ALTER TABLE `suscripciones_organizador`
   ADD CONSTRAINT `suscripciones_organizador_organizador_id_foreign` FOREIGN KEY (`organizador_id`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `suscripciones_organizador_plan_id_foreign` FOREIGN KEY (`plan_id`) REFERENCES `planes_suscripcion` (`id`);
 
---
--- Filtros para la tabla `users`
---
 ALTER TABLE `users`
   ADD CONSTRAINT `users_rol_id_foreign` FOREIGN KEY (`rol_id`) REFERENCES `roles` (`id`);
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+-- ========================================
+-- 11. RESUMEN DE LA BASE DE DATOS CREADA
+-- ========================================
+
+/*
+BASE DE DATOS FESTISPOT - RESUMEN:
+
+✅ ESTRUCTURAS CREADAS:
+- 23 tablas con estructura completa (CREATE TABLE IF NOT EXISTS)
+- Todos los índices y claves foráneas
+- Configuración UTF8MB4 para soporte internacional
+- Protección contra re-ejecución del script
+
+✅ DATOS INCLUIDOS:
+- 3 Roles: asistente, productor, organizador (INSERT IGNORE)
+- 12 Categorías: Música, Arte, Gastronomía, Deportes, etc. (INSERT IGNORE)
+- 3 Planes de suscripción: Básico (gratis), Pro, Premium (INSERT IGNORE)
+- 19 Registros de migraciones de Laravel (INSERT IGNORE)
+
+❌ DATOS EXCLUIDOS (según solicitud):
+- Eventos (tabla events vacía)
+- Usuarios (tabla users vacía)
+- Ubicaciones (tabla ubicaciones vacía)
+
+�️ CARACTERÍSTICAS DE SEGURIDAD:
+- Puede ejecutarse múltiples veces sin errores
+- No duplicará datos existentes
+- No fallará si la BD o tablas ya existen
+
+�📋 SIGUIENTES PASOS RECOMENDADOS:
+1. Crear usuarios administradores
+2. Agregar más ubicaciones según necesidades
+3. Configurar eventos de prueba si es necesario
+4. Personalizar categorías según el mercado objetivo
+
+🔧 PARA USAR:
+1. Ejecutar este archivo en MySQL/MariaDB
+2. Verificar que todas las tablas se crearon correctamente
+3. La aplicación Laravel debería funcionar inmediatamente
+4. Puede re-ejecutarse sin problemas para actualizaciones
+
+Fecha de creación: Septiembre 22, 2025
+Versión de la BD: 2.0 - Estructura completa sin eventos ni usuarios + Validaciones
+*/

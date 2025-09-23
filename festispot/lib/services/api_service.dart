@@ -538,13 +538,35 @@ class ApiService {
   /// Actualiza un usuario existente usando update_user.php
   static Future<Usuario> actualizarUsuario(Usuario usuario) async {
     try {
+      // Crear JSON para actualización (solo campos necesarios)
+      final updateData = {
+        'id': usuario.id,
+        if (usuario.nombre.isNotEmpty) 'nombre': usuario.nombre,
+        if (usuario.apellido.isNotEmpty) 'apellido': usuario.apellido,
+        if (usuario.email.isNotEmpty) 'email': usuario.email,
+        if (usuario.telefono != null && usuario.telefono!.isNotEmpty) 'telefono': usuario.telefono,
+        if (usuario.fechaNacimiento != null && usuario.fechaNacimiento!.isNotEmpty) 'fecha_nacimiento': usuario.fechaNacimiento,
+        if (usuario.genero != null && usuario.genero!.isNotEmpty) 'genero': usuario.genero,
+        if (usuario.avatarUrl != null && usuario.avatarUrl!.isNotEmpty) 'avatar_url': usuario.avatarUrl,
+        // Incluir password solo si se está actualizando
+        if (usuario.password != null && usuario.password!.isNotEmpty) 'password': usuario.password,
+      };
+
+      if (ApiConfig.isDebugMode) {
+        print('Actualizando usuario con datos: $updateData');
+      }
+
       final response = await http
           .put(
             Uri.parse('$baseUrl/api/update_user.php'),
             headers: headers,
-            body: json.encode(usuario.toJson()),
+            body: json.encode(updateData),
           )
           .timeout(timeout);
+
+      if (ApiConfig.isDebugMode) {
+        print('Respuesta del servidor: ${response.statusCode} - ${response.body}');
+      }
 
       final data = _handleResponse(response);
       
@@ -558,6 +580,9 @@ class ApiService {
     } on TimeoutException {
       throw ApiException('Tiempo de espera agotado');
     } catch (e) {
+      if (ApiConfig.isDebugMode) {
+        print('Error completo al actualizar usuario: $e');
+      }
       throw ApiException('Error al actualizar usuario: $e');
     }
   }

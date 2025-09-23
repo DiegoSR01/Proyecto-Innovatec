@@ -128,12 +128,21 @@ class AuthService {
   /// Actualiza los datos del usuario actual
   static Future<AuthResult> updateCurrentUser(Usuario usuarioActualizado) async {
     try {
+      print('🔄 AuthService: Iniciando actualización del usuario ${usuarioActualizado.id}');
+      print('📤 Enviando datos del usuario a la API...');
+      
       final usuarioActualizadoDb = await ApiService.actualizarUsuario(usuarioActualizado);
+      
+      print('📥 Usuario actualizado recibido de la API');
+      print('💾 Guardando usuario actualizado en memoria y SharedPreferences...');
       
       _currentUser = usuarioActualizadoDb;
       await _saveUser(usuarioActualizadoDb);
+      
+      print('✅ AuthService: Usuario actualizado exitosamente');
       return AuthResult.success(usuarioActualizadoDb, 'Usuario actualizado correctamente');
     } catch (e) {
+      print('❌ AuthService: Error durante la actualización - $e');
       return AuthResult.error('Error durante la actualización: $e');
     }
   }

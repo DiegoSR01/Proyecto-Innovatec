@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:festispot/utils/eventos_carrusel.dart';
 import 'package:festispot/utils/variables.dart';
+import 'package:festispot/utils/image_helper.dart';
 import 'package:festispot/screens/asistente/a_mostrar_evento.dart';
 import 'package:festispot/services/api_service.dart';
 
@@ -271,26 +272,10 @@ class _ExplorarEventosState extends State<ExplorarEventos> {
                 // Imagen del evento
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    evento.imagen,
+                  child: evento.imagen.toImageWidget(
                     fit: BoxFit.cover,
                     width: 100,
                     height: 100,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          Icons.image_outlined,
-                          color: Colors.grey[600],
-                          size: 24,
-                        ),
-                      );
-                    },
                   ),
                 ),
                 const SizedBox(width: 16),

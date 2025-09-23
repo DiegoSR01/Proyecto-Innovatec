@@ -1,5 +1,6 @@
 import 'package:festispot/utils/variables.dart';
 import 'package:festispot/services/api_service.dart';
+import 'package:festispot/utils/image_helper.dart';
 
 // Esta lista ahora se carga dinámicamente desde la base de datos
 // Los eventos se obtienen a través de la API usando ApiService.getEventos()
@@ -65,19 +66,10 @@ Future<List<Evento>> loadEventosFromAPI() async {
   }
 }
 
-/// Mapea la imagen del evento a la ruta de assets
+/// Mapea la imagen del evento desde BD usando el ImageHelper
 String _mapImagePath(String? bannerImage) {
-  if (bannerImage == null || bannerImage.isEmpty) {
-    return 'assets/images/loading.gif';
-  }
-  
-  // Si es una URL completa, usarla directamente
-  if (bannerImage.startsWith('http')) {
-    return bannerImage;
-  }
-  
-  // Si no, mapear a assets locales
-  return 'assets/images/$bannerImage';
+  // Usar el nuevo helper para obtener la URL desde BD
+  return ImageHelper.getImageUrl(bannerImage);
 }
 
 /// Formatea el nombre completo del organizador

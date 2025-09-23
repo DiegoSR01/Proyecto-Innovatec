@@ -4,6 +4,7 @@ import 'package:festispot/screens/asistente/a_favoritos.dart';
 import 'package:festispot/screens/asistente/a_configuracion.dart';
 import 'package:festispot/utils/variables.dart';
 import 'package:festispot/utils/eventos_carrusel.dart';
+import 'package:festispot/utils/image_helper.dart';
 import 'package:festispot/screens/asistente/a_mostrar_evento.dart';
 import 'package:festispot/services/api_service.dart';
 import 'package:flutter/material.dart';
@@ -629,29 +630,10 @@ class _InicioState extends State<Inicio> {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                ClipRRect(
+                evento.imagen.toImageWidget(
+                  width: 80,
+                  height: 80,
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    evento.imagen,
-                    fit: BoxFit.cover,
-                    width: 80,
-                    height: 80,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          Icons.image_outlined,
-                          color: Colors.grey[600],
-                          size: 20,
-                        ),
-                      );
-                    },
-                  ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -844,25 +826,21 @@ class _CardImagesState extends State<CardImages> {
                   ),
                 );
               },
-              child: Image.asset(
-                widget.carrusel.imagen,
-                fit: BoxFit.cover,
+              child: widget.carrusel.imagen.toImageWidget(
                 width: double.infinity,
                 height: double.infinity,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: double.infinity,
-                    height: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF3D3D3D),
-                    ),
-                    child: Icon(
-                      Icons.image_outlined,
-                      color: Colors.grey[500],
-                      size: 40,
-                    ),
-                  );
-                },
+                errorWidget: Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF3D3D3D),
+                  ),
+                  child: Icon(
+                    Icons.image_outlined,
+                    color: Colors.grey[500],
+                    size: 40,
+                  ),
+                ),
               ),
             ),
             // Overlay gradient

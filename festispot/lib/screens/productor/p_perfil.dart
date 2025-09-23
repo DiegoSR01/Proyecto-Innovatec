@@ -216,7 +216,6 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
 
     final nombreController = TextEditingController(text: _currentUser!.nombre);
     final apellidoController = TextEditingController(text: _currentUser!.apellido);
-    final telefonoController = TextEditingController(text: _currentUser!.telefono ?? '');
     final fechaNacimientoController = TextEditingController(text: _currentUser!.fechaNacimiento ?? '');
     
     // Asegurar que el género seleccionado sea uno de los valores válidos
@@ -256,46 +255,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
                     const SizedBox(height: 16),
                     _buildTextFieldDialog('Apellido', apellidoController, Icons.person_outline),
                     const SizedBox(height: 16),
-                    _buildTextFieldDialog('Teléfono', telefonoController, Icons.phone, isOptional: true),
-                    const SizedBox(height: 16),
                     _buildTextFieldDialog('Fecha de Nacimiento (YYYY-MM-DD)', fechaNacimientoController, Icons.cake, isOptional: true),
-                    const SizedBox(height: 16),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF1A1B2E),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.white.withOpacity(0.2)),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value: generoSeleccionado,
-                          isExpanded: true,
-                          hint: const Text('Seleccionar género', style: TextStyle(color: Colors.white70)),
-                          dropdownColor: const Color(0xFF2D2E3F),
-                          style: const TextStyle(color: Colors.white),
-                          items: const [
-                            DropdownMenuItem<String>(
-                              value: 'M',
-                              child: Text('Masculino', style: TextStyle(color: Colors.white)),
-                            ),
-                            DropdownMenuItem<String>(
-                              value: 'F',
-                              child: Text('Femenino', style: TextStyle(color: Colors.white)),
-                            ),
-                            DropdownMenuItem<String>(
-                              value: 'O',
-                              child: Text('Otro', style: TextStyle(color: Colors.white)),
-                            ),
-                          ],
-                          onChanged: (String? newValue) {
-                            setModalState(() {
-                              generoSeleccionado = newValue;
-                            });
-                          },
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -319,9 +279,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
                       final result = await UserService.updateProfile(
                         nombre: nombreController.text.trim(),
                         apellido: apellidoController.text.trim(),
-                        telefono: telefonoController.text.trim().isEmpty ? null : telefonoController.text.trim(),
                         fechaNacimiento: fechaNacimientoController.text.trim().isEmpty ? null : fechaNacimientoController.text.trim(),
-                        genero: generoSeleccionado,
                       );
 
                       result.onSuccess((user, message) {
@@ -344,6 +302,92 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
               ],
             );
           }
+        );
+      },
+    );
+  }
+
+  /// Muestra el diálogo para editar solo el teléfono
+  void _mostrarDialogoEditarTelefono() {
+    if (_currentUser == null) return;
+
+    final telefonoController = TextEditingController(text: _currentUser!.telefono ?? '');
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF2D2E3F),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: const Row(
+            children: [
+              Icon(Icons.phone, color: Color(0xFF673AB7)),
+              SizedBox(width: 12),
+              Text(
+                'Editar Teléfono',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildTextFieldDialog('Número de teléfono', telefonoController, Icons.phone),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                'Cancelar',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFF4CAF50),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: TextButton(
+                onPressed: () async {
+                  Navigator.pop(context);
+                  
+                  // Mostrar indicator de carga
+                  _showCustomSnackBar('Actualizando teléfono...', true);
+                  
+                  try {
+                    final result = await UserService.updatePhone(
+                      telefonoController.text.trim(),
+                    );
+
+                    result.onSuccess((user, message) {
+                      setState(() {
+                        _currentUser = user;
+                      });
+                      _showCustomSnackBar(message, true);
+                    });
+
+                    result.onError((message) {
+                      _showCustomSnackBar('Error: $message', false);
+                      print('❌ Error completo al actualizar teléfono: $message');
+                    });
+                  } catch (e) {
+                    _showCustomSnackBar('Error inesperado: $e', false);
+                    print('💥 Excepción no manejada: $e');
+                  }
+                },
+                child: const Text(
+                  'Guardar',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ],
         );
       },
     );
@@ -1060,7 +1104,7 @@ class _PerfilUsuarioState extends State<PerfilUsuario>
             ? 'Teléfono: ${_currentUser!.telefono}'
             : 'Agregar número de teléfono',
         const Color(0xFF4CAF50),
-        _mostrarDialogoEditarPerfil,
+        _mostrarDialogoEditarTelefono,
       ),
     ]);
   }

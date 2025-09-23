@@ -105,26 +105,26 @@ function createUser($db) {
         $stmt = $db->prepare($query);
         
         // Asignar valores con valores por defecto
-        $stmt->bindParam(":nombre", $data['nombre']);
-        $stmt->bindParam(":apellido", $data['apellido']);
-        $stmt->bindParam(":email", $data['email']);
-        $stmt->bindParam(":telefono", $data['telefono'] ?? null);
-        $stmt->bindParam(":fecha_nacimiento", $data['fecha_nacimiento'] ?? null);
-        $stmt->bindParam(":genero", $data['genero'] ?? null);
-        $stmt->bindParam(":avatar_url", $data['avatar_url'] ?? null);
+        $stmt->bindValue(":nombre", $data['nombre']);
+        $stmt->bindValue(":apellido", $data['apellido']);
+        $stmt->bindValue(":email", $data['email']);
+        $stmt->bindValue(":telefono", $data['telefono'] ?? null);
+        $stmt->bindValue(":fecha_nacimiento", $data['fecha_nacimiento'] ?? null);
+        $stmt->bindValue(":genero", $data['genero'] ?? null);
+        $stmt->bindValue(":avatar_url", $data['avatar_url'] ?? null);
         
         $rol_id = $data['rol_id'] ?? 1; // Rol asistente por defecto
-        $stmt->bindParam(":rol_id", $rol_id);
+        $stmt->bindValue(":rol_id", $rol_id);
         
         $estado = $data['estado'] ?? 'activo';
-        $stmt->bindParam(":estado", $estado);
+        $stmt->bindValue(":estado", $estado);
         
         $email_verificado = $data['email_verificado'] ?? 0;
-        $stmt->bindParam(":email_verificado", $email_verificado);
+        $stmt->bindValue(":email_verificado", $email_verificado);
         
         // Hash de la contraseña si se proporciona
         $password_hash = isset($data['password']) ? password_hash($data['password'], PASSWORD_DEFAULT) : null;
-        $stmt->bindParam(":password", $password_hash);
+        $stmt->bindValue(":password", $password_hash);
         
         if ($stmt->execute()) {
             $user_id = $db->lastInsertId();

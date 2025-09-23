@@ -43,6 +43,12 @@ class Evento {
   final String? organizadorApellido;
   final String? organizadorEmail;
   final String? organizadorTelefono;
+  
+  // Campos para imágenes de BD (BLOB)
+  final String? bannerImageData; // Para datos BLOB base64 de banner_image
+  final String? bannerImageType; // Para tipo MIME de banner_image
+  final String? galleryImagesData; // Para datos BLOB base64 de gallery_images
+  final String? galleryImagesMetadata; // Para metadatos JSON de galería
 
   const Evento({
     required this.id,
@@ -87,6 +93,10 @@ class Evento {
     this.organizadorApellido,
     this.organizadorEmail,
     this.organizadorTelefono,
+    this.bannerImageData,
+    this.bannerImageType,
+    this.galleryImagesData,
+    this.galleryImagesMetadata,
   });
 
   factory Evento.fromJson(Map<String, dynamic> json) => Evento(
@@ -132,6 +142,10 @@ class Evento {
     organizadorApellido: json['organizador_apellido'],
     organizadorEmail: json['organizador_email'],
     organizadorTelefono: json['organizador_telefono'],
+    bannerImageData: json['banner_image']?.toString(),
+    bannerImageType: json['banner_image_type']?.toString(),
+    galleryImagesData: json['gallery_images_data']?.toString(),
+    galleryImagesMetadata: json['gallery_images_metadata']?.toString(),
   );
 
   Map<String, dynamic> toJson() => {
@@ -177,6 +191,10 @@ class Evento {
     'organizador_apellido': organizadorApellido,
     'organizador_email': organizadorEmail,
     'organizador_telefono': organizadorTelefono,
+    'banner_image': bannerImageData,
+    'banner_image_type': bannerImageType,
+    'gallery_images_data': galleryImagesData,
+    'gallery_images_metadata': galleryImagesMetadata,
   };
 
   Evento copy() => Evento(
@@ -222,5 +240,9 @@ class Evento {
     organizadorApellido: organizadorApellido,
     organizadorEmail: organizadorEmail,
     organizadorTelefono: organizadorTelefono,
+    bannerImageData: bannerImageData,
+    bannerImageType: bannerImageType,
+    galleryImagesData: galleryImagesData,
+    galleryImagesMetadata: galleryImagesMetadata,
   );
 }
