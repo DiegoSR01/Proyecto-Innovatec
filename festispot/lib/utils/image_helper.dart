@@ -22,6 +22,9 @@ class ImageHelper {
     // Si no hay imagen o está vacía, mostrar placeholder
     if (imageField == null || imageField.isEmpty) {
       image = _buildPlaceholder(width, height, placeholder);
+    } else if (_isAssetImage(imageField)) {
+      // Si es una imagen de assets locales
+      image = _buildAssetImage(imageField, width, height, fit, errorWidget);
     } else if (_isBase64Image(imageField)) {
       // Si es una imagen base64 (BLOB de la BD)
       image = _buildBase64Image(imageField, width, height, fit, errorWidget);
@@ -185,6 +188,10 @@ class ImageHelper {
       return '';
     }
     
+    if (_isAssetImage(imageField)) {
+      return imageField; // Retornar assets path tal como está
+    }
+    
     if (_isBase64Image(imageField)) {
       return imageField; // Retornar base64 tal como está
     }
@@ -201,8 +208,17 @@ class ImageHelper {
     return '';
   }
   
+  /// Verifica si es una imagen de assets locales
+  static bool _isAssetImage(String imageField) {
+    return imageField.startsWith('assets/');
+  }
+  
   /// Verifica si es un formato de imagen válido desde BD
   static bool _isValidImageFormat(String imageField) {
+    if (_isAssetImage(imageField)) {
+      return true; // Assets son válidos
+    }
+    
     if (_isBase64Image(imageField)) {
       return true; // Base64 válido
     }
@@ -243,6 +259,22 @@ class ImageHelper {
   /// Verifica si es una URL completa (externa)
   static bool _isUrl(String imageField) {
     return imageField.startsWith('http://') || imageField.startsWith('https://');
+  }
+  
+  /// Construye widget para imagen de assets locales
+  static Widget _buildAssetImage(String assetPath, double? width, double? height, BoxFit fit, Widget? errorWidget) {
+    return Image.asset(
+      assetPath,
+      width: width,
+      height: height,
+      fit: fit,
+      errorBuilder: (context, error, stackTrace) {
+        if (ApiConfig.isDebugMode) {
+          print('Error al cargar asset: $assetPath - $error');
+        }
+        return errorWidget ?? _buildErrorWidget(width, height, 'Asset');
+      },
+    );
   }
   
   /// Construye widget para imagen base64 (BLOB de BD)

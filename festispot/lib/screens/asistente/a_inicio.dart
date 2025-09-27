@@ -121,10 +121,22 @@ class _InicioState extends State<Inicio> {
         _error = null;
       });
 
-      // Cargar eventos y categorías en paralelo
+      // Cargar eventos y categorías en paralelo con timeout
       final futures = await Future.wait([
-        loadEventosFromAPI(),
-        ApiService.getCategorias(),
+        loadEventosFromAPI().timeout(
+          const Duration(seconds: 15),
+          onTimeout: () {
+            print('Timeout al cargar eventos, retornando lista vacía');
+            return <Evento>[];
+          },
+        ),
+        ApiService.getCategorias().timeout(
+          const Duration(seconds: 10), 
+          onTimeout: () {
+            print('Timeout al cargar categorías, retornando lista vacía');
+            return <Map<String, dynamic>>[];
+          },
+        ),
       ]);
 
       final eventos = futures[0] as List<Evento>;
@@ -135,14 +147,29 @@ class _InicioState extends State<Inicio> {
         _eventosFiltrados = eventos; // Inicialmente mostrar todos
         _categorias = categorias;
         _isLoading = false;
+        // Limpiar error solo si obtuvimos datos exitosamente
+        if (eventos.isNotEmpty || categorias.isNotEmpty) {
+          _error = null;
+        }
       });
+
+      // Si no hay eventos, no es necesariamente un error, pero informar al usuario
+      if (eventos.isEmpty && _error == null) {
+        print('No se encontraron eventos disponibles');
+      }
     } catch (e) {
+      print('Error completo al cargar datos: $e');
       setState(() {
-        _error = 'Error al cargar datos: $e';
+        _error = 'Error al cargar datos. Verifica tu conexión de red.';
         _isLoading = false;
-        _eventos = [];
-        _eventosFiltrados = [];
-        _categorias = [];
+        // Mantener datos existentes en caso de error de recarga
+        if (_eventos.isEmpty) {
+          _eventos = [];
+          _eventosFiltrados = [];
+        }
+        if (_categorias.isEmpty) {
+          _categorias = [];
+        }
       });
     }
   }
@@ -378,22 +405,28 @@ class _InicioState extends State<Inicio> {
             const SizedBox(height: 12),
 
             // Carrusel de eventos
-            CarouselSlider.builder(
-              itemCount: _eventosFiltrados.length,
-              itemBuilder: (context, index, realindex) {
-                return CardImages(carrusel: _eventosFiltrados[index]);
-              },
-              options: CarouselOptions(
+            _eventosFiltrados.isEmpty 
+            ? Container(
                 height: 320,
-                autoPlay: true,
-                autoPlayCurve: Curves.easeInOut,
-                enlargeCenterPage: true,
-                aspectRatio: 16 / 9,
-                viewportFraction: 0.85,
-                scrollDirection: Axis.horizontal,
-                autoPlayInterval: const Duration(seconds: 4),
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                child: _buildEmptyCarousel(),
+              )
+            : CarouselSlider.builder(
+                itemCount: _eventosFiltrados.length,
+                itemBuilder: (context, index, realindex) {
+                  return CardImages(carrusel: _eventosFiltrados[index]);
+                },
+                options: CarouselOptions(
+                  height: 320,
+                  autoPlay: _eventosFiltrados.length > 1, // Solo autoplay si hay múltiples elementos
+                  autoPlayCurve: Curves.easeInOut,
+                  enlargeCenterPage: true,
+                  aspectRatio: 16 / 9,
+                  viewportFraction: 0.85,
+                  scrollDirection: Axis.horizontal,
+                  autoPlayInterval: const Duration(seconds: 4),
+                ),
               ),
-            ),
 
             const SizedBox(height: 24),
 
@@ -481,6 +514,85 @@ class _InicioState extends State<Inicio> {
             const SizedBox(height: 100), // Espacio para el bottom navigation
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyCarousel() {
+    return Container(
+      width: double.infinity,
+      height: 320,
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFF2D2E3F),
+            const Color(0xFF2D2E3F).withOpacity(0.8),
+          ],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: const Color(0xFF8E24AA).withOpacity(0.2),
+              borderRadius: BorderRadius.circular(50),
+            ),
+            child: const Icon(
+              Icons.celebration_outlined,
+              size: 48,
+              color: Color(0xFF8E24AA),
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            '¡Próximamente!',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Estamos preparando eventos\nincreíbles para ti',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white70,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF8E24AA), Color(0xFF7B1FA2)],
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Text(
+              '🎉 Eventos en camino',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -829,16 +941,76 @@ class _CardImagesState extends State<CardImages> {
               child: widget.carrusel.imagen.toImageWidget(
                 width: double.infinity,
                 height: double.infinity,
+                placeholder: Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        const Color(0xFF2D2E3F),
+                        const Color(0xFF8E24AA).withOpacity(0.3),
+                      ],
+                    ),
+                  ),
+                  child: const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.image_outlined,
+                        color: Colors.white70,
+                        size: 48,
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Cargando...',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 errorWidget: Container(
                   width: double.infinity,
                   height: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF3D3D3D),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        const Color(0xFF2D2E3F),
+                        const Color(0xFF8E24AA).withOpacity(0.5),
+                      ],
+                    ),
                   ),
-                  child: Icon(
-                    Icons.image_outlined,
-                    color: Colors.grey[500],
-                    size: 40,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.celebration,
+                          color: Colors.white,
+                          size: 40,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      const Text(
+                        'Evento Destacado',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

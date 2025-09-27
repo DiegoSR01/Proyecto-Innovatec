@@ -9,7 +9,14 @@ List<Evento> carrusel = [];
 /// Carga los eventos desde la API y los convierte al formato del carrusel
 Future<List<Evento>> loadEventosFromAPI() async {
   try {
+    print('Iniciando carga de eventos desde API...');
     final eventosData = await ApiService.getEventos();
+    
+    if (eventosData.isEmpty) {
+      print('No se encontraron eventos en la respuesta de la API');
+      return _createPlaceholderEvents(); // Mostrar eventos placeholder
+    }
+    
     carrusel = eventosData.map((data) {
       return Evento(
         id: data['id'] ?? 0,
@@ -59,17 +66,85 @@ Future<List<Evento>> loadEventosFromAPI() async {
       );
     }).toList();
     
+    print('Eventos cargados exitosamente: ${carrusel.length}');
     return carrusel;
   } catch (e) {
     print('Error al cargar eventos desde la API: $e');
-    return [];
+    // En caso de error, devolver eventos placeholder en lugar de lista vacía
+    return _createPlaceholderEvents();
   }
+}
+
+/// Crea eventos placeholder para mostrar cuando no hay datos
+List<Evento> _createPlaceholderEvents() {
+  return [
+    Evento(
+      id: -1,
+      nombre: '🎵 Festival de Música',
+      imagen: 'assets/images/placeholder.png',
+      descripcion: 'Un increíble festival musical está por venir. ¡Mantente atento para más detalles!',
+      categoria: 'Festival',
+      ubicacion: 'Próximamente',
+      fecha: 'Por confirmar',
+      hora: 'Por confirmar',
+      precio: 'Por confirmar',
+      capacidad: '1000',
+      edad: '18',
+      organizador: 'FestiSpot Team',
+      organizadorRating: '5.0',
+      organizadorEventos: '50+',
+    ),
+    Evento(
+      id: -2,
+      nombre: '🎨 Exposición de Arte',
+      imagen: 'assets/images/placeholder.png',
+      descripcion: 'Una extraordinaria exposición de arte contemporáneo. ¡No te la pierdas!',
+      categoria: 'Arte',
+      ubicacion: 'Por confirmar',
+      fecha: 'Próximamente',
+      hora: 'Por confirmar',
+      precio: 'Gratuito',
+      capacidad: '500',
+      edad: '0',
+      organizador: 'FestiSpot Gallery',
+      organizadorRating: '4.8',
+      organizadorEventos: '30+',
+    ),
+    Evento(
+      id: -3,
+      nombre: '🏃‍♂️ Carrera Benéfica',
+      imagen: 'assets/images/placeholder.png',
+      descripcion: 'Únete a nuestra carrera benéfica por una buena causa. ¡Tu participación cuenta!',
+      categoria: 'Deportivo',
+      ubicacion: 'Ciudad Central',
+      fecha: 'En preparación',
+      hora: '07:00',
+      precio: '\$25',
+      capacidad: '2000',
+      edad: '16',
+      organizador: 'FestiSpot Sports',
+      organizadorRating: '4.9',
+      organizadorEventos: '100+',
+    ),
+  ];
 }
 
 /// Mapea la imagen del evento desde BD usando el ImageHelper
 String _mapImagePath(String? bannerImage) {
+  // Si no hay imagen, usar una imagen placeholder local
+  if (bannerImage == null || bannerImage.isEmpty) {
+    return 'assets/images/placeholder.png';
+  }
+  
   // Usar el nuevo helper para obtener la URL desde BD
-  return ImageHelper.getImageUrl(bannerImage);
+  final imageUrl = ImageHelper.getImageUrl(bannerImage);
+  
+  // Si ImageHelper no puede procesar la imagen, usar placeholder
+  if (imageUrl.isEmpty) {
+    return 'assets/images/placeholder.png';
+  }
+  
+  return imageUrl;
 }
 
 /// Formatea el nombre completo del organizador

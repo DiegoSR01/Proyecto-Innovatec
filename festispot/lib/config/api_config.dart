@@ -1,7 +1,7 @@
 /// Configuración de la API
 class ApiConfig {
   // IP única - CAMBIAR SOLO AQUÍ
-  static const String _apiHost = '192.168.1.14';
+  static const String _apiHost = '192.168.64.176';
   static const String baseUrl = 'http://$_apiHost/festispot_api';
   
   // Configuraciones adicionales
